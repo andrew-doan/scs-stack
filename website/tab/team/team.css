@@ -1,0 +1,123 @@
+/* One team's page: its figures, its quests by region, its hours and the
+   plain facts of its day. */
+
+/* one gap under the page's name, whichever block comes first */
+#tm-body > .section:first-child { margin-top: 0; }
+
+.tm-share {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 12px 20px;
+  margin: 24px 0 0;
+}
+/* a bar across the column on a phone rather than a part-width block */
+@media (max-width: 560px) {
+  .tm-share > .btn { flex: 1; }
+}
+
+/* the receipt before it is copied: the picture, its option and the two
+   buttons, on the site's pop-up card; the whole screen on a phone */
+.tm-preview[hidden] { display: none; }
+.tm-preview-card { width: min(560px, 100%); display: flex; flex-direction: column; }
+.tm-preview-body { display: flex; flex-direction: column; gap: 16px; min-height: 0; }
+.tm-preview-shot {
+  min-height: 160px;
+  max-height: 56vh;
+  overflow: auto;
+  border: 1px solid var(--border);
+  border-radius: 2px;
+  background: var(--tint);
+  overscroll-behavior: contain;
+}
+.tm-preview-shot img { display: block; width: 100%; height: auto; }
+/* the receipt's three levels, the live tab's view buttons again */
+.tm-detail { display: flex; flex-wrap: wrap; gap: 6px; }
+.tm-detail button {
+  min-height: 44px;
+  padding: 0 14px;
+  border: 1px solid var(--border-strong);
+  border-radius: 2px;
+  background: transparent;
+  color: var(--text);
+  font: inherit;
+  font-size: var(--t-small);
+  font-weight: 800;
+  cursor: pointer;
+  transition: background-color var(--duration-quick) var(--ease-smooth-out), color var(--duration-quick) var(--ease-smooth-out);
+}
+.tm-detail button[aria-pressed="true"] {
+  background: var(--sign-bg);
+  border-color: var(--pick-edge);
+  color: var(--sign-ink);
+}
+.tm-preview .confirm-actions { margin-top: 0; }
+@media (max-width: 560px) {
+  .tm-preview { padding: 0; align-items: stretch; }
+  .tm-preview-card {
+    width: 100%;
+    max-height: none;
+    height: 100%;
+    border: 0;
+    box-shadow: none;
+    padding-bottom: env(safe-area-inset-bottom);
+  }
+  .tm-preview-card .confirm-title { padding-top: calc(14px + env(safe-area-inset-top)); }
+  .tm-preview-body { flex: 1; }
+  .tm-preview-shot { flex: 0 1 auto; max-height: none; }
+  .tm-preview .tm-detail { margin-top: auto; }
+  .tm-detail button { flex: 1; }
+  .tm-preview .confirm-actions > .btn { flex: 1; }
+}
+
+.tm-note { margin: 0; color: var(--muted); }
+
+/* a region's quests: its name over a table of them */
+.tm-region {
+  margin: 32px 0 12px;
+  font-size: var(--t-body);
+  font-weight: 800;
+  letter-spacing: -0.01em;
+}
+.tm-region:first-child { margin-top: 0; }
+
+/* Every region's table on the same columns, so the points line up from
+   one table to the next */
+table.nice.tm-table { min-width: 0; }
+@media (min-width: 561px) {
+  table.nice.tm-table { table-layout: fixed; }
+  .tm-table .tm-col-at { width: 10em; }
+  .tm-table .tm-col-points { width: 6em; }
+}
+.tm-when { color: var(--muted); white-space: nowrap; }
+
+/* On a phone each quest is two lines: the quest and its points, then
+   when it was recorded */
+@media (max-width: 560px) {
+  table.nice.tm-table,
+  .tm-table thead,
+  .tm-table tbody { display: block; }
+  .tm-table tr {
+    display: grid;
+    grid-template-columns: minmax(0, 1fr) auto;
+    column-gap: 16px;
+    row-gap: 2px;
+    padding: 11px 0;
+    border-bottom: 1px solid var(--border);
+  }
+  .tm-table thead tr {
+    padding: 0 0 8px;
+    border-bottom: var(--rule-w) solid var(--rule-ink);
+  }
+  .tm-table tbody tr:last-child { border-bottom: 0; }
+  table.nice.tm-table th,
+  table.nice.tm-table td { padding: 0; border: 0; }
+  .tm-table :is(th, td):first-child { grid-area: 1 / 1; }
+  .tm-table .tm-col-points { grid-area: 1 / 2; }
+  .tm-table .tm-col-at { grid-area: 2 / 1; }
+  .tm-table td.tm-col-at { font-size: var(--t-small); }
+  /* the time under each quest reads as one without a head of its own */
+  .tm-table th.tm-col-at { display: none; }
+  .tm-table td.tm-col-at:empty { display: none; }
+}
+

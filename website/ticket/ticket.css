@@ -1,0 +1,318 @@
+/* ---------------- The check-in ticket ----------------
+   One object on the page, reached from the confirmation email and held
+   up at the door. It is a ticket drawn in the site's own signage: a
+   black station board at the head with the five routes along its
+   bottom edge — the same construction the nav uses, and this page
+   carries no nav — then the code, then a tear, then the stub.
+
+   Three type sizes and nothing between them: 0.72rem uppercase labels,
+   1rem for everything that is read, and the name. Weight and position
+   carry the rest. Every fact is said once: the date is on the board,
+   the time and the place are on the stub, and the name and team are on
+   the board rather than repeated as rows under the code.
+
+   The code sits on white in both themes. A scanner reads contrast, so
+   that panel is the one place on the site with a literal colour in it,
+   and it is not themed on purpose.
+
+   A page with no chrome still has to paint its own ground and hold its
+   own measure, so the shell keeps its own centred column rather than
+   the site's page-shell rules, which pad for fixed bars that are not
+   here. */
+
+.tk-page { background: var(--page-bg); }
+
+/* site.js puts the app layout on a handheld, and site.css then spaces
+   the body for a fixed top bar and a fixed tab bar. This page carries
+   neither, so it takes that space back and keeps only what the notch
+   and the home indicator need. */
+html.is-pwa body.tk-page {
+  padding-top: env(safe-area-inset-top, 0px);
+  padding-bottom: env(safe-area-inset-bottom, 0px);
+  /* and the strip of the bar's colour the app layout paints along the
+     top for a page switch, which with no bar over it was a pale band
+     the ticket overlapped */
+  background-image: none;
+}
+
+.tk-shell {
+  width: min(100% - 32px, 420px);
+  margin: 0 auto;
+  padding: 32px 0 56px;
+}
+
+/* Two edges, used by everything on the ticket. --tk-x is the outer one:
+   the board's words, the code's frame, the tear, the rules between the
+   rows and the note's box all start and end on it. --tk-in is the inner
+   one, inside those: the row icons and the note's icon stand on it, so
+   the icons are one column and the words beside them another. */
+.tk {
+  --tk-x: 20px;
+  --tk-in: 14px;
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: 2px;
+  box-shadow: var(--shadow);
+  /* no overflow clip: the tear's notches sit on the ticket's own edge */
+}
+
+/* ---- the board: a station sign ---- */
+
+.tk-board {
+  background: var(--sign-bg);
+  color: var(--sign-ink);
+  border-radius: 2px 2px 0 0;
+  padding: 16px var(--tk-x) 18px;
+}
+
+/* The service and the date, on one line at the top of the sign. This
+   is the only place the page says what it is and what day it is for. */
+.tk-service {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: space-between;
+  gap: 4px 18px;
+  margin: 0 0 10px;
+  color: var(--sign-muted);
+  font-size: var(--t-micro);
+  font-weight: 800;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  line-height: 1.3;
+}
+
+.tk-service-date { font-variant-numeric: tabular-nums; }
+
+/* The passenger. The door crew read this off the screen, so it is the
+   largest thing on the ticket after the code itself. Two class names,
+   because `.themed h1` in site.css sets a colour and a display size of
+   its own and would otherwise paint the name page-ink on the sign. */
+.tk-board .tk-name {
+  margin: 0;
+  color: var(--sign-ink);
+  font-size: clamp(1.5rem, 5.6vw, 1.9rem);
+  font-weight: 800;
+  letter-spacing: -0.03em;
+  line-height: 1.12;
+  overflow-wrap: anywhere;
+}
+
+.tk-team {
+  margin: 6px 0 0;
+  color: var(--sign-ink);
+  font-size: var(--t-body);
+  font-weight: 700;
+  line-height: 1.35;
+  overflow-wrap: anywhere;
+}
+
+/* the five routes along the bottom edge of the sign */
+.tk-stripe {
+  height: var(--stripe-h);
+  background: var(--stripe);
+}
+
+/* ---- the code, the tear and the stub ----
+   One column at every width: the ticket is the shape of the phone it is
+   held up on, and a wider window gets the same ticket in the middle of
+   it rather than one turned on its side. The gaps are 24px either side
+   of the tear and 14px either side of each rule. */
+
+.tk-code { padding: 20px var(--tk-x) 16px; }
+
+/* The paper frame round the code, the way the confirmation email draws
+   it, as wide as everything under it so its edges are the ticket's
+   edges. White in both themes — see the note at the top of this file. */
+.tk-qr {
+  display: grid;
+  justify-items: center;
+  background: #ffffff;
+  border: 1px solid var(--border-strong);
+  border-radius: 2px;
+  padding: 10px;
+  line-height: 0;
+}
+
+/* Rendered at the size it was drawn wherever it fits, and scaled down
+   smoothly when it does not: a nearest-neighbour downscale drops whole
+   rows of modules, which is the one thing a scanner cannot forgive. */
+.tk-qr img,
+.tk-qr canvas {
+  display: block;
+  max-width: 100%;
+  height: auto;
+}
+
+/* The one field asking to be looked at, and only ever in place of the
+   code. Amber inside the box with the border warmed, never a shadow
+   around it. */
+.tk-fault {
+  border: 1px solid var(--glow-edge);
+  border-radius: 2px;
+  background: var(--glow-fill);
+  padding: 16px 18px;
+}
+
+.tk-fault p { margin: 0; }
+
+.tk-fault .tk-fault-why {
+  font-size: var(--t-body);
+  font-weight: 800;
+  line-height: 1.4;
+}
+
+.tk-fault .tk-fault-do,
+.tk-fault .tk-fault-fix {
+  margin-top: 10px;
+  font-size: var(--t-body);
+  line-height: 1.5;
+}
+
+.tk-fault .tk-fault-ref {
+  margin-top: 14px;
+  padding-top: 10px;
+  border-top: 1px solid var(--glow-edge);
+  color: var(--muted);
+  font-size: var(--t-micro);
+  font-weight: 800;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+}
+
+.tk-fault-code {
+  font-family: var(--mono);
+  letter-spacing: 0;
+}
+
+/* The tear: a run of dashes between the outer edges. */
+.tk-tear {
+  position: relative;
+  height: 16px;
+}
+
+.tk-tear::before {
+  content: '';
+  position: absolute;
+  left: var(--tk-x);
+  right: var(--tk-x);
+  top: 50%;
+  height: 2px;
+  margin-top: -1px;
+  background: repeating-linear-gradient(to right,
+    var(--border-strong) 0 4px, transparent 4px 10px);
+}
+
+.tk-stub { padding: 2px var(--tk-x) var(--tk-x); }
+
+/* A row is an icon, a name and a value, ruled off from the next. The
+   first has no rule over it: the tear is just above it already. */
+.tk-details {
+  margin: 0;
+  display: grid;
+}
+
+.tk-details > div {
+  position: relative;
+  display: grid;
+  gap: 2px;
+  padding: 14px var(--tk-in) 14px calc(var(--tk-in) * 2 + 1.35rem);
+  border-bottom: 1px solid var(--border);
+}
+
+/* Every icon on the ticket is drawn the way the site draws its others:
+   a 24-unit outline at a 2-unit stroke, in the ink of the words beside
+   it, so it keeps its weight at every text size and in both themes. */
+.tk-icon,
+.tk-note-icon,
+.tk-link-icon {
+  flex: none;
+  fill: none;
+  stroke: currentColor;
+  stroke-width: 2;
+  stroke-linecap: round;
+  stroke-linejoin: round;
+}
+
+/* The row's icon, on the inner edge and centred on the label and value
+   together. It is written inside the label, so it is placed against the
+   row rather than the label. */
+.tk-icon {
+  position: absolute;
+  left: var(--tk-in);
+  top: 50%;
+  width: 1.35rem;
+  height: 1.35rem;
+  margin-top: -0.675rem;
+  color: var(--text);
+}
+
+.tk-details dt {
+  color: var(--muted);
+  font-size: var(--t-micro);
+  font-weight: 800;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+}
+
+.tk-details dd {
+  margin: 0;
+  font-size: var(--t-body);
+  font-weight: 700;
+  line-height: 1.35;
+  overflow-wrap: anywhere;
+}
+
+.tk-time { font-variant-numeric: tabular-nums; }
+
+/* The one thing to remember, in a box of its own under the details:
+   the tint the site uses for a box that sits in the page, never a
+   shadow or a colour. Its padding is the inner edge, so its icon and
+   its words line up with the rows'. */
+.tk-note {
+  display: flex;
+  align-items: center;
+  gap: var(--tk-in);
+  margin: 16px 0 0;
+  padding: 12px var(--tk-in);
+  background: var(--tint);
+  border-radius: 2px;
+  color: var(--text);
+  font-size: var(--t-body);
+  line-height: 1.4;
+}
+
+.tk-note-icon { width: 1.35rem; height: 1.35rem; }
+
+.tk-links {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  align-items: center;
+  gap: 8px 0;
+  margin: 18px 0 0;
+  font-size: var(--t-body);
+}
+
+.tk-links a {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  padding: 0 18px;
+  color: var(--text);
+  font-weight: 700;
+  text-underline-offset: 3px;
+}
+
+.tk-links a + a { border-left: 1px solid var(--border); }
+
+.tk-link-icon { width: 1.15em; height: 1.15em; }
+
+/* On a small phone the code takes the room the margins were holding.
+   It is drawn at eight pixels a module and shown no larger, so on a
+   narrow screen it is scaled down, and every millimetre it keeps is a
+   module the camera at the door does not have to work for. */
+@media (max-width: 400px) {
+  .tk-shell { width: calc(100% - 24px); }
+  .tk { --tk-x: 14px; }
+  .tk-qr { padding: 8px; }
+}

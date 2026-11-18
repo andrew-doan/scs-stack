@@ -1,0 +1,20 @@
+{
+  "name": "scs-checkin",
+  "private": true,
+  "type": "module",
+  "scripts": {
+    "dev": "wrangler dev",
+    "deploy": "node scripts/deploy.mjs",
+    "secrets": "wrangler secret bulk secrets.json",
+    "secrets:check": "node scripts/secrets-check.mjs",
+    "db:schema": "node scripts/d1-run.mjs schema.sql",
+    "db:migrate": "node scripts/migrate.mjs",
+    "db:check": "node scripts/db-check.mjs",
+    "backup": "node scripts/backup.mjs",
+    "test": "node tests/verify-migrations.mjs",
+    "test:ui": "node tests/verify-board.cjs"
+  },
+  "devDependencies": {
+    "wrangler": "^4.0.0"
+  }
+}

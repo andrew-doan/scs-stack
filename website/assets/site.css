@@ -1,0 +1,4676 @@
+/* ============================================================
+   SCS.2 — shared site theme
+   Transit wayfinding look, after Vignelli's subway signage: Helvetica,
+   black station bars with white type, coloured route bullets and
+   stripes on aged paper, square corners, hard offset shadows.
+   ============================================================ */
+
+/* SCS Heros, for devices without Helvetica Neue: TeX Gyre Heros, cut
+   down (licence in fonts/). It comes before Helvetica in every stack
+   because Windows answers Helvetica with Arial and Android with
+   Roboto. The Latin Extended files are fetched only by a page that
+   shows one of those letters, and the later rules win where the two
+   ranges overlap. The overrides are Helvetica Neue's own ascent, descent
+   and line gap, so text sits in its line where it does on a Mac. */
+@font-face {
+  font-family: "SCS Heros";
+  src: url("fonts/heros-regular-ext.woff2") format("woff2");
+  font-weight: 400;
+  font-style: normal;
+  font-display: swap;
+  ascent-override: 95.2%;
+  descent-override: 21.3%;
+  line-gap-override: 2.8%;
+  unicode-range: U+0100-02AF, U+0304, U+0308, U+0329, U+1E00-1EFF, U+20A0-20C0, U+2113, U+2C60-2C7F, U+A720-A7FF;
+}
+@font-face {
+  font-family: "SCS Heros";
+  src: url("fonts/heros-italic-ext.woff2") format("woff2");
+  font-weight: 400;
+  font-style: italic;
+  font-display: swap;
+  ascent-override: 95.2%;
+  descent-override: 21.3%;
+  line-gap-override: 2.8%;
+  unicode-range: U+0100-02AF, U+0304, U+0308, U+0329, U+1E00-1EFF, U+20A0-20C0, U+2113, U+2C60-2C7F, U+A720-A7FF;
+}
+@font-face {
+  font-family: "SCS Heros";
+  src: url("fonts/heros-bold-ext.woff2") format("woff2");
+  font-weight: 700;
+  font-style: normal;
+  font-display: swap;
+  ascent-override: 95.2%;
+  descent-override: 21.3%;
+  line-gap-override: 2.8%;
+  unicode-range: U+0100-02AF, U+0304, U+0308, U+0329, U+1E00-1EFF, U+20A0-20C0, U+2113, U+2C60-2C7F, U+A720-A7FF;
+}
+@font-face {
+  font-family: "SCS Heros";
+  src: url("fonts/heros-bolditalic-ext.woff2") format("woff2");
+  font-weight: 700;
+  font-style: italic;
+  font-display: swap;
+  ascent-override: 95.2%;
+  descent-override: 21.3%;
+  line-gap-override: 2.8%;
+  unicode-range: U+0100-02AF, U+0304, U+0308, U+0329, U+1E00-1EFF, U+20A0-20C0, U+2113, U+2C60-2C7F, U+A720-A7FF;
+}
+@font-face {
+  font-family: "SCS Heros";
+  src: url("fonts/heros-regular-latin.woff2") format("woff2");
+  font-weight: 400;
+  font-style: normal;
+  font-display: swap;
+  ascent-override: 95.2%;
+  descent-override: 21.3%;
+  line-gap-override: 2.8%;
+  unicode-range: U+0000-00FF, U+0131, U+0152-0153, U+02BB-02BC, U+02C6, U+02DA, U+02DC, U+0304, U+0308, U+0329, U+2000-206F, U+20AC, U+2122, U+2190-2193, U+2212, U+2215, U+FEFF, U+FFFD;
+}
+@font-face {
+  font-family: "SCS Heros";
+  src: url("fonts/heros-italic-latin.woff2") format("woff2");
+  font-weight: 400;
+  font-style: italic;
+  font-display: swap;
+  ascent-override: 95.2%;
+  descent-override: 21.3%;
+  line-gap-override: 2.8%;
+  unicode-range: U+0000-00FF, U+0131, U+0152-0153, U+02BB-02BC, U+02C6, U+02DA, U+02DC, U+0304, U+0308, U+0329, U+2000-206F, U+20AC, U+2122, U+2190-2193, U+2212, U+2215, U+FEFF, U+FFFD;
+}
+@font-face {
+  font-family: "SCS Heros";
+  src: url("fonts/heros-bold-latin.woff2") format("woff2");
+  font-weight: 700;
+  font-style: normal;
+  font-display: swap;
+  ascent-override: 95.2%;
+  descent-override: 21.3%;
+  line-gap-override: 2.8%;
+  unicode-range: U+0000-00FF, U+0131, U+0152-0153, U+02BB-02BC, U+02C6, U+02DA, U+02DC, U+0304, U+0308, U+0329, U+2000-206F, U+20AC, U+2122, U+2190-2193, U+2212, U+2215, U+FEFF, U+FFFD;
+}
+@font-face {
+  font-family: "SCS Heros";
+  src: url("fonts/heros-bolditalic-latin.woff2") format("woff2");
+  font-weight: 700;
+  font-style: italic;
+  font-display: swap;
+  ascent-override: 95.2%;
+  descent-override: 21.3%;
+  line-gap-override: 2.8%;
+  unicode-range: U+0000-00FF, U+0131, U+0152-0153, U+02BB-02BC, U+02C6, U+02DA, U+02DC, U+0304, U+0308, U+0329, U+2000-206F, U+20AC, U+2122, U+2190-2193, U+2212, U+2215, U+FEFF, U+FFFD;
+}
+
+:root {
+  color-scheme: light;
+  --page-bg: #f2f3f5;
+  --card-bg: #ffffff;
+  --surface: #ffffff;
+  /* A grey a step darker than the page, for a box that has to show on
+     the white bars and cards and on the page alike: a hover, a pressed
+     half, code, a track, a picture still loading. */
+  --tint: #e7e8eb;
+  --text: #111111;
+  --muted: #616161;
+  --border: #d5d5d5;
+  --border-strong: #8a8a8a;
+  --accent: #00933c;
+  --accent-dark: #00752f;
+  /* The accent as a GROUND, with --on-accent type reversed out of it.
+     It was briefly the darker #00752f, because white on #00933c is
+     4.01:1 and the rest of the site's type is held to 4.5. It came
+     back: the dark green read as a different, duller colour rather
+     than as the site's green, and one green everywhere is worth more
+     here than the ratio. Deliberate, not an oversight. The name stays
+     so the two uses of green are still named apart. */
+  --accent-solid: #00933c;
+  --accent-soft: #e8f2e8;
+  --accent-soft-border: #b5d6bc;
+  --on-accent: #ffffff;
+  --notice-bg: #fdf6e0;
+  --notice-border: #e5cd8a;
+  --danger-bg: #fdf0ef;
+  --danger-border: #eeb4ae;
+  /* The ground a destructive button is filled with, and the ink on it.
+     Deliberately not --alert-ink: the line red carries white at 4.05:1,
+     under the 4.5 the rest of the site's type is held to. This one is
+     5.21:1 on white, and reads as a block against the paper (4.53) and
+     against the dark ground (3.60). Same value in both themes — see
+     .btn-danger. */
+  --danger-solid: #d4211c;
+  --on-danger: #ffffff;
+  /* Red as words on the page, rather than as a route colour. The line
+     red is right on paper but sits too dark and too saturated on the
+     dark ground, where it buzzes against the black; dark mode lifts it
+     to a warmer coral that carries the same meaning and stays legible. */
+  --alert-ink: #ee352e;
+  /* The same red as words, but on a sign bar. A sign is the same black
+     in both themes, so this cannot follow --alert-ink: the paper red
+     buzzes on the black exactly as it does in dark mode. It is the
+     dark theme's coral, in both themes, the way --sign-bg and
+     --sign-ink are the same in both. */
+  --alert-sign: #ff6b60;
+  /* Warm light for something asking to be looked at: a flat translucent
+     amber laid inside the box, not a shadow around it, so the hard
+     square edge the rest of the site keeps stays exactly where it is.
+     Flat rather than pooled — a gradient made the box read as unevenly
+     lit; what should vary is how strong it is, not where. */
+  --glow-fill: rgba(226, 176, 60, 0.4);
+  --glow-edge: #e2c179;
+  --mono: "Roboto Mono", ui-monospace, "SF Mono", Menlo, Consolas, monospace; /* quest codes */
+  --chrome-fade: 500ms cubic-bezier(0.16, 1, 0.3, 1); /* scroll-linked bars: fast start, long tail */
+  --chrome-slide: 450ms cubic-bezier(0.16, 1, 0.3, 1);
+  --shadow: 3px 3px 0 rgba(17, 17, 17, 0.14);
+  --shadow-hover: 3px 3px 0 rgba(17, 17, 17, 0.28);
+  /* Signage: the black objects keep their ink in both themes. A hero's
+     sign bar, a plate, the quest sheet, the submit board and a picked
+     chip are drawings, not furniture, and they read as the same object
+     whichever theme the page is in. */
+  --sign-bg: #131313;
+  --sign-ink: #ffffff;
+  --sign-muted: rgba(255, 255, 255, 0.72);
+  /* The chrome is the other thing, and it does follow the theme: the
+     top bar, the footer, the app's bottom bar and the lightbox's bar.
+     It sits a shade off the page rather than on it, and a hairline is
+     what separates the two — the five-route stripe that used to run
+     along every one of those edges is gone. The stripe itself is not:
+     it is still the mark on the paper things (the ticket, the
+     confirmation email, the posters), where it is the only colour and
+     has a page of its own to sit at the edge of. */
+  --bar-bg: var(--surface);
+  --bar-ink: var(--text);
+  --bar-muted: var(--muted);
+  --bar-edge: #c8c8c8;
+  /* a pointer over something in the bar: a grey box, darker than the
+     bar in the light theme and lighter than it in the dark one */
+  --bar-hover: var(--tint);
+  /* The five routes light the app's bottom bar, and they were drawn for
+     black signage: on the light bar the yellow is 1.6:1, under the 3:1
+     a solid glyph needs. It takes the lift --alert-ink takes in the
+     other direction — the line yellow on the dark bar, a darker gold on
+     the light one. The other four carry on both. */
+  --tab-yellow: #8a6a00;
+  /* the route palette (MTA line colours) — the same in the dark theme
+     but for the blue, which is lifted there (below) */
+  --line-red: #ee352e;
+  --line-orange: #ff6319;
+  --line-yellow: #fccc0a;
+  --line-green: #00933c;
+  --line-blue: #0039a6;
+  --line-lime: #6cbe45;
+  --line-purple: #b933ad;
+  --line-brown: #996633;
+  --line-grey: #a7a9ac;
+  --line-sky: #00a1de;
+  /* Five routes running in parallel: the coloured edge of every bar.
+     The stops are whole pixels, not fifths. At 8px tall a fifth is
+     1.6px, which no screen can draw: each line landed on a different
+     pixel boundary, the browser part-covered the ones between, and the
+     five came out at four different weights with the blue reading
+     separate from the rest. Every bar carrying this is 10px, 2px a
+     colour, with nothing between them. Separating the five with a pixel
+     of the sign's own black took the stripe to 14px, and at that height
+     on every band edge it read as an object in its own right rather
+     than as a rule. */
+  --stripe-h: 10px;
+  /* the one gutter every band on the page is built on */
+  --gutter: 26px;
+  /* ---- the type ladder ----
+     Six stops with real distance between them, and nothing between the
+     stops. A signage system has a handful of sizes that each mean
+     something; this page had grown about eighteen, most of them within
+     a fifth of each other, which is a CSS scale rather than a sign
+     scale and reads as mush. */
+  --t-display: clamp(2.05rem, 5.4vw, 4.2rem);
+  /* Section headings and everything set at their size. It ran to 2.1rem
+     on a desktop, so a page of twelve sections was twelve headlines,
+     and the home page had already set its own at 1.375rem: two sizes
+     for one job. */
+  --t-head: clamp(1.375rem, 1.9vw, 1.5rem);
+  --t-lede: clamp(1.06rem, 1.5vw, 1.22rem);
+  --t-body: 1rem;
+  --t-small: 0.88rem;
+  --t-micro: 0.72rem;
+  /* The rule over a section, a table head or a list: one weight
+     everywhere. It was a 6px black bar, which chopped every page into
+     stripes and in the dark theme became a white one. Ink on paper; a
+     mid grey in the dark theme, where the ink is near white and a rule
+     in it was the brightest thing on the screen. */
+  --rule-w: 2px;
+  --rule-ink: var(--text);
+  /* The edge of a black object. Nothing on paper, where the black is
+     the edge; in the dark theme the page is within a few steps of the
+     sign's black and a code chip, a picked chip or the map's badge has
+     nothing else to say where it stops. */
+  --sign-edge: transparent;
+  /* The edge of a picked chip or tab, which is the sign's black filled
+     in. On the dark page that black is darker than the chips around it,
+     so the picked one read as the one switched off; there its edge is
+     the ink. */
+  --pick-edge: var(--sign-bg);
+  --stripe: linear-gradient(to bottom,
+    var(--line-red) 0 2px, var(--line-orange) 2px 4px,
+    var(--line-yellow) 4px 6px, var(--line-green) 6px 8px,
+    var(--line-blue) 8px 10px);
+}
+
+html[data-theme="dark"] {
+  color-scheme: dark;
+  --page-bg: #121212;
+  --card-bg: #1b1b1b;
+  --surface: #1b1b1b;
+  --text: #eeeeee;
+  --muted: #a3a3a3;
+  --border: #333333;
+  --border-strong: #4a4a4a;
+  --accent: #2fb063;
+  --accent-dark: #55c581;
+  /* the same green as the light theme, with the same white type on it */
+  --accent-solid: #00933c;
+  --accent-soft: #142a1b;
+  --accent-soft-border: #26513a;
+  --on-accent: #ffffff;
+  /* A warning box: the amber is in the edge. Filled with it as well,
+     the box came out an olive brown that read as a stain. */
+  --notice-bg: #1f1c15;
+  --notice-border: #8a7134;
+  --danger-bg: #2a1716;
+  --danger-border: #5b302d;
+  --alert-ink: #ff6b60;
+  --glow-fill: rgba(255, 198, 92, 0.12);
+  --glow-edge: #8a7134;
+  --rule-ink: #6d6d6d;
+  --sign-edge: #484848;
+  --pick-edge: var(--text);
+  /* The line blue is drawn for a white letter on a black sign. As a disc
+     on this page, or the lit tab on this bar, it was navy on near black
+     and the shape was lost; lifted the way the red is lifted to coral,
+     still carrying white at 4.5:1. */
+  --line-blue: #3d74d6;
+  --shadow: 3px 3px 0 rgba(0, 0, 0, 0.5);
+  --shadow-hover: 3px 3px 0 rgba(47, 176, 99, 0.3);
+  --sign-bg: #0c0c0c;
+  --sign-ink: #ffffff;
+  --sign-muted: rgba(255, 255, 255, 0.72);
+  --bar-edge: #3b3b3b;
+  --bar-hover: #2c2c2c;
+  --tint: #121212;
+  --tab-yellow: var(--line-yellow);
+}
+
+/* ---------------- Motion tokens (transitions.dev scale) ----------------
+   One timing vocabulary for the small transitions: menus, icon swaps,
+   toasts, status lines, digits, list entries and the hero reveal. The
+   big settled interactions — sheet physics, morphs, FLIP rows, the map
+   and search panels — keep their own tuned curves and stay out of this. */
+:root {
+  --duration-stagger: 40ms;
+  --duration-micro: 80ms;
+  --duration-quick: 150ms;
+  --duration-fast: 250ms;
+  --duration-medium: 350ms;
+  --duration-slow: 400ms;
+  --duration-very-slow: 500ms;
+  --ease-smooth-out: cubic-bezier(0.22, 1, 0.36, 1);
+  --ease-in-out: ease-in-out;
+  --ease-bounce: cubic-bezier(0.34, 1.36, 0.64, 1);
+  --distance-micro: 4px;
+  --distance-small: 6px;
+  --distance-base: 8px;
+  --distance-medium: 12px;
+  --blur-small: 2px;
+  --blur-medium: 3px;
+  /* icon swap (map button, gear, bell, theme) */
+  --icon-swap-dur: var(--duration-fast);
+  /* Two faces share one cell and cross-fade. Painted at once they were
+     both partly opaque through the middle of the swap — 0.77 over 0.23
+     — and one's strokes showed through the other, so the outline came
+     out doubled for about a tenth of a second. Each gets half the
+     clock to itself instead: the leaving face clears, then the
+     arriving one comes up. */
+  --icon-swap-blur: var(--blur-small);
+  --icon-swap-start-scale: 0.25;
+  --icon-swap-ease: var(--ease-in-out);
+  /* number pop-in (live tab stats, quest tally) */
+  --digit-dur: var(--duration-very-slow);
+  --digit-distance: var(--distance-base);
+  --digit-stagger: 70ms;
+  --digit-blur: var(--blur-small);
+  --digit-ease: cubic-bezier(0.34, 1.45, 0.64, 1);
+  --digit-dir-x: 0;
+  --digit-dir-y: 1;
+  /* dropdown (settings menu) */
+  --dropdown-open-dur: var(--duration-fast);
+  --dropdown-close-dur: var(--duration-quick);
+  --dropdown-pre-scale: 0.97;
+  --dropdown-closing-scale: 0.99;
+  /* toast: drops in from under the top bar */
+  --toast-open: var(--duration-medium);
+  --toast-close: var(--duration-fast);
+  --toast-distance: 18px;
+  --toast-blur: var(--blur-small);
+  --toast-scale: 0.97;
+  /* text swap (status lines) */
+  --text-swap-dur: var(--duration-quick);
+  --text-swap-translate-y: var(--distance-micro);
+  --text-swap-blur: var(--blur-small);
+  /* error shake (sign-in, forms) */
+  --shake-distance: var(--distance-small);
+  --shake-overshoot: 4px;
+  --shake-dur-a: 80ms;
+  --shake-dur-b: 60ms;
+  /* skeleton reveal (live tab first load) */
+  --pulse-dur: 1000ms;
+  --pulse-min: 0.5;
+  --reveal-dur: var(--duration-slow);
+  --reveal-blur: var(--blur-small);
+  --reveal-ease: var(--ease-in-out);
+}
+
+/* ---------------- Small shared transitions ----------------
+   .t-rise: an element that has just appeared rises into place.
+   .t-rise-list: the first eight children rise in on a stagger (the
+   rest are below the fold and simply appear).
+   .t-swap: a status line whose text changed; site.js re-adds
+   .is-swapping so the new text enters from below with a blur.
+   .t-digit-group: a number whose digits pop in when it changes.
+   .is-shaking: the error shake, replayed by site.js. */
+.t-rise { animation: t-rise var(--duration-fast) var(--ease-smooth-out) both; }
+.t-rise-list > :nth-child(-n+8) { animation: t-rise var(--duration-fast) var(--ease-smooth-out) both; }
+.t-rise-list > :nth-child(2) { animation-delay: calc(var(--duration-stagger) * 1); }
+.t-rise-list > :nth-child(3) { animation-delay: calc(var(--duration-stagger) * 2); }
+.t-rise-list > :nth-child(4) { animation-delay: calc(var(--duration-stagger) * 3); }
+.t-rise-list > :nth-child(5) { animation-delay: calc(var(--duration-stagger) * 4); }
+.t-rise-list > :nth-child(6) { animation-delay: calc(var(--duration-stagger) * 5); }
+.t-rise-list > :nth-child(7) { animation-delay: calc(var(--duration-stagger) * 6); }
+.t-rise-list > :nth-child(8) { animation-delay: calc(var(--duration-stagger) * 7); }
+@keyframes t-rise {
+  from { opacity: 0; transform: translateY(var(--distance-small)); }
+  to { opacity: 1; transform: none; }
+}
+
+span.t-swap { display: inline-block; }
+.t-swap.is-swapping { animation: t-swap-in var(--text-swap-dur) var(--ease-in-out) both; }
+@keyframes t-swap-in {
+  from { opacity: 0; transform: translateY(var(--text-swap-translate-y)); filter: blur(var(--text-swap-blur)); }
+  to { opacity: 1; transform: none; filter: blur(0); }
+}
+
+@keyframes t-digit-pop-in {
+  0% {
+    transform: translate(
+      calc(var(--digit-distance) * var(--digit-dir-x)),
+      calc(var(--digit-distance) * var(--digit-dir-y))
+    );
+    opacity: 0;
+    filter: blur(var(--digit-blur));
+  }
+  100% { transform: translate(0, 0); opacity: 1; filter: blur(0); }
+}
+.t-digit { display: inline-block; will-change: transform, opacity, filter; }
+.t-digit-group.is-animating .t-digit { animation: t-digit-pop-in var(--digit-dur) var(--digit-ease) both; }
+.t-digit-group.is-animating .t-digit[data-stagger="1"] { animation-delay: var(--digit-stagger); }
+.t-digit-group.is-animating .t-digit[data-stagger="2"] { animation-delay: calc(var(--digit-stagger) * 2); }
+
+.is-shaking { animation: t-input-shake calc(var(--shake-dur-a) * 2 + var(--shake-dur-b) * 2) linear; }
+@keyframes t-input-shake {
+  0% { transform: translateX(0); animation-timing-function: var(--ease-smooth-out); }
+  28.57% { transform: translateX(var(--shake-distance)); animation-timing-function: var(--ease-smooth-out); }
+  57.14% { transform: translateX(calc(var(--shake-distance) * -1)); animation-timing-function: var(--ease-smooth-out); }
+  78.57% { transform: translateX(var(--shake-overshoot)); animation-timing-function: var(--ease-smooth-out); }
+  100% { transform: translateX(0); }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .t-rise, .t-rise-list > *, .t-swap.is-swapping, .t-digit-group .t-digit, .is-shaking { animation: none !important; }
+}
+
+* { box-sizing: border-box; }
+
+/* The document itself never scrolls: content scrolls (and rubber-bands)
+   inside the body instead, so the bounce can never drag the fixed top
+   bar. Same architecture the installed app uses. */
+html {
+  height: 100%;
+  overflow: hidden;
+  overscroll-behavior-y: none; /* horizontal stays native: desktop keeps its browser swipes */
+  /* Phone browsers are allowed to inflate text on their own when the
+     layout changes under them — opening the quest sheet over the page
+     was enough to make the page behind it resize its own type, and
+     closing it put the type back. The layout is already sized for
+     phones, so the browser is told to leave it alone. The Text size
+     setting still works: it scales the root font size instead. */
+  -webkit-text-size-adjust: 100%;
+  text-size-adjust: 100%;
+}
+body {
+  height: 100%;
+  overflow-y: auto;
+  overscroll-behavior-y: contain; /* keep the bounce, stop chaining/pull-to-refresh */
+}
+
+body.themed {
+  margin: 0;
+  font-family: "Helvetica Neue", "SCS Heros", Helvetica, Arial, "Liberation Sans", sans-serif; /* the signage face */
+  background: var(--page-bg);
+  color: var(--text);
+  overflow-x: hidden; /* stray wide content must never side-scroll the page */
+}
+
+button, input, select, textarea { font: inherit; }
+
+/* A paragraph nobody gave a line height took the browser's, tighter
+   than every paragraph around it. This is the floor, at no
+   specificity, so any page's own setting still wins. */
+:where(main) p { line-height: 1.55; }
+
+/* Buttons carry their own pressed styles, so the browser's tap flash
+   (Safari's grey wash, Android's highlight box) only doubles up */
+* { -webkit-tap-highlight-color: transparent; }
+button { cursor: pointer; }
+
+.is-hidden { display: none !important; }
+
+/* The page grain is gone. It was a fixed noise tile over everything,
+   and it read as a dirty screen rather than as paper — most of all in
+   dark mode, where it sat at a higher opacity against the darker
+   ground. Nothing paints over the page now.
+   Neither page-wide slot is free: `html::after` is the app layout's
+   cover over the notch, and `body::after` is the quest page's sheet
+   dim — a full-screen overlay put there once merged the two into a dim
+   on top of the open quest panel. */
+
+/* Route bullet: the coloured disc with a letter in it. The one shape
+   on the site that is allowed to be round. */
+.bullet {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 1.7em;
+  height: 1.7em;
+  border-radius: 50%;
+  background: var(--line-green);
+  color: #ffffff;
+  font-weight: 700;
+  font-style: normal;
+  line-height: 1;
+  flex: none;
+  vertical-align: middle;
+}
+.bullet-orange { background: var(--line-orange); }
+.bullet-yellow { background: var(--line-yellow); color: #111111; }
+.bullet-green { background: var(--line-green); }
+.bullet-blue { background: var(--line-blue); }
+/* Centring the letter's line puts the capital wherever the font's
+   ascent and descent leave it, and in Helvetica Neue that is low in the
+   disc. Where the browser can trim a line to its capitals, the line is
+   cut to exactly the capital's height and that is what is centred, in
+   any face. Elsewhere the flex centring above stands. */
+@supports (text-box: trim-both cap alphabetic) {
+  .bullet {
+    display: inline-block;
+    align-content: center;
+    text-align: center;
+    text-box: trim-both cap alphabetic;
+  }
+}
+
+/* ---------------- Top navigation bar ---------------- */
+
+.site-nav {
+  position: fixed; /* outside the body scroller, so it never bounces */
+  top: 0;
+  left: 0;
+  right: var(--sbw, 0px); /* clear of the page's scrollbar */
+  z-index: 1100;
+  background: var(--bar-bg);
+  color: var(--bar-ink);
+  /* The hairline is a border rather than a layer under the bar, so the
+     height site.js measures into --nav-h carries it and the content
+     below starts clear of it without anything being written down. */
+  border-bottom: 1px solid var(--bar-edge);
+  font-family: "Helvetica Neue", "SCS Heros", Helvetica, Arial, "Liberation Sans", sans-serif; /* the signage face */
+}
+
+/* Used on the season 1 archive page so its own sticky header keeps working */
+.site-nav--static { position: static; }
+
+/* The web's bar is the full one at the top of a page, scrolled away
+   with it (--nav-scroll, site.js). Once it has gone a floating bar takes
+   its place (html.nav-float); the outer bar is then only the gap round
+   it and lets taps through. The same element either way, so going back
+   to the top widens the floating bar into the full one. Its edge is a
+   ring drawn inside, so the full bar's height does not change. */
+html:not(.is-pwa) .site-nav:not(.site-nav--static) {
+  transform: translateY(calc(-1 * var(--nav-scroll, 0px)));
+  transition: padding var(--duration-fast) var(--ease-smooth-out),
+    background-color var(--duration-fast) var(--ease-smooth-out),
+    border-color var(--duration-fast) var(--ease-smooth-out);
+}
+html:not(.is-pwa) .site-nav:not(.site-nav--static) > .site-nav-inner {
+  transition: width var(--duration-fast) var(--ease-smooth-out),
+    padding var(--duration-fast) var(--ease-smooth-out),
+    border-radius var(--duration-fast) var(--ease-smooth-out),
+    background-color var(--duration-fast) var(--ease-smooth-out),
+    box-shadow var(--duration-fast) var(--ease-smooth-out);
+}
+html.nav-float:not(.is-pwa) .site-nav:not(.site-nav--static) {
+  transform: none;
+  padding: 8px 12px 0;
+  background-color: transparent;
+  border-bottom-color: transparent;
+  pointer-events: none;
+  transition: transform var(--chrome-slide),
+    padding var(--duration-fast) var(--ease-smooth-out),
+    background-color var(--duration-fast) var(--ease-smooth-out),
+    border-color var(--duration-fast) var(--ease-smooth-out);
+}
+html.nav-float:not(.is-pwa) .site-nav:not(.site-nav--static) > .site-nav-inner {
+  width: min(1220px, 100%);
+  padding: 7px 8px 7px 20px;
+  background-color: var(--bar-bg);
+  border-radius: 2px;
+  box-shadow: inset 0 0 0 1px var(--bar-edge), var(--shadow);
+  pointer-events: auto;
+}
+html[data-theme="dark"].nav-float:not(.is-pwa) .site-nav:not(.site-nav--static) > .site-nav-inner {
+  box-shadow: inset 0 0 0 1px var(--sign-edge), var(--shadow);
+}
+/* a phone hides the floating bar while the page goes down */
+html.nav-float.nav-up:not(.is-pwa) .site-nav:not(.site-nav--static) { transform: translateY(calc(-100% - 8px)); }
+@media (prefers-reduced-motion: reduce) {
+  html:not(.is-pwa) .site-nav:not(.site-nav--static),
+  html:not(.is-pwa) .site-nav:not(.site-nav--static) > .site-nav-inner { transition: none; }
+}
+
+.site-nav-inner {
+  width: min(1180px, calc(100% - 32px));
+  margin: 0 auto;
+  display: flex;
+  align-items: center;
+  justify-content: flex-start;
+  gap: 14px;
+  padding: 12px 0;
+  position: relative;
+}
+
+.site-brand {
+  margin-right: auto;
+  display: inline-flex;
+  align-items: center;
+  gap: 10px;
+  text-decoration: none;
+  color: var(--bar-ink);
+  font-weight: 850;
+  letter-spacing: -0.03em;
+  white-space: nowrap;
+}
+
+.site-brand-badge {
+  background: var(--accent-solid);
+  color: #ffffff;
+  border-radius: 2px;
+  padding: 5px 11px;
+  font-weight: 900;
+  font-size: 0.85rem;
+  letter-spacing: 0.02em;
+}
+
+.site-brand-name { font-size: 0.96rem; }
+
+/* The app bar's own title. On the web the brand is the brand and this
+   is not drawn at all; in the app layout the bar is the page's title
+   bar, so the page's name takes the brand's place and the page stops
+   drawing it a second time (html.is-pwa .app-titled, below). The home
+   page carries neither class, so it keeps the brand in the bar and its
+   own board under it. The name is in the markup rather than written in
+   by script, so the bar is right at first paint. */
+.site-brand-page { display: none; font-size: 0.96rem; }
+
+.site-menu {
+  display: flex;
+  gap: 4px;
+  flex-wrap: wrap;
+  justify-content: flex-end;
+}
+
+/* Each destination is a route: a coloured bullet dot in front of a
+   white Helvetica label, straight off the platform signs */
+.site-menu a {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  text-decoration: none;
+  color: var(--bar-muted);
+  font-weight: 700;
+  font-size: 0.92rem;
+  /* the same height as the bell and the gear beside it, so the
+     inverted chip on the current page sits in a row of one height */
+  min-height: 40px;
+  padding: 0 13px;
+  border-radius: 0; /* the rule under the name is an inset shadow and follows the corners */
+  transition: color var(--duration-quick) var(--ease-smooth-out), background var(--duration-quick) var(--ease-smooth-out);
+  white-space: nowrap;
+}
+
+/* No disc beside every name. A route bullet identifies a service, and
+   six of them in one row identified nothing — the colour was carried,
+   but a reader looking at six coloured discs reads decoration, and
+   then reads the discs that DO mean something, three of them on the
+   whole site, as decoration too. The colour stays: it is under the
+   name you are on, and under any name the pointer is over. */
+.site-menu a {
+  box-shadow: inset 0 -3px 0 transparent;
+  transition:
+    color var(--duration-quick) var(--ease-smooth-out),
+    background-color var(--duration-quick) var(--ease-smooth-out),
+    box-shadow var(--duration-quick) var(--ease-smooth-out);
+}
+
+.site-menu a:hover { box-shadow: inset 0 -3px 0 var(--route, var(--dot, var(--line-grey))); }
+
+/* the submit link's two names: Sign In until a team is signed in on the
+   device. The boot script sets the class before the first paint, so the
+   name never changes under the reader. */
+.menu-signed { display: none; }
+html.team-signed-in .menu-signed { display: inline; }
+html.team-signed-in .menu-signin { display: none; }
+
+/* ---------------- One hue per destination ----------------
+   A wayfinding language where a colour means two things is worse than
+   no colour at all, and that is what the site had: Quest List was blue
+   in the nav and green on the home page's link card, Event Info orange
+   in one place and blue in the other. The names below are the single
+   source of truth. Anything that colours a destination — the nav dot,
+   a link card's rule, a card's icon — reads `--route` and nothing
+   picks a colour by its position in a list. */
+.route-home { --route: var(--line-green); }
+.route-quests { --route: var(--line-blue); }
+.route-info { --route: var(--line-orange); }
+.route-welfare { --route: var(--line-red); }
+.route-tab { --route: var(--line-yellow); }
+.route-submit { --route: var(--line-purple); }
+
+.site-menu a:nth-child(1) { --dot: var(--line-green); }
+.site-menu a:nth-child(2) { --dot: var(--line-blue); }
+.site-menu a:nth-child(3) { --dot: var(--line-orange); }
+.site-menu a:nth-child(4) { --dot: var(--line-red); }
+.site-menu a:nth-child(5) { --dot: var(--line-yellow); }
+.site-menu a:nth-child(6) { --dot: var(--line-purple); }
+.site-menu a:nth-child(7) { --dot: var(--line-brown); }
+
+.site-menu a:hover {
+  color: var(--bar-ink);
+  /* a grey box, with the route colour in the rule under the name */
+  background: var(--bar-hover);
+}
+
+/* The destination you are at is in ink with an ink rule under it: the
+   hover's rule, held. It was inverted into a black block, which with
+   the black band under every page title put two slabs of black at the
+   top of every page, one on top of the other. */
+.site-menu a.is-active {
+  color: var(--bar-ink);
+  background: transparent;
+  box-shadow: inset 0 -3px 0 var(--bar-ink);
+}
+
+.site-menu a.is-active:hover { color: var(--bar-ink); background: var(--bar-hover); }
+
+/* The burger is the third icon in the row at the right end of the bar,
+   sized and spaced like the bell and the gear beside it. No label and
+   no outline: it used to be an outlined pill reading "Menu", which was
+   the only object on the bar that was neither the brand nor an icon.
+   The border stays as a transparent one so the box is the same 40px as
+   the other two, and so an open state could colour it — but it does
+   not need one, because the bars folding into a cross already say the
+   menu is open. */
+.site-nav-toggle {
+  display: none;
+  place-items: center;
+  width: 40px;
+  height: 40px;
+  padding: 0;
+  border: 1px solid transparent;
+  border-radius: 2px;
+  background: transparent;
+  color: var(--bar-ink);
+}
+
+/* The light/dark button in the settings menu, and the settings gear */
+.theme-toggle,
+.settings-toggle {
+  display: inline-grid;
+  place-items: center;
+  width: 40px;
+  height: 40px;
+  padding: 0;
+  border: 1px solid transparent;
+  border-radius: 2px;
+  background: var(--surface);
+  color: var(--text);
+  transition:
+    border-color var(--duration-quick) var(--ease-smooth-out),
+    background-color var(--duration-quick) var(--ease-smooth-out),
+    box-shadow var(--duration-quick) var(--ease-smooth-out);
+}
+
+/* A glyph in the bar is not a card and never leaves the page, so a
+   shadow under it was lifting something that has nowhere to be lifted
+   to — and the bar's own copy of the gear had to turn it off again.
+   Outside the bar — the settings menu's own copy on a page — the
+   border is still the whole of it. */
+@media (hover: hover) and (pointer: fine) {
+  .theme-toggle:hover,
+  .settings-toggle:hover { border-color: var(--accent); }
+}
+
+/* both glyphs share one cell and cross-fade (icon swap): the gear
+   turns as it fills, the moon and sun rotate past each other */
+.theme-toggle svg,
+.settings-toggle svg {
+  grid-area: 1 / 1;
+  width: 19px;
+  height: 19px;
+  /* All three properties run the same clock, so the two faces cross
+     over rather than handing over. They counter-rotate through the
+     same poses, so at the midpoint they are turned and scaled exactly
+     alike and read as one object: what the eye follows is a shape
+     filling in, not two shapes swapping. Half a clock each, with the
+     arriving face waiting for the other to clear, left a frame where
+     neither was drawn — measured at 0.01 combined opacity — and on the
+     black bar, where the button has no border of its own, that read as
+     the icon blinking out. */
+  will-change: opacity, filter, transform;
+}
+
+/* controls that sit on the black bar go transparent with white ink */
+.site-nav .settings-toggle {
+  background: transparent;
+  border-color: transparent;
+  color: var(--bar-ink);
+}
+/* In the bar the gear hovers as a grey box and nothing else: the
+   page's own ground, the same box the nav links take. No rule under
+   it — the rule is a route colour under a destination, and the gear
+   and the bell are chrome rather than destinations. */
+@media (hover: hover) and (pointer: fine) {
+  .site-nav .settings-toggle:hover {
+    border-color: transparent;
+    background: var(--bar-hover);
+  }
+}
+/* An open menu says so on its own, rather than leaning on the hover a
+   tap happens to leave behind: on a phone the invisible haptic switch
+   takes the pointer, so the gear never sees that hover at all. */
+
+/* gear goes solid while the menu is open */
+.settings-toggle { order: 10; }
+/* The burger is the last of the three, at the very end of the bar: the
+   bell and the gear are where they are on every page, and the control
+   that opens the rest of the site sits outside them. DOM order keeps it
+   before the menu it controls, so `order` is what moves it. */
+.site-nav-toggle { order: 11; }
+.settings-toggle .icon-gear-fill,
+.settings-toggle.is-open .icon-gear-outline {
+  opacity: 0;
+  visibility: hidden;
+  filter: blur(var(--icon-swap-blur));
+  transform: rotate(45deg) scale(0.6);
+}
+.settings-toggle .icon-gear-outline,
+.settings-toggle.is-open .icon-gear-fill {
+  opacity: 1;
+  visibility: visible;
+  filter: blur(0);
+  transform: rotate(0) scale(1);
+}
+
+/* The theme switch cross-fades instead of snapping: while site.js
+   holds this class (one beat around the data-theme flip) every element
+   eases its colours. Opacity, filter and transform ride along at the
+   same clock so the moon/sun cross-fade still moves; the class comes
+   off right after, so nothing keeps these transitions. */
+html.theme-fading,
+html.theme-fading *,
+html.theme-fading *::before,
+html.theme-fading *::after {
+  transition:
+    background-color var(--duration-fast) var(--ease-in-out),
+    border-color var(--duration-fast) var(--ease-in-out),
+    color var(--duration-fast) var(--ease-in-out),
+    box-shadow var(--duration-fast) var(--ease-in-out),
+    opacity var(--duration-fast) var(--ease-in-out),
+    filter var(--duration-fast) var(--ease-in-out),
+    fill var(--duration-fast) var(--ease-in-out),
+    stroke var(--duration-fast) var(--ease-in-out),
+    transform var(--duration-fast) var(--ease-in-out) !important;
+}
+
+/* Where the browser has view transitions the flip goes through one
+   instead: the old rendering is snapshotted and cross-faded to the new
+   one, so everything moves together rather than each element easing its
+   own colours. This only sets the clock; the cross-fade is the default. */
+::view-transition-old(root),
+::view-transition-new(root) {
+  animation-duration: var(--duration-fast);
+  animation-timing-function: var(--ease-in-out);
+}
+@media (prefers-reduced-motion: reduce) {
+  html.theme-fading,
+  html.theme-fading *,
+  html.theme-fading *::before,
+  html.theme-fading *::after { transition: none !important; }
+}
+
+/* Messages bell — sits next to the gear on the black bar and wears a
+   dot while OrgComm has posted something this device has not opened.
+   Round is reserved for route bullets and small status discs like this
+   one; the ring is the page ground, so the dot reads clear of the bell
+   in either theme. */
+.bell-toggle {
+  order: 9;
+  position: relative;
+  display: inline-grid;
+  place-items: center;
+  width: 40px;
+  height: 40px;
+  padding: 0;
+  border: 1px solid transparent;
+  border-radius: 2px;
+  background: transparent;
+  color: var(--bar-ink);
+  text-decoration: none;
+  transition:
+    border-color var(--duration-quick) var(--ease-smooth-out),
+    background-color var(--duration-quick) var(--ease-smooth-out),
+    box-shadow var(--duration-quick) var(--ease-smooth-out);
+}
+
+/* Welfare's way in from the top bar, used only by the app layout while
+   Submit has Welfare's place in the bottom bar (the rules sit with the
+   bottom bar's). Everywhere else the page is in the menu. */
+.welfare-toggle { display: none; }
+
+/* the same grey box the gear takes */
+@media (hover: hover) and (pointer: fine) {
+  .bell-toggle:hover {
+    border-color: transparent;
+    background: var(--bar-hover);
+  }
+}
+
+/* both bells share one cell and cross-fade (icon swap), the same move
+   as the gear: the open bell is the resting face, the solid one fades
+   up when the bell is tapped — is-filled goes on at the tap so the fill
+   rings in on the way to the messages page, and that page carries the
+   class in its own markup, so the bell stands solid while you are there */
+.bell-toggle svg {
+  grid-area: 1 / 1;
+  width: 19px;
+  height: 19px;
+  /* All three properties run the same clock, so the two faces cross
+     over rather than handing over. They counter-rotate through the
+     same poses, so at the midpoint they are turned and scaled exactly
+     alike and read as one object: what the eye follows is a shape
+     filling in, not two shapes swapping. Half a clock each, with the
+     arriving face waiting for the other to clear, left a frame where
+     neither was drawn — measured at 0.01 combined opacity — and on the
+     black bar, where the button has no border of its own, that read as
+     the icon blinking out. */
+  will-change: opacity, filter, transform;
+}
+/* The heart beside it in the app layout swaps the same way: solid on
+   the welfare page (is-active, in its markup) and from the moment it
+   is tapped (is-filled). */
+.bell-toggle .icon-bell-fill,
+.bell-toggle.is-filled .icon-bell-outline,
+.welfare-toggle .icon-heart-fill,
+.welfare-toggle.is-active .icon-heart-outline,
+.welfare-toggle.is-filled .icon-heart-outline {
+  opacity: 0;
+  visibility: hidden;
+  filter: blur(var(--icon-swap-blur));
+  transform: scale(0.6);
+}
+.bell-toggle .icon-bell-outline,
+.bell-toggle.is-filled .icon-bell-fill,
+.welfare-toggle .icon-heart-outline,
+.welfare-toggle.is-active .icon-heart-fill,
+.welfare-toggle.is-filled .icon-heart-fill {
+  opacity: 1;
+  visibility: visible;
+  filter: blur(0);
+  transform: scale(1);
+}
+
+/* The bell's, the heart's and the gear's two faces share one clock.
+   The face that is not showing is hidden outright as well as clear,
+   and visibility rides the same clock, so during a swap both faces are
+   drawn and at rest only one can be. */
+.settings-toggle svg,
+.bell-toggle svg,
+.welfare-toggle svg {
+  transition:
+    opacity    var(--icon-swap-dur) var(--icon-swap-ease),
+    filter     var(--icon-swap-dur) var(--icon-swap-ease),
+    transform  var(--icon-swap-dur) var(--icon-swap-ease),
+    visibility var(--icon-swap-dur) var(--icon-swap-ease);
+}
+
+/* Nothing in the two bars fades until the page has loaded
+   (html.chrome-ready, site.js); until then a change snaps. A style
+   change made while a page was still arriving played as a fade: on an
+   iPhone, opening the submit page drew the solid bell and gear and an
+   outline round the bell, and faded them away. */
+html:not(.chrome-ready) .site-nav *,
+html:not(.chrome-ready) .tab-bar * {
+  transition: none !important;
+}
+
+/* the tap rings it: both faces swing from the hanger and settle, the
+   swing decaying, while the solid face fades up underneath. The swing
+   is the separate `rotate` property so it composes with the scale the
+   cross-fade is tweening on `transform`. Only the tap (`is-ringing`,
+   set in site.js) rings — the messages page's own bell is filled in
+   its markup and must not swing on every load. */
+.bell-toggle.is-ringing svg {
+  transform-origin: 50% 2px;
+  animation: bell-ring 800ms var(--ease-smooth-out);
+}
+@keyframes bell-ring {
+  0% { rotate: 0deg; }
+  15% { rotate: 16deg; }
+  35% { rotate: -12deg; }
+  55% { rotate: 7deg; }
+  75% { rotate: -3deg; }
+  100% { rotate: 0deg; }
+}
+
+/* the heart's version: it beats twice, the second beat smaller, while
+   the solid face fades up. The beat is the separate `scale` property
+   for the same reason the swing is `rotate`. Set by site.js on a tap,
+   and on arrival at the welfare page when a tap sent you there. */
+.welfare-toggle.is-beating svg {
+  animation: heart-beat 800ms var(--ease-smooth-out);
+}
+@keyframes heart-beat {
+  0% { scale: 1; }
+  15% { scale: 1.24; }
+  35% { scale: 0.94; }
+  55% { scale: 1.1; }
+  75% { scale: 0.98; }
+  100% { scale: 1; }
+}
+@media (prefers-reduced-motion: reduce) {
+  .bell-toggle.is-ringing svg,
+  .welfare-toggle.is-beating svg { animation: none; }
+}
+
+/* Inside the button, tucked against the bell's own top right. It used
+   to hang outside the corner at -6px, with a ring of the bar's colour
+   so it read as clear of the button's outline — and that outline is
+   gone. Hanging off a button with no box, under a bar whose hover is a
+   rule along the bottom, it read as a mark floating in the bar rather
+   than as something on the bell. It still carries the ring, because it
+   overlaps the glyph now rather than the button's edge, and a red disc
+   straight on a black bell is one shape with a bite out of it. */
+.bell-dot {
+  position: absolute;
+  top: 7px;
+  right: 7px;
+  width: 10px;
+  height: 10px;
+  border-radius: 50%;
+  background: var(--line-red);
+  border: 2px solid var(--bar-bg);
+}
+
+.bell-dot[hidden] { display: none; }
+
+/* ---------------- The settings menu ----------------
+   Three groups of rows behind the gear: Display (appearance, text
+   size, the quest animation), On the day (notifications, the offline
+   map) and Phone (the app layout and haptic feedback, which only a
+   handheld can offer, so the whole group goes where they go — those
+   rules sit with the hour bars, near the foot of this file). A row is
+   a name, one muted line saying what the setting does, and the control
+   beside both; rows sit on hairlines and a group is set apart by a
+   label in the site's label voice. Every control is the rocker's
+   width, so the right-hand column reads as one column. The panel
+   scrolls inside itself where a screen is too short for it — a phone
+   on its side, an SE — instead of running off the bottom with no way
+   to reach the last rows. */
+.settings-panel {
+  position: absolute;
+  top: calc(100% + 8px);
+  right: 0;
+  z-index: 1250;
+  width: 340px;
+  max-width: calc(100vw - 32px);
+  /* svh where it is understood: on a phone 100vh is the tallest the
+     viewport ever gets, and a panel measured against that sits under
+     the browser's own bar */
+  max-height: calc(100vh - var(--nav-h, 60px) - 24px);
+  max-height: calc(100svh - var(--nav-h, 60px) - 24px);
+  overflow-y: auto;
+  overscroll-behavior: contain;
+  background: var(--surface);
+  color: var(--text);
+  border: 1px solid var(--border);
+  border-radius: 2px;
+  padding: 12px 14px 6px;
+  font-size: 0.92rem;
+}
+/* The app layout has a bar along the bottom as well, measured into
+   --tabbar-h with its safe area, and the panel stops short of it. The
+   installed app's top bar is not measured at all: it is 52px under the
+   notch. */
+html.is-pwa .settings-panel {
+  max-height: calc(100vh - var(--nav-h, 52px) - 24px - var(--tabbar-h, 57px));
+  max-height: calc(100svh - var(--nav-h, 52px) - 24px - var(--tabbar-h, 57px));
+}
+html.is-installed.is-pwa .settings-panel {
+  max-height: calc(100vh - 76px - env(safe-area-inset-top, 0px) - var(--tabbar-h, 57px));
+  max-height: calc(100svh - 76px - env(safe-area-inset-top, 0px) - var(--tabbar-h, 57px));
+}
+
+/* Opens as a dropdown growing from the gear; closes quicker than it opens */
+.settings-panel { transform-origin: top right; }
+.settings-panel:not(.is-hidden):not(.is-closing) { animation: settings-open var(--dropdown-open-dur) var(--ease-smooth-out); }
+@keyframes settings-open {
+  from { opacity: 0; transform: translateY(-4px) scale(var(--dropdown-pre-scale)); }
+  to { opacity: 1; transform: none; }
+}
+
+/* Closing eases out (quicker than opening, dropdown-style) instead of
+   vanishing: the script holds .is-closing for the duration before
+   display:none lands */
+.settings-panel.is-closing {
+  animation: none;
+  opacity: 0;
+  transform: translateY(-4px) scale(var(--dropdown-closing-scale));
+  pointer-events: none;
+  transition:
+    opacity   var(--dropdown-close-dur) var(--ease-smooth-out),
+    transform var(--dropdown-close-dur) var(--ease-smooth-out);
+}
+
+/* While a panel is open the page content dims behind a veil. The bars
+   and floating controls all sit above z-index 1000, so only the content
+   fades; clicks pass through it and close the panel as usual. The quest
+   list's filter drawer uses the same one — it is the same kind of thing
+   over the same page, and two panels with two different treatments read
+   as two different systems. Neither carries a shadow: the veil is what
+   says the panel is off the page, and a shadow under something already
+   lifted by a dimmed screen is a second answer to a settled question. */
+html.settings-open body::before,
+html.settings-closing body::before,
+html.ql-filters-open body::before {
+  content: '';
+  position: fixed;
+  inset: 0;
+  background: rgba(12, 15, 20, 0.22);
+  z-index: 1000;
+  pointer-events: none;
+  animation: settings-veil var(--dropdown-open-dur) var(--ease-smooth-out);
+  transition: opacity var(--dropdown-close-dur) var(--ease-smooth-out);
+}
+/* while the menu eases out, the veil fades with it */
+html.settings-closing body::before {
+  opacity: 0;
+  animation: none;
+}
+@keyframes settings-veil {
+  from { opacity: 0; }
+  to { opacity: 1; }
+}
+@media (prefers-reduced-motion: reduce) {
+  .settings-panel:not(.is-hidden),
+  html.settings-open body::before { animation: none; }
+  .settings-panel.is-closing,
+  html.settings-closing body::before { transition: none; }
+}
+
+/* The panel's two pages. With everything in it the menu was nine rows
+   long, and a list that has to be scrolled to reach its end is a list
+   nobody reads the end of. What stays on the first page is what a
+   reader opens the menu for; the rest is behind the Visual row. One
+   page leaves to one side while the next arrives from the other, and
+   the panel's own height is tweened between the two from script (they
+   are different lengths, and a box that jumps is the one moment the
+   reader has to look again to work out what changed). --page-dir is
+   1 going in and -1 coming back. */
+.settings-panel { overflow-x: hidden; }
+.settings-page[hidden] { display: none; }
+
+/* the leaving page comes out of the flow so both occupy the same box
+   while they cross; the offsets are the panel's own padding */
+.settings-page.is-leaving {
+  position: absolute;
+  top: 12px;
+  left: 14px;
+  right: 14px;
+  pointer-events: none;
+  animation: settings-page-out var(--duration-fast) var(--ease-smooth-out) forwards;
+}
+.settings-page.is-arriving {
+  animation: settings-page-in var(--duration-fast) var(--ease-smooth-out);
+}
+@keyframes settings-page-in {
+  from {
+    opacity: 0;
+    transform: translateX(calc(var(--page-dir, 1) * var(--distance-base)));
+    filter: blur(var(--blur-medium));
+  }
+  to { opacity: 1; transform: none; filter: none; }
+}
+@keyframes settings-page-out {
+  from { opacity: 1; transform: none; filter: none; }
+  to {
+    opacity: 0;
+    transform: translateX(calc(var(--page-dir, 1) * var(--distance-base) * -1));
+    filter: blur(var(--blur-medium));
+  }
+}
+@media (prefers-reduced-motion: reduce) {
+  .settings-page.is-arriving,
+  .settings-page.is-leaving { animation: none; }
+}
+
+/* The row that opens the second page, and the way back from it. The
+   chevron is boxed to the rocker's width so the right-hand column
+   stays one column. */
+.settings-more-btn {
+  display: inline-grid;
+  place-items: center;
+  width: calc(5.2em + 2px);
+  height: 40px;
+  padding: 0;
+  border: 1px solid var(--border-strong);
+  border-radius: 2px;
+  background: var(--surface);
+  color: var(--text);
+  font-size: var(--t-micro);
+  cursor: pointer;
+  transition: background-color var(--duration-quick) var(--ease-smooth-out);
+}
+.settings-more-btn svg { width: 15px; height: 15px; }
+@media (hover: hover) and (pointer: fine) {
+  .settings-more-btn:hover { background: var(--tint); }
+}
+.settings-more-btn:active { background: var(--border-strong); }
+.settings-more-btn:focus-visible { outline: 2px solid var(--accent); outline-offset: -3px; }
+
+.settings-back {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  margin: 0 0 8px;
+  padding: 4px 6px 4px 0;
+  border: 0;
+  background: none;
+  color: var(--muted);
+  font: inherit;
+  font-weight: 650;
+  cursor: pointer;
+  transition: color var(--duration-quick) var(--ease-smooth-out);
+}
+.settings-back svg { width: 14px; height: 14px; flex: none; }
+@media (hover: hover) and (pointer: fine) {
+  .settings-back:hover { color: var(--text); }
+}
+.settings-back:focus-visible { outline: 2px solid var(--accent); outline-offset: 2px; }
+
+.settings-group + .settings-group { margin-top: 14px; }
+
+/* a group's label, in the voice of DATE and HOURS on the home board */
+.settings-group-title {
+  margin: 0 0 2px;
+  color: var(--muted);
+  font-size: var(--t-micro);
+  font-weight: 800;
+  letter-spacing: 0.08em;
+  line-height: 1.3;
+  text-transform: uppercase;
+}
+
+/* The name over the line that explains it, the control beside both.
+   The hairline is under a row, not over it, and the last row in a
+   group carries none: a row that hides itself (App layout in the
+   installed app) would otherwise leave its line between the group's
+   label and the row that is still there. Last of its type, since an
+   iPhone's invisible tap switches are added after the rows. */
+.settings-row {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) auto;
+  column-gap: 14px;
+  align-items: center;
+  padding: 8px 0;
+  border-bottom: 1px solid var(--border);
+}
+.settings-row:last-of-type { border-bottom: 0; }
+
+.settings-name {
+  grid-column: 1;
+  grid-row: 1;
+  display: flex;
+  align-items: flex-start;
+  gap: 0.625rem;
+  font-weight: 650;
+  line-height: 1.35;
+}
+.settings-name .ic { width: 1.125rem; color: var(--muted); }
+/* the line under a name starts under the name, not under its icon */
+.settings-name:has(.ic) ~ .settings-desc { padding-left: 1.75rem; }
+
+.settings-desc {
+  grid-column: 1;
+  grid-row: 2;
+  margin: 2px 0 0;
+  color: var(--muted);
+  font-size: 0.8rem;
+  line-height: 1.45;
+}
+
+.settings-row > .theme-toggle,
+.settings-row > .settings-size,
+.settings-row > .settings-knob,
+.settings-row > .settings-more-btn {
+  grid-column: 2;
+  grid-row: 1 / span 2;
+}
+
+/* The rocker's tap target is the switch, not the row: the quest
+   list's rule, for the quest list's reason. A label across the whole
+   row flips the switch when a finger is put down on the words to
+   scroll, and this panel scrolls on a short screen. The label round
+   the switch is 44px tall so a thumb still has something to land on. */
+.settings-knob {
+  position: relative;
+  display: flex;
+  align-items: center;
+  min-height: 44px;
+  cursor: pointer;
+}
+.settings-knob input {
+  position: absolute;
+  opacity: 0;
+  width: 1px;
+  height: 1px;
+}
+/* a switch that cannot be used — notifications in a browser without
+   them — looks it, rather than sitting there like the others */
+.settings-knob input:disabled + .settings-switch { opacity: 0.4; }
+
+/* The O/I rocker in place of a browser tick: a paper box with a solid
+   block over one half, grey over the O when off and accent green over
+   the I when on. The letters are set in the site's label voice
+   (--t-micro, 800) and the box is measured in em, so the text-size
+   ladder scales the whole switch rather than growing the letters inside
+   fixed cells. No shadow: a control that is set is not lifted off the
+   paper, and the size buttons beside it in the menu carry none. */
+/* The light/dark button sits in the same column as the rockers below
+   it, so it is one of their width rather than a 40px square pushed to
+   the right edge. Both were right-aligned, which put the glyph 11px
+   off the column's centre line — near enough to read as a mistake.
+   The width is the rocker's own arithmetic (two 2.6em tracks at
+   --t-micro plus its two hairlines), so the two stay in step all the
+   way along the text-size ladder instead of only at 100%. */
+.settings-panel .theme-toggle {
+  font-size: var(--t-micro);
+  width: calc(5.2em + 2px);
+  /* boxed like the rocker and the stepper under it, so the column is
+     three controls of one family rather than two boxes and a glyph */
+  border-color: var(--border-strong);
+}
+
+.settings-switch {
+  flex: none;
+  position: relative;
+  display: inline-grid;
+  grid-auto-flow: column;
+  /* both halves the same width, so the filled block can travel between
+     them: O is a much wider glyph than I, and equal tracks are what
+     let one block land squarely on either side */
+  grid-auto-columns: 1fr;
+  border: 1px solid var(--border-strong);
+  border-radius: 2px;
+  overflow: hidden;
+  background: var(--surface);
+  font-size: var(--t-micro);
+  font-weight: 800;
+  line-height: 1;
+  -webkit-user-select: none;
+  user-select: none;
+}
+
+/* The filled half is one block that slides, instead of two cells
+   cross-fading their backgrounds. It overshoots a little as it lands
+   and the switch's own edge clips the overshoot, so the block reads as
+   settling into its side. */
+.settings-switch::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  bottom: 0;
+  left: 0;
+  width: 50%;
+  background: var(--border-strong);
+  transition:
+    transform var(--duration-fast) var(--ease-bounce),
+    background-color var(--duration-fast) var(--ease-smooth-out);
+}
+
+input:checked + .settings-switch::before {
+  transform: translateX(100%);
+  background: var(--accent-solid);
+}
+
+/* The letters stay where they are — they are position labels, and a
+   switch whose O and I moved would stop reading as one. They sit over
+   the block and flip colour as it arrives: the uncovered letter is
+   muted on the paper, and the covered one takes the ink that reads on
+   its block — the text ink on the grey, the accent's own ink on the
+   green. A paper-coloured O on the grey block measured 3.3:1 on paper
+   and 1.9:1 in the dark theme, where it all but vanished. */
+.settings-switch span {
+  position: relative;
+  min-width: 2.6em;
+  padding: 0.6em 0;
+  text-align: center;
+  color: var(--muted);
+  /* uncovered: back to muted at once, as the block leaves */
+  transition: color var(--duration-micro) var(--ease-in-out);
+}
+
+/* the switch squeezes under the finger while a label is pressed */
+.settings-switch { transition: transform var(--duration-quick) var(--ease-smooth-out); }
+.settings-knob:active .settings-switch,
+.sub-check:active .settings-switch,
+.sub-rocker:active .settings-switch,
+.ql-checkbox:active .settings-switch { transform: scale(0.94); }
+
+/* State selectors stay unscoped so any hidden checkbox followed by a
+   switch gets the treatment (settings menu and quest panel both use it) */
+/* covered: the flip waits for the block to get there */
+input:not(:checked) + .settings-switch .switch-o,
+input:checked + .settings-switch .switch-i {
+  transition: color var(--duration-micro) var(--ease-in-out) 140ms;
+}
+
+input:not(:checked) + .settings-switch .switch-o { color: var(--text); }
+input:checked + .settings-switch .switch-i { color: var(--on-accent); }
+
+@media (prefers-reduced-motion: reduce) {
+  .settings-switch::before,
+  .settings-switch span { transition: none !important; }
+}
+
+/* ---- Direct-tap haptics (iOS 26.5 and later) ----
+   iOS only buzzes for a finger landing on a real native switch, so
+   site.js lays invisible ones over the controls worth a tick. They have
+   to stay rendered with their native appearance — opacity is the only
+   thing hiding them — or the tick goes with them. */
+html.haptic-taps .haptic-tap {
+  opacity: 0;
+  margin: 0;
+  padding: 0;
+  -webkit-tap-highlight-color: transparent;
+}
+
+/* laid over a button or a link, which cannot hold a switch inside it:
+   site.js writes the box from the control's own layout position */
+html.haptic-taps .haptic-tap-over {
+  position: absolute;
+  z-index: 2;
+}
+
+/* the row the light/dark button sits in is the box its switch is
+   measured against */
+html.haptic-taps .settings-row { position: relative; }
+
+/* the app's bottom bar: one switch per link, in the link's own cell */
+html.haptic-taps .tab-bar .haptic-tap {
+  position: relative;
+  z-index: 2;
+  width: 100%;
+  height: 100%;
+}
+
+/* A rocker needs no overlay: its own checkbox is the switch, grown
+   from its corner pixel to cover the control, so the finger lands on
+   the native switch rather than on the label that forwards to it. In
+   the settings menu the control is the knob, the label round the drawn
+   switch. The checkbox takes z-index 2: the drawn switch is positioned
+   and comes later in the document, so without it the finger lands on
+   the drawing and the tick never comes. */
+html.haptic-taps .settings-knob,
+html.haptic-taps .sub-check,
+html.haptic-taps .sub-rocker,
+html.haptic-taps .ql-checkbox { position: relative; }
+
+html.haptic-taps .settings-knob > input[type="checkbox"],
+html.haptic-taps .sub-check > input[type="checkbox"],
+html.haptic-taps .sub-rocker > input[type="checkbox"],
+html.haptic-taps .ql-checkbox > input[type="checkbox"] {
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  margin: 0;
+}
+html.haptic-taps .settings-knob > input[type="checkbox"],
+html.haptic-taps .sub-rocker > input[type="checkbox"],
+html.haptic-taps .sub-check > input[type="checkbox"] { z-index: 2; }
+
+input:focus-visible + .settings-switch {
+  outline: 2px solid var(--accent);
+  outline-offset: 2px;
+}
+
+/* The text-size stepper is a rocker with two directions rather than
+   two loose buttons with a number between them: A− and A+ in one box
+   the rocker's width, so the right-hand column stays one column, and
+   the size itself reads on the row's second line, where the other
+   rows keep their explanation. A press fills the half the finger is
+   on, the way the rocker's block fills a side; the end of the ladder
+   is greyed, since a press past it did nothing before and now looks
+   like it. */
+.settings-size {
+  position: relative;
+  display: inline-grid;
+  grid-auto-flow: column;
+  grid-auto-columns: 1fr;
+  width: calc(5.2em + 2px);
+  height: 40px;
+  border: 1px solid var(--border-strong);
+  border-radius: 2px;
+  background: var(--surface);
+  font-size: var(--t-micro);
+}
+
+.settings-size-btn {
+  min-width: 0;
+  padding: 0;
+  border: 0;
+  border-radius: 0;
+  background: transparent;
+  color: var(--text);
+  font: inherit;
+  font-weight: 800;
+  line-height: 1;
+  cursor: pointer;
+  transition: background-color var(--duration-quick) var(--ease-smooth-out), color var(--duration-quick) var(--ease-smooth-out);
+}
+.settings-size-btn + .settings-size-btn { border-left: 1px solid var(--border-strong); }
+@media (hover: hover) and (pointer: fine) {
+  .settings-size-btn:hover:not(:disabled) { background: var(--tint); }
+}
+.settings-size-btn:active:not(:disabled) { background: var(--border-strong); }
+.settings-size-btn:disabled { color: var(--border-strong); cursor: default; }
+.settings-size-btn:focus-visible { outline: 2px solid var(--accent); outline-offset: -3px; }
+
+/* the size itself, on the row's line */
+#set-font-val { font-variant-numeric: tabular-nums; }
+
+/* The fullscreen quest map owns the whole screen: the site chrome
+   steps aside so the map's own buttons are reachable everywhere.
+
+   Unless full screen is where the quest list STARTS (html.ql-map-home,
+   the settings menu's Full screen map). Then it is the page rather than
+   a layer over it, and a page with no way off it is a trap: the app
+   layout keeps its bottom bar, which is how you leave any page there,
+   and everything else keeps the top bar. The footer and the floating
+   button go either way — the footer is the end of a scroll there is
+   none of, and the bar already carries Submit a Quest. */
+html.ql-map-full .site-footer{ display: none; }
+html.ql-map-full:not(.ql-map-home) .site-nav,
+html.ql-map-full:not(.ql-map-home) .tab-bar,
+html.ql-map-full.ql-map-home.is-pwa .site-nav { display: none; }
+
+.theme-toggle .icon-sun,
+html[data-theme="dark"] .theme-toggle .icon-moon {
+  opacity: 0;
+  filter: blur(var(--icon-swap-blur));
+  transform: rotate(-90deg) scale(0.5);
+}
+.theme-toggle .icon-moon,
+html[data-theme="dark"] .theme-toggle .icon-sun {
+  opacity: 1;
+  filter: blur(0);
+  transform: rotate(0) scale(1);
+}
+
+/* Drawn to the same optical size as the 19px bell and gear it now sits
+   beside, rather than to the old pill's label height. */
+.nav-burger {
+  position: relative;
+  display: inline-block;
+  width: 18px;
+  height: 14px;
+}
+
+.nav-burger span {
+  position: absolute;
+  left: 0;
+  width: 100%;
+  height: 2px;
+  border-radius: 1px;
+  background: currentColor;
+  transition: transform var(--duration-fast) var(--ease-smooth-out), opacity var(--duration-fast) var(--ease-smooth-out);
+}
+
+.nav-burger span:nth-child(1) { top: 0; }
+.nav-burger span:nth-child(2) { top: 6px; }
+.nav-burger span:nth-child(3) { top: 12px; }
+.site-nav-toggle[aria-expanded="true"] .nav-burger span:nth-child(1) { transform: translateY(6px) rotate(45deg); }
+.site-nav-toggle[aria-expanded="true"] .nav-burger span:nth-child(2) { opacity: 0; transform: scaleX(0); }
+.site-nav-toggle[aria-expanded="true"] .nav-burger span:nth-child(3) { transform: translateY(-6px) rotate(-45deg); }
+
+/* The links need about 970px at the default text size, so the burger
+   takes over below that rather than at the app layout's 840: a desktop
+   window between the two wrapped the last link onto a second row. */
+@media (max-width: 980px) {
+  .site-nav-inner { flex-wrap: wrap; }
+  .site-nav-toggle { display: inline-grid; }
+  .site-menu { order: 20; }
+  .site-menu {
+    display: none;
+    width: 100%;
+    flex-direction: column;
+    /* the wide bar's wrap and end-packing do not carry over: while the
+       open tween holds the menu shorter than its rows, a column that may
+       wrap puts its last rows in a second column and drops the rest to
+       the bottom, and they jumped back when the tween let go */
+    flex-wrap: nowrap;
+    justify-content: flex-start;
+    align-items: stretch;
+    gap: 2px;
+    padding: 8px 0 10px;
+    border-top: 1px solid var(--border);
+    margin-top: 10px;
+  }
+  .site-menu.is-open { display: flex; }
+  /* in the floating bar, as far in from the left as from the right */
+  html.nav-float:not(.is-pwa) .site-menu { margin-left: -12px; }
+  /* the clear rule at rest is down the left edge too, or a hover
+     slides it there from under the name */
+  .site-menu a { padding: 12px 14px; border-radius: 0; box-shadow: inset 3px 0 0 transparent; }
+  /* a row as wide as the menu takes its rule down the left edge, not
+     under the whole row */
+  .site-menu a:hover { box-shadow: inset 3px 0 0 var(--route, var(--dot, var(--line-grey))); }
+  .site-menu a.is-active { box-shadow: inset 3px 0 0 var(--bar-ink); }
+  /* the dropped-open burger menu is part of the black sign */
+  .site-menu { border-top-color: rgba(255, 255, 255, 0.22); }
+  /* site.js grows the bar to fit; the rows rise in behind it */
+  .site-menu.is-open a { animation: t-rise var(--duration-fast) var(--ease-smooth-out) both; }
+  .site-menu.is-open a:nth-child(2) { animation-delay: calc(var(--duration-stagger) * 1); }
+  .site-menu.is-open a:nth-child(3) { animation-delay: calc(var(--duration-stagger) * 2); }
+  .site-menu.is-open a:nth-child(4) { animation-delay: calc(var(--duration-stagger) * 3); }
+  .site-menu.is-open a:nth-child(5) { animation-delay: calc(var(--duration-stagger) * 4); }
+  .site-menu.is-open a:nth-child(6) { animation-delay: calc(var(--duration-stagger) * 5); }
+  .site-menu.is-open a:nth-child(7) { animation-delay: calc(var(--duration-stagger) * 6); }
+  .site-menu.is-closing a { animation: none; }
+  @media (prefers-reduced-motion: reduce) {
+    .site-menu.is-open a { animation: none !important; }
+  }
+}
+
+@media (max-width: 430px) {
+  .site-brand-name { display: none; }
+  /* Installed app: the centred brand is the app title, so keep it visible */
+  html.is-pwa .site-brand-name { display: inline; }
+}
+
+/* ---------------- Page scaffolding ---------------- */
+
+.page-shell {
+  --shell-top: 32px;
+  width: min(1180px, calc(100% - 32px));
+  margin: 0 auto;
+  padding: var(--shell-top) 0 56px;
+}
+
+/* On the web the top bar sits outside the body scroller (fixed), so the
+   content is spaced by its measured height (--nav-h, kept exact by
+   site.js; the body itself stays unpadded because scroller padding
+   shifts position: sticky offsets), and the bounce can move the content
+   but never the bar. The installed app sizes its chrome separately.
+
+   The footer is the end of the page, in the flow after it. It used to
+   be pinned to the bottom of the screen under the page, which slid off
+   it at the end of a scroll. The page is at least the height of the
+   screen less the bar and the footer (--footer-h, measured the same
+   way), so on a short page the footer still sits at the foot of the
+   screen rather than partway up it. The column keeps the layer it had
+   then, because the page's own fixed pieces are stacked inside it,
+   under the bar. */
+html:not(.is-pwa) body.themed > main.page-shell {
+  width: auto;
+  margin: var(--nav-h, 65px) 0 0;
+  padding-left: max(16px, env(safe-area-inset-left, 0px) + 16px, calc((100% - 1180px) / 2));
+  padding-right: max(16px, env(safe-area-inset-right, 0px) + 16px, calc((100% - 1180px) / 2));
+  background: var(--page-bg);
+  position: relative;
+  z-index: 1;
+}
+html:not(.is-pwa) body.themed:has(> .site-footer) > main.page-shell {
+  min-height: calc(100% - var(--nav-h, 65px) - var(--footer-h, 160px));
+}
+/* Safari before 15.4: site.js sets the class */
+@supports not selector(:has(a)) {
+  html:not(.is-pwa) body.themed.has-footer > main.page-shell {
+    min-height: calc(100% - var(--nav-h, 65px) - var(--footer-h, 160px));
+  }
+}
+/* the page's own bottom padding is the space above it */
+html:not(.is-pwa) body.themed > .site-footer { margin-top: 0; }
+
+/* Below 840px every page is one column at the home page's measure,
+   centred, so a page's name starts in the same place on each. --col is
+   that column's width; the home page and the quest list's search bar
+   read it too. */
+@media (max-width: 840px) {
+  :root { --col: 36rem; }
+  html:not(.is-pwa) body.themed > main.page-shell:not(.home) {
+    padding-left: max(16px, env(safe-area-inset-left, 0px) + 16px, calc((100% - var(--col)) / 2));
+    padding-right: max(16px, env(safe-area-inset-right, 0px) + 16px, calc((100% - var(--col)) / 2));
+  }
+  html.is-pwa main.page-shell:not(.home) { width: min(var(--col), calc(100% - 32px)); }
+  /* the column is the measure here */
+  main.page-shell .prose > p,
+  main.page-shell .prose > ul,
+  main.page-shell .prose > ol,
+  main.page-shell .prose > .section-sub { max-width: none; }
+}
+/* a tablet held upright: a wider column, with the prose kept to the
+   phone's measure inside it */
+@media (min-width: 700px) and (max-width: 840px) {
+  :root { --col: 44rem; }
+  main.page-shell .prose > p,
+  main.page-shell .prose > ul,
+  main.page-shell .prose > ol,
+  main.page-shell .prose > .section-sub { max-width: 36rem; }
+}
+
+/* The page's name, on the paper. It was reversed out of a black band
+   the full width of the screen, which was the heaviest thing on every
+   page while saying only what the menu already underlines; it came out
+   a different height on four pages, stacked against the red band on
+   Welfare and the Submit/Compress row on Submit, and in the dark theme
+   it was a black stripe on a black page. The home page's board is the
+   one black sign left at the top of a page. The quest list, submit and
+   messages pages set their names the same way in their own sheets.
+
+   It pulls up by the shell's top padding and sets its own, so the name
+   sits the same distance under the top bar on every page. */
+/* One gap between the page's name and what comes under it, on every
+   page: 32px on a wide screen, 24px on a phone. In the app layout the
+   name is in the bar and the band is not drawn, so the same 24px is the
+   gap from the bar to the first thing on the paper. Whatever follows the
+   band gives up its own top margin, or the gap is the band's plus that
+   element's and differs from page to page, which is what it did — 28, 29,
+   40 and 48 on five pages. */
+:root { --after-title: 32px; }
+main > .hero + * { margin-top: 0; }
+/* A section heading pulls itself up into the margin above it so its
+   rule sits where the gap starts. First under the band there is no
+   margin left to pull into, and it rode up over the band's edge. */
+main > .hero + * > .section-heading:first-child { margin-top: 0; }
+html.is-pwa .page-shell { --shell-top: var(--after-title); }
+
+.hero {
+  display: block;
+  border: none;
+  margin: calc(var(--shell-top, 32px) * -1) 0 var(--after-title);
+  padding: 30px 0 0;
+  background: none;
+  color: var(--text);
+  text-align: left;
+}
+
+/* the name is type on the paper, so the bar keeps no box of its own */
+.hero .hero-board { gap: 10px; }
+.hero h1.sign-bar,
+.hero .hero-copy.sign-bar {
+  background: none;
+  box-shadow: none;
+  border-radius: 0;
+  padding: 0;
+}
+
+/* ---------------- The station headwall ----------------
+   One plate. The diagram is the whole field, drawn so the lower left of
+   it is empty, and the name and the four facts that decide whether
+   somebody turns up — date, time, place, price — are set into that
+   space rather than parked in a clear band below the picture. The
+   facts sit on columns 1 to 8 of the page's own twelve, two columns
+   each, which leaves the right third of the plate to the fan. */
+.board {
+  --bleed-m: calc(50% - 50vw);
+  --bleed-p: calc(50vw - 50%);
+  display: block;
+  margin-inline: var(--bleed-m);
+  padding: 34px var(--bleed-p) 0;
+  /* The plate starts where the nav's route stripe ends. A band of paper
+     between two blacks at the very top of the page reads as a fault
+     rather than as a decision, so the shell's own top padding is given
+     back here. */
+  margin-top: calc(var(--shell-top, 32px) * -1);
+  background: var(--sign-bg);
+  color: var(--sign-ink);
+  overflow: hidden;
+}
+
+/* The name sits under the lines that serve it and the strip sits at the
+   foot, which is the grammar of the sign this whole page is built on.
+   The top padding is the height of the trunk: the drawing is scaled to
+   the plate's width, so 107.5 of the viewBox's 1200 units is 8.96% of
+   that width, and a percentage padding resolves against exactly that.
+   Everything between the two is the drawing's, and the fan runs down
+   through it. */
+.board-type {
+  width: 100%;
+  padding: 30px 0 30px;
+  row-gap: 16px;
+  align-content: space-between;
+  color: var(--sign-ink);
+}
+
+/* `.board h1`, not `.board-name`: `.themed h1` sets the page's ink,
+   and it both outranks a bare class and is written further down the
+   file than an equal one — either way the name came out near-black on
+   the black plate, which is invisible rather than merely wrong. */
+.board h1.board-name {
+  grid-column: 1 / 9;
+  /* the L's side bearing, so the stem lands on the same edge as the D
+     of DATE below it rather than the box landing there */
+  margin: 0 0 0 -0.055em;
+  color: var(--sign-ink);
+  font-size: var(--t-display);
+  font-weight: 850;
+  line-height: 0.93;
+  letter-spacing: -0.038em;
+  text-wrap: balance;
+}
+
+/* No dividers. On a signage plate a rule is full-weight white or it is
+   not there; hairline grey cells made the four facts read as an HTML
+   table sitting on the diagram. Space does the work. */
+/* One departure strip across the whole plate, not a two-by-two huddled
+   in the left quarter with the countdown as a footnote beneath it. The
+   cells are items of the plate's own twelve columns rather than a grid
+   nested inside one, so they land on the page's column lines: two each
+   for the four fixed facts, four for the one that is moving. */
+.board-facts {
+  display: contents;
+  margin: 0;
+}
+
+/* Placed by hand, every one of them. Auto-placement fills the space
+   left beside the name first, so the date and the time went to the
+   right of the title and the strip broke across two rows. */
+.board-facts > div:nth-child(1) { grid-column: 1 / span 2; }
+.board-facts > div:nth-child(2) { grid-column: 3 / span 2; }
+.board-facts > div:nth-child(3) { grid-column: 5 / span 2; }
+.board-facts > div:nth-child(4) { grid-column: 7 / span 2; }
+.board-facts > div:nth-child(5) { grid-column: 9 / span 4; }
+
+/* On a phone the drawing keeps its shape but not its labels: at a
+   third of the width the station names would be four pixels tall. The
+   times stay, because they are what the drawing is about; the places
+   are in the timetable further down the page. */
+@media (max-width: 900px) {
+  .board-facts > div:nth-child(1) { grid-column: 1 / span 6; }
+  .board-facts > div:nth-child(2) { grid-column: 7 / span 6; }
+  .board-facts > div:nth-child(3) { grid-column: 1 / span 6; }
+  .board-facts > div:nth-child(4) { grid-column: 7 / span 6; }
+  .board-facts > div:nth-child(5) { grid-column: 1 / -1; }
+  .board h1.board-name { grid-column: 1 / -1; }
+}
+
+.board-facts dt {
+  color: var(--sign-muted);
+  font-size: var(--t-micro);
+  font-weight: 800;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+}
+
+.board-facts dd {
+  margin: 5px 0 0;
+  font-size: var(--t-lede);
+  font-weight: 800;
+  letter-spacing: -0.02em;
+}
+
+/* ---------------- The opening screen ----------------
+   What it is on the left, how the day runs on the right, both on the
+   page's own columns: the left block ends on column 7 and the right one
+   starts on column 9, the line the third quest column starts on. */
+.opening {
+  align-items: start;
+  margin-top: 44px;
+}
+
+/* No trailing arrow. Helvetica's arrow is a hairline and sat visibly
+   lighter than the bold underlined text it followed; underlined text
+   in a row of links already reads as a link. */
+
+/* the lead paragraph: one step above body, the only thing on the page
+   set at that size, so the opening has a voice without a subtitle */
+.lead {
+  margin: 0 0 18px;
+  font-size: var(--t-lede);
+  line-height: 1.55;
+}
+
+/* The bars share one measure. They used to shrink-wrap their text, so
+   the title bar ended at 676px and the paragraph bar under it at
+   546px, and the page opened on a ragged right edge before it had said
+   anything. */
+.hero-board {
+  display: grid;
+  gap: 10px;
+  justify-items: stretch;
+  max-width: 860px;
+}
+
+.sign-bar {
+  background: var(--sign-bg);
+  color: var(--sign-ink);
+  border-radius: 2px;
+  box-shadow: var(--shadow);
+  padding: 12px 18px;
+}
+
+/* The 22px here was the inset of a black box sitting on the paper.
+   There is no box any more — the band is the bar — so it would only
+   push the title 22px right of the date, the run sheet and everything
+   else standing on the page's own gutter. Same specificity as the
+   reset above and written after it, which is how it kept winning. */
+.hero h1.sign-bar {
+  display: flex;
+  align-items: center;
+  gap: 20px;
+  flex-wrap: wrap;
+  color: var(--text);
+  padding: 0;
+}
+.hero .hero-copy.sign-bar { color: var(--muted); }
+
+/* No measure of its own: it shares the board's, so the two bars have
+   one right edge. */
+.hero-copy.sign-bar {
+  margin: 0;
+  color: var(--sign-muted);
+  font-size: 0.98rem;
+  line-height: 1.6;
+  padding: 14px 22px;
+}
+
+/* On the paper, not reversed out of a second black bar. A signage bar
+   carries a name or a direction; four lines of description is not what
+   the device is for, and stacking two black blocks put the page's
+   longest read at its lowest contrast. */
+.hero-copy:not(.sign-bar) {
+  margin: 16px 0 0;
+  /* ems, not ch: ch is the width of a zero, which is far wider than
+     Helvetica's average lowercase letter, so a measure meant to be
+     sixty-two characters ran to seventy-three on every page */
+  max-width: 31em;
+  font-size: 1.06rem;
+  line-height: 1.6;
+}
+
+/* The name of the thing is the biggest type on the page. It was not:
+   the countdown's digits were larger than the h1, so the first thing
+   the eye landed on was a clock. */
+/* The name of the thing is the biggest type on the page. It was not:
+   the countdown's digits were larger than the h1, so the first thing
+   the eye landed on was a clock. Capped where the title and its four
+   discs still make one line inside the board. */
+.themed h1 {
+  margin: 0;
+  color: var(--text);
+  font-size: clamp(2.1rem, 4.6vw, 3.6rem);
+  letter-spacing: -0.045em;
+  line-height: 1;
+}
+
+.themed h2 { letter-spacing: -0.03em; }
+
+/* ---------------- One grid ----------------
+   Twelve columns and a single gutter, shared by every band on the page.
+   Three-up spans four, four-up spans three, two-up spans six, and a
+   sidebar starts on column nine — so the quest columns, the figures,
+   the two lists and the day's running order all land on the same
+   verticals instead of each carrying a column system of its own. */
+.band {
+  display: grid;
+  grid-template-columns: repeat(12, minmax(0, 1fr));
+  column-gap: var(--gutter);
+}
+
+/* Every section used to get the same space above it, so a page read as
+   a stack of equal bands with nothing given room and nothing
+   compressed. A section that opens a new subject gets more; one that
+   carries on from the section above it gets less. */
+/* Pauses of different length, so the page has a rhythm rather than a
+   stack of equal bands: a section that carries on from the one above
+   it, a section that opens a new subject, and the long pause on
+   either side of the black plate. Nearly a factor of two between the
+   shortest and the longest. */
+.section { margin-top: 48px; }
+.section + .section { margin-top: 56px; }
+
+.plate,
+.plate + .section { margin-top: 92px; }
+
+/* A section opens on a rule with its heading under it. The rule sits in
+   the middle of the gap it opens: the padding grows and the negative
+   margin takes the same amount back, so the distance from the last
+   paragraph to the heading is unchanged and only the rule inside that
+   gap moves. Two values, because the gap is wider on a desktop than on
+   a phone and one number cannot sit in the middle of both. */
+.section-heading {
+  margin: -14px 0 16px;
+  padding-top: 26px;
+  border-top: var(--rule-w) solid var(--rule-ink);
+  font-size: var(--t-head);
+  font-weight: 800;
+  line-height: 1.25;
+  letter-spacing: -0.015em;
+}
+
+@media (min-width: 841px) {
+  .section-heading { margin: -22px 0 18px; padding-top: 34px; }
+}
+
+/* ---------------- A plate on the page ----------------
+   White on black, reaching to the page's gutter. The band is what
+   gives the page its rhythm: paper, signage, paper. It bleeds by a
+   fixed amount that is never more than the shell's own padding, so it
+   needs no viewport arithmetic and never brings a sideways scrollbar
+   with it. */
+.plate {
+  --bleed-m: calc(50% - 50vw);
+  --bleed-p: calc(50vw - 50%);
+  background: var(--sign-bg);
+  color: var(--sign-ink);
+  border-radius: 0;
+  margin-inline: var(--bleed-m);
+  padding: 38px var(--bleed-p) 40px;
+}
+
+/* `.grid-figures .stat-note` is written further down the file at the
+   same weight, so a plain `.plate .stat-note` lost to it and the
+   captions came out page-ink on the black plate: invisible. */
+.plate .stat-label { color: var(--sign-muted); }
+.plate .stat-value { color: var(--sign-ink); }
+
+.section-sub {
+  margin: 0 0 16px;
+  color: var(--muted);
+  line-height: 1.6;
+  max-width: 720px;
+}
+
+/* A section's deck often carries the link the section is actually for,
+   and it was the palest, smallest type in the block. It reads at body
+   size now — in ink, not in the accent. Green had come to mean two
+   things at once on this page: it was the Home route, the five-line
+   stripe's bottom line and the SCS.2 badge, and it was also every
+   link and the primary button. A reader cannot
+   tell a route from a control when both are #00933c, so green is now
+   the colour of an action and nothing else. */
+.section-sub a {
+  color: var(--text);
+  font-weight: 800;
+}
+
+.section-heading + .section-sub { margin-top: 8px; }
+.section-heading + .grid,
+.section-heading + .table-scroll,
+.section-heading + .card { margin-top: 14px; }
+
+.hero + .notice { margin-top: 0; }
+
+/* Inline links in running text pick up the accent; buttons, cards and
+   chips carry their own colours. `.prose a` is not in this list: it has
+   its own rule further down and is black with an underline.
+   The declaration on the last line went missing once — `.prose a` used
+   to end the list and the whole line was deleted to stop it outranking
+   `.btn-accent`, which left eight selectors running into `.card-copy`'s
+   rule and no colour rule at all, so every one of these links fell
+   through to the browser's blue. Do not delete the last selector; take
+   the selector off the list and leave the declaration where it is. */
+.section-sub a,
+.notice a,
+.card-note a,
+.credit a,
+.sub-hint a { color: var(--accent-dark); font-weight: 700; }
+
+.card-note { margin: 0; color: var(--muted); font-size: 0.9rem; line-height: 1.5; }
+.card h2 { margin: 0 0 14px; }
+
+/* small credits and sign-offs */
+.credit { text-align: center; color: var(--muted); font-size: 0.88rem; }
+.sign-off { text-align: center; font-weight: 800; font-size: 1.1rem; }
+.sign-off span { display: block; color: var(--muted); font-weight: 600; font-size: 0.95rem; }
+.quote { border-left: 4px solid var(--border); padding-left: 14px; color: var(--muted); }
+
+/* ---------------- Buttons ----------------
+   One button: 48px tall, the body size in the heaviest weight, a 2px
+   keyline. Green and filled for the one action a screen is for; the
+   keyline on the paper for anything beside it. The quest page's
+   .ql-button and the sign-in bar take the same numbers. They were 44,
+   51, 52, 54 and 58px tall at three type sizes, with a second kind of
+   secondary button in a pale 1px edge that read as switched off. */
+.btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  min-height: 48px;
+  border: 2px solid var(--text);
+  border-radius: 2px;
+  background: var(--surface);
+  color: var(--text);
+  text-decoration: none;
+  padding: 10px 20px;
+  font-size: var(--t-body);
+  font-weight: 800;
+  line-height: 1.25;
+  box-shadow: none;
+  transition: transform var(--duration-quick) var(--ease-smooth-out), box-shadow var(--duration-quick) var(--ease-smooth-out),
+    border-color var(--duration-quick) var(--ease-smooth-out), opacity var(--duration-quick) var(--ease-smooth-out);
+}
+
+.btn:hover {
+  transform: translateY(-1px);
+  box-shadow: var(--shadow-hover);
+}
+
+.btn:active { transform: translate(1px, 1px); box-shadow: none; }
+.btn:disabled { opacity: 0.5; cursor: default; transform: none; box-shadow: none; }
+
+.btn-dark {
+  background: var(--sign-bg);
+  border-color: var(--sign-edge);
+  color: var(--sign-ink);
+}
+
+.btn-accent {
+  background: var(--accent-solid);
+  border-color: var(--accent-solid);
+  color: var(--on-accent);
+}
+
+/* The button that does the damage. Red here is words: the paper stays
+   the paper and the border takes its colour from the label, rather
+   than a red field, which would read as one of the routes. */
+/* The one button that undoes something. It was red words on the page's
+   own surface, which reads as a link that happens to be red and sat at
+   the same weight as Cancel beside it. Filled, it is the only solid
+   block on the panel and the eye goes to it, which is what a last step
+   is for. One red in both themes, for the same reason the signage bar
+   is one black in both: it is a solid ground with reversed type on it,
+   not ink on paper, so it does not follow the page. */
+.btn-danger {
+  background: var(--danger-solid);
+  border-color: var(--danger-solid);
+  color: var(--on-danger);
+}
+
+/* A button inside prose is a button. `.prose a` outranks `.btn-accent`
+   on its own, so the label was repainted the link green and the
+   primary action came out as a green block with nothing written on it. */
+.prose a.btn { color: var(--text); }
+.prose a.btn-accent { color: var(--on-accent); }
+.prose a.btn-danger { color: var(--alert-ink); }
+
+/* ---------------- Icons beside words ----------------
+   Drawn on the 24 grid like the bar icons, in the colour of the words.
+   The box is one line tall, so the drawing sits centred on the first
+   line of whatever it is beside, however many lines that runs to. */
+.ic {
+  display: inline-block;
+  flex: none;
+  width: 1.2em;
+  height: 1.5em;
+  height: 1lh;
+  vertical-align: top;
+}
+.btn > .ic { width: 1.25em; height: 1.25em; }
+
+/* ---------------- Cards & grids ---------------- */
+
+/* No shadow. The hard offset shadow is the system's way of lifting one
+   thing off the paper, and it was on every box on every page — fact
+   cards, quest cards, stat cards, chips, buttons and link cards all at
+   once — so nothing was lifted. It is kept for the sign bars and the
+   primary action and taken off everything else. */
+.card {
+  background: var(--card-bg);
+  border: 1px solid var(--border);
+  border-radius: 2px;
+  padding: 20px;
+}
+
+/* The gutter is never smaller than the padding inside the boxes it
+   separates, or a row of four reads as one box that has cracked. */
+.grid { display: grid; gap: 22px; }
+
+@media (max-width: 560px) {
+  .card { padding: 16px; }
+}
+
+.stat {
+  border: 1px solid var(--border);
+  border-radius: 2px;
+  padding: 16px 18px;
+  background: var(--surface);
+}
+
+.stat-label {
+  color: var(--muted);
+  font-size: var(--t-micro);
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+  font-weight: 800;
+}
+
+.stat-value {
+  margin-top: 6px;
+  font-weight: 850;
+  font-size: clamp(1.14rem, 2.2vw, 1.5rem);
+  letter-spacing: -0.035em;
+}
+
+.stat-note {
+  margin-top: 4px;
+  color: var(--muted);
+  font-size: 0.82rem;
+}
+
+/* ---------------- A map key ----------------
+   Three kinds of quest, each under a rule. The three used to carry
+   black discs lettered M, S and B — a third bullet vocabulary on a
+   page that already had station circles and timeline dots, and in this
+   language the letter on a disc IS the line's name, so a disc reading
+   M sitting beside the words "Main quests" spends the system's
+   strongest mark saying nothing. The heading carries it. */
+/* A three-up comparison only compares if its parts line up: the names
+   on one baseline, the copy starting on one, the examples on one.
+   Left to themselves the three columns each started their second
+   paragraph wherever the first one happened to end. */
+.legend {
+  margin-top: 18px;
+  grid-template-rows: auto auto auto;
+  row-gap: 0;
+}
+
+@media (max-width: 860px) {
+  .legend { grid-template-rows: none; row-gap: 0; }
+
+}
+
+/* A list, with nothing between the rows. Ten names each under their
+   own hairline put the rule to a seventh job on one page; ten names
+   run together with middots made a wall that broke mid-name. Space
+   separates them and each one stays whole. */
+.soc-names {
+  list-style: none;
+  margin: 12px 0 0;
+  padding: 0;
+  font-size: var(--t-small);
+  font-weight: 700;
+  line-height: 1.5;
+}
+
+.soc-names {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 0 var(--gutter);
+}
+
+.soc-names li { padding: 5px 0; }
+
+@media (max-width: 420px) { .soc-names { grid-template-columns: 1fr; } }
+
+/* A chip is a name, not a control. With a border, a fill and the
+   system's shadow it was the same object as the outline button beside
+   it and promised a tap it does not have. */
+.chip {
+  display: inline-block;
+  border: 1px solid var(--border);
+  border-radius: 2px;
+  background: transparent;
+  padding: 7px 12px;
+  font-weight: 700;
+  font-size: 0.88rem;
+  color: var(--muted);
+}
+
+/* ---------------- Countdown ---------------- */
+
+/* Left, like everything else, and smaller than the title. The board
+   used to be centred on a page that is otherwise all left-aligned, and
+   its digits were larger than the h1 — so the loudest thing on the
+   page, and the only centred thing on it, was a clock. It is a fact
+   about the day now, set beside the others. */
+.countdown { text-align: left; }
+
+.countdown h2 {
+  margin: 0 0 4px;
+  padding-top: 10px;
+  border-top: var(--rule-w) solid var(--rule-ink);
+  font-size: clamp(1.3rem, 2.6vw, 1.7rem);
+}
+
+.countdown-grid {
+  display: flex;
+  gap: clamp(18px, 3vw, 30px);
+  justify-content: flex-start;
+  flex-wrap: wrap;
+  margin-top: 16px;
+}
+
+/* Split-flap departure board: each digit is two halves, and a changed
+   digit drops its top leaf and swings the new bottom leaf up. */
+.count-num {
+  --flap-h: clamp(38px, 7vw, 54px);
+  --flap-w: calc(var(--flap-h) * 0.7);
+  --flap-fall: 130ms;
+  display: flex;
+  gap: 2px;
+  justify-content: flex-start;
+}
+
+.flap {
+  position: relative;
+  width: var(--flap-w);
+  height: var(--flap-h);
+  perspective: 320px;
+  box-shadow: var(--shadow);
+  border-radius: 2px;
+}
+
+/* the two halves, with the hairline of the split between them */
+.flap-half {
+  position: absolute;
+  left: 0;
+  width: 100%;
+  height: calc(50% - 1px);
+  overflow: hidden;
+  background: var(--sign-bg);
+}
+.flap-upper { top: 0; border-radius: 2px 2px 0 0; }
+.flap-lower { bottom: 0; border-radius: 0 0 2px 2px; }
+/* the lower half catches a touch less light, the way a hinged card does */
+.flap-lower { background: linear-gradient(var(--sign-bg), #1d1d1d); }
+
+/* the numeral is drawn at the full height of the module inside each
+   half, so the two halves show the top and bottom of one glyph */
+.flap-half b {
+  position: absolute;
+  left: 0;
+  width: 100%;
+  height: var(--flap-h);
+  line-height: var(--flap-h);
+  text-align: center;
+  /* the same mono the quest codes are set in: a fixed-width face is
+     what these boards used, and every numeral sits the same */
+  font-family: var(--mono);
+  font-weight: 700;
+  font-size: calc(var(--flap-h) * 0.58);
+  color: var(--sign-ink);
+  font-variant-numeric: tabular-nums;
+}
+.flap-upper b { top: 0; }
+.flap-lower b { bottom: 0; }
+
+/* the leaves that move: the old top falls, then the new bottom rises */
+.flap-leaf {
+  z-index: 2;
+  -webkit-backface-visibility: hidden;
+  backface-visibility: hidden;
+  transform: rotateX(0deg);
+}
+.flap-leaf-a { transform-origin: 50% 100%; }
+.flap-leaf-b { transform-origin: 50% 0%; transform: rotateX(90deg); }
+
+.flap.is-flipping .flap-leaf-a { animation: flap-fall var(--flap-fall) ease-in forwards; }
+.flap.is-flipping .flap-leaf-b { animation: flap-rise var(--flap-fall) var(--flap-fall) ease-out forwards; }
+@keyframes flap-fall { to { transform: rotateX(-90deg); } }
+@keyframes flap-rise { from { transform: rotateX(90deg); } to { transform: rotateX(0deg); } }
+
+/* a shadow sweeps the card as it turns, so the fold reads as depth */
+.flap-leaf::after {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background: #000000;
+  opacity: 0;
+  pointer-events: none;
+}
+.flap.is-flipping .flap-leaf-a::after { animation: flap-shade-in var(--flap-fall) ease-in forwards; }
+.flap.is-flipping .flap-leaf-b::after { animation: flap-shade-out var(--flap-fall) var(--flap-fall) ease-out forwards; }
+@keyframes flap-shade-in { from { opacity: 0; } to { opacity: 0.55; } }
+@keyframes flap-shade-out { from { opacity: 0.55; } to { opacity: 0; } }
+
+@media (prefers-reduced-motion: reduce) {
+  .flap.is-flipping .flap-leaf-a,
+  .flap.is-flipping .flap-leaf-b,
+  .flap.is-flipping .flap-leaf::after { animation: none; }
+}
+
+.countdown-message {
+  color: var(--accent);
+  font-size: clamp(1.1rem, 3vw, 1.5rem);
+  font-weight: 850;
+  letter-spacing: -0.03em;
+  padding: 18px 0 6px;
+}
+
+/* ---------------- Justified text ---------------- */
+
+/* Off by default; the Visual settings page turns it on and the class
+   goes on <html>. A page opts its running text in with data-justify on
+   the block that holds it, rather than the rule reaching for every
+   paragraph on the site — a label, a caption or a line in a table cell
+   is not running text, and justifying a narrow cell opens rivers of
+   white space through it.
+
+   Hyphenation is not optional here. Justify stretches the spaces
+   between words to reach both margins, and with no way to break a long
+   word the stretch lands in one or two gaps; hyphens: auto is what
+   spreads it. hyphenate-limit-chars keeps it off short words and off
+   two-letter fragments. Safari needs the prefix. text-wrap: pretty
+   stops the last line of a paragraph being one word on its own, which
+   justify makes more obvious rather than less. */
+html.justify-text [data-justify] p,
+html.justify-text [data-justify] li,
+html.justify-text p[data-justify] {
+  text-align: justify;
+  text-wrap: pretty;
+  -webkit-hyphens: auto;
+  hyphens: auto;
+  hyphenate-limit-chars: 7 3 3;
+}
+/* A row of links is a list too, and its items are one line each. */
+html.justify-text [data-justify] .index-rows li { text-align: left; }
+
+/* ---------------- Prose (info & welfare pages) ---------------- */
+
+/* The measure belongs to the running text, not to the section. It was
+   on .prose, so the rule over a heading stopped at 780px
+   while the rules on the sections either side ran the full width, and
+   the page had a ragged right edge that read as a rendering fault. */
+.prose { line-height: 1.65; }
+/* About sixty-five characters. It was set in ch, which is the width of
+   a zero — far wider than Helvetica's average lowercase letter — so a
+   measure meant to be sixty-two ran to seventy-three. */
+.prose > p,
+.prose > ul,
+.prose > ol,
+.prose > .section-sub { max-width: 31em; }
+
+.prose > p.lead { max-width: 30em; }
+
+.prose h2 { margin: 0 0 12px; }
+
+.prose h3 {
+  margin: 20px 0 8px;
+  font-size: var(--t-lede);
+  letter-spacing: -0.02em;
+}
+
+.prose p { margin: 0 0 12px; }
+.prose p:last-child { margin-bottom: 0; }
+
+.prose ul, .prose ol { margin: 0 0 12px; padding-left: 22px; }
+.prose li { margin: 6px 0; }
+.prose li::marker { color: var(--accent); font-weight: 800; }
+
+.prose a {
+  color: var(--text);
+  font-weight: 700;
+  text-decoration-thickness: 1px;
+  text-underline-offset: 3px;
+}
+
+.prose a:hover { text-decoration-thickness: 2px; }
+
+.prose .muted { color: var(--muted); }
+
+/* Warning / info notices */
+.notice {
+  border: 1px solid var(--notice-border);
+  background: var(--notice-bg);
+  border-radius: 2px;
+  padding: 12px 16px;
+  margin: 14px 0;
+  line-height: 1.55;
+}
+
+.notice-info {
+  border-color: var(--accent-soft-border);
+  background: var(--accent-soft);
+}
+
+/* Schedule timeline */
+.timeline {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+}
+
+.timeline li {
+  display: grid;
+  grid-template-columns: 96px 1fr;
+  gap: 14px;
+  padding: 11px 0;
+  border-bottom: 1px dashed var(--border);
+}
+
+.timeline li:last-child { border-bottom: none; }
+
+/* times wear little station signs */
+.timeline time {
+  justify-self: start;
+  align-self: start;
+  background: var(--sign-bg);
+  color: var(--sign-ink);
+  border-radius: 2px;
+  padding: 3px 9px;
+  font-weight: 800;
+  white-space: nowrap;
+  font-variant-numeric: tabular-nums;
+}
+
+/* Tables */
+.table-scroll { overflow-x: auto; }
+
+table.nice {
+  border-collapse: collapse;
+  width: 100%;
+  min-width: 520px;
+}
+
+table.nice th {
+  text-align: left;
+  color: var(--muted);
+  font-size: var(--t-micro);
+  font-weight: 800;
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+  padding: 0 12px 8px;
+  border-bottom: var(--rule-w) solid var(--rule-ink);
+}
+
+table.nice td {
+  padding: 11px 12px;
+  border-bottom: 1px solid var(--border);
+  vertical-align: top;
+  line-height: 1.5;
+}
+
+/* the table keeps the page's own left and right edges */
+table.nice th:first-child,
+table.nice td:first-child { padding-left: 0; }
+table.nice th:last-child,
+table.nice td:last-child { padding-right: 0; }
+
+table.nice tr:last-child td { border-bottom: none; }
+
+table.nice .num { text-align: right; font-variant-numeric: tabular-nums; white-space: nowrap; }
+
+/* Escalation ladder (welfare page) */
+.ladder { display: grid; gap: 10px; }
+
+/* ---------------- Forms (submit, registration) ---------------- */
+
+.sub-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 12px;
+  margin-bottom: 12px;
+}
+
+@media (max-width: 560px) {
+  .sub-grid { grid-template-columns: 1fr; }
+}
+
+/* quest codes: the tab's reference, set in mono wherever they appear */
+.code {
+  display: inline-block;
+  font-family: var(--mono);
+  font-weight: 500;
+  font-size: 0.8rem;
+  line-height: 1.5;
+  padding: 0 6px;
+  border-radius: 2px;
+  background: var(--sign-bg);
+  color: var(--sign-ink);
+  box-shadow: inset 0 0 0 1px var(--sign-edge);
+  white-space: nowrap;
+}
+
+/* quest text rendered from markdown */
+.md p { margin: 0 0 0.7em; }
+.md p:last-child, .md ul:last-child { margin-bottom: 0; }
+.md ul { margin: 0 0 0.7em; padding-left: 1.2em; list-style: square; } /* round is the route disc's */
+.md li { margin: 0 0 0.25em; }
+.md code { font-family: var(--mono); font-size: 0.9em; padding: 0 3px; background: var(--tint); border: 1px solid var(--border); border-radius: 2px; }
+.md a { color: var(--accent-dark); }
+.md u { text-decoration-thickness: 2px; text-underline-offset: 2px; }
+
+.sub-field { display: grid; gap: 6px; margin: 0 0 12px; }
+
+/* A field's name, in the words it was written in. It was tracked
+   capitals in the label voice, which put the sign-up form's questions —
+   "Which societies are you in?", "Arc member?" — in a second voice
+   beside the field names over its boxes, and turned "zID" into "ZID". */
+.sub-field > span {
+  font-size: var(--t-small);
+  font-weight: 800;
+  line-height: 1.4;
+  color: var(--text);
+}
+
+.sub-field input,
+.sub-field textarea {
+  width: 100%;
+  border: 1px solid var(--border-strong);
+  border-radius: 2px;
+  padding: 11px;
+  background: var(--surface);
+  color: var(--text);
+  font: inherit;
+  transition: border-color var(--duration-quick) var(--ease-smooth-out);
+}
+
+.sub-field input:focus-visible,
+.sub-field textarea:focus-visible { outline: 2px solid var(--accent); outline-offset: 1px; }
+
+.sub-field input[type="file"] { padding: 9px; background: var(--tint); }
+
+.sub-hint { color: var(--muted); font-size: 0.88rem; margin: 10px 0 0; line-height: 1.5; }
+.sub-error { color: var(--line-red); font-weight: 650; margin: 10px 0 0; min-height: 1.4em; }
+
+/* The team sign-in, on the submit page and the gallery. */
+.sub-signin { max-width: 560px; }
+.sub-signin .sub-error { margin-bottom: 0; }
+/* The error line takes no room until there is an error in it. Held
+   open, it was 32px of empty card under the button, and the card had
+   twice the space inside it at the foot that it had at the head and
+   sides. It stays in the page rather than going to display: none, so
+   it is still a live region when the words arrive. */
+.sub-signin .sub-error:empty { min-height: 0; margin-top: 0; }
+
+/* A form's one action is a bar the width of what it acts on: the
+   strongest control on the page by its width and its green, at the
+   height and the type size every other button has. */
+.sub-bar-btn {
+  display: flex;
+  width: 100%;
+}
+.sub-status { margin: 10px 0 0; min-height: 1.4em; font-weight: 650; }
+.sub-status.is-error { color: var(--line-red); }
+
+.sub-actions { display: flex; gap: 14px; align-items: center; margin-top: 10px; }
+
+.sub-progress {
+  flex: 1;
+  max-width: 300px;
+  height: 10px;
+  border: 1px solid var(--border-strong);
+  border-radius: 2px;
+  background: var(--surface);
+  overflow: hidden;
+}
+.sub-progress > span {
+  display: block;
+  height: 100%;
+  width: 0;
+  background: var(--accent);
+  transition: width var(--duration-fast) var(--ease-smooth-out);
+}
+
+/* The control, and the words beside it. Where the words carry a link
+   the label goes round the control alone (.sub-rocker) — the quest
+   page's rockers learned the same thing for a different reason, that a
+   label spanning the row flips when a thumb lands on the words. */
+.sub-rocker {
+  display: inline-flex;
+  align-items: center;
+  flex: none;
+  cursor: pointer;
+}
+
+/* a hidden checkbox driving an O/I rocker, with its label alongside */
+.sub-check {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  margin: 14px 0 0;
+  cursor: pointer;
+  font-weight: 650;
+}
+.sub-check input { position: absolute; opacity: 0; width: 1px; height: 1px; }
+.sub-check a { color: var(--text); font-weight: 700; text-underline-offset: 3px; }
+
+/* status pills: pending, accepted, rejected */
+.pill {
+  display: inline-block;
+  padding: 3px 9px;
+  border-radius: 2px;
+  font-size: 0.72rem;
+  font-weight: 800;
+  text-transform: uppercase;
+  letter-spacing: 0.06em;
+}
+.pill.pending { background: var(--line-yellow); color: #111111; }
+.pill.accepted { background: var(--accent-solid); color: var(--on-accent); }
+.pill.rejected { background: var(--line-red); color: #ffffff; }
+.pill.deleted { background: var(--tint); color: var(--text); }
+
+/* ---------------- Pop-up notifications (toasts) ----------------
+   They sit under the top bar, not over the bottom of the page: a
+   quest sheet, the tab bar and the camera button all live down there
+   and a pop-up over them hid what had just been ticked. */
+
+.toast-stack {
+  position: fixed;
+  left: 50%;
+  top: calc(var(--nav-h, 60px) + 10px);
+  transform: translateX(-50%);
+  display: grid;
+  gap: 8px;
+  justify-items: center;
+  z-index: 1500;
+  width: max-content;
+  max-width: calc(100vw - 24px);
+  pointer-events: none;
+}
+html.is-pwa .toast-stack { top: calc(63px + env(safe-area-inset-top, 0px)); }
+/* the full screen map hides the site's chrome, so there is no bar to
+   sit under */
+html.ql-map-full .toast-stack { top: calc(12px + env(safe-area-inset-top, 0px)); }
+/* unless the top bar is still there, which it is when full screen is
+   where the quest list starts */
+html.ql-map-full.ql-map-home:not(.is-pwa) .toast-stack { top: calc(var(--nav-h, 65px) + 10px); }
+
+.toast {
+  background: rgba(12, 15, 20, 0.94);
+  color: #fff;
+  border-radius: 2px;
+  padding: 10px 14px;
+  font-size: 0.9rem;
+  font-weight: 650;
+  line-height: 1.4;
+  box-shadow: 2px 2px 0 rgba(12, 15, 20, 0.25);
+  max-width: 100%;
+  opacity: 0;
+  /* the resting state is also where it leaves: in from above, back up
+     as it fades out */
+  transform: translateY(calc(-1 * var(--toast-distance))) scale(var(--toast-scale));
+  filter: blur(var(--toast-blur));
+  will-change: transform, opacity, filter;
+  transition:
+    opacity   var(--toast-close) var(--ease-smooth-out),
+    transform var(--toast-close) var(--ease-smooth-out),
+    filter    var(--toast-close) var(--ease-smooth-out);
+}
+
+.toast.is-open {
+  opacity: 1;
+  transform: none;
+  filter: blur(0);
+  transition:
+    opacity   var(--toast-open) var(--ease-smooth-out),
+    transform var(--toast-open) var(--ease-smooth-out),
+    filter    var(--toast-open) var(--ease-smooth-out);
+}
+
+@media (prefers-reduced-motion: reduce) { .toast { transition: none !important; } }
+
+html[data-theme="dark"] .toast {
+  background: rgba(233, 237, 240, 0.97);
+  color: #10151a;
+  box-shadow: 2px 2px 0 rgba(0, 0, 0, 0.45);
+}
+
+/* ---------------- Footer ---------------- */
+
+/* the footer is the other end of the chrome, and takes the same ground
+   and the same hairline as the bar at the top */
+.site-footer {
+  border-top: 1px solid var(--bar-edge);
+  margin-top: 48px;
+  background: var(--bar-bg);
+  color: var(--bar-muted);
+  font-family: "Helvetica Neue", "SCS Heros", Helvetica, Arial, "Liberation Sans", sans-serif; /* the signage face */
+}
+
+.site-footer-inner {
+  width: min(1180px, calc(100% - 32px));
+  margin: 0 auto;
+  padding: 26px 0 34px;
+  display: flex;
+  flex-wrap: wrap;
+  gap: 18px;
+  align-items: start;
+  justify-content: space-between;
+  color: var(--bar-muted);
+  font-size: 0.92rem;
+  line-height: 1.6;
+}
+
+.site-footer strong { color: var(--bar-ink); }
+
+.site-footer-links {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 16px;
+}
+.site-footer-links a { display: inline-flex; align-items: flex-start; gap: 7px; }
+.site-footer-links .ic { width: 1.1em; }
+
+.site-footer a {
+  color: var(--bar-ink);
+  font-weight: 700;
+  text-decoration: underline;
+  text-underline-offset: 3px;
+}
+
+.site-footer a:hover { text-decoration-thickness: 2px; }
+
+/* ---------------- PWA overscroll ---------------- */
+/* Installed app: pin the document and make <body> the scroll container.
+   The content keeps its native rubber-band bounce inside the body
+   scroller, while the app frame (fixed top bar + bottom tab bar, which
+   live outside the scrolling layer) never moves with it. */
+
+html.is-pwa {
+  height: 100%;
+  overflow: hidden;
+  overscroll-behavior: none;
+}
+
+html.is-pwa body {
+  height: 100%;
+  overflow-y: auto;
+  overscroll-behavior-y: contain; /* keep the bounce, stop chaining/pull-to-refresh */
+  overscroll-behavior-x: none; /* no pull-from-edge back/forward swipe navigation */
+}
+
+/* No long-press link previews (peek and pop) inside the app; links act
+   like native controls, not draggable web links */
+html.is-pwa a {
+  -webkit-touch-callout: none;
+  -webkit-user-select: none;
+  user-select: none;
+}
+
+/* While a remembered scroll position is being applied the content stays
+   invisible (the bars stay), so the top of the page never flashes into
+   view mid-switch. visibility keeps layout, letting the jump land; the
+   boot script adds the class and site.js reveals on restore or deadline. */
+html.is-pwa.scroll-restoring main,
+html.is-pwa.scroll-restoring #root { visibility: hidden; }
+
+/* The quest page builds its list with a deferred script after first
+   paint; keep its content veiled until the list exists so tab switches
+   show one complete paint instead of a half-empty flash. The head script
+   adds the class; the quest script (or a 900ms safety) removes it. */
+html.ql-pending main { visibility: hidden; }
+
+/* ---------------- PWA launch splash ---------------- */
+/* Painted from the very first frame on a cold app launch (the head boot
+   script flags html.show-splash before render) and dismissed by site.js
+   as soon as the page is ready. Signage black in both themes. */
+
+.app-splash { display: none; }
+
+html.show-splash .app-splash {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  position: fixed;
+  inset: 0;
+  z-index: 2000;
+  background: #131313;
+  opacity: 1;
+  transition: opacity var(--duration-fast) var(--ease-smooth-out);
+}
+
+.app-splash span {
+  color: #fff;
+  font-family: "Helvetica Neue", "SCS Heros", Helvetica, Arial, "Liberation Sans", sans-serif;
+  font-weight: 900;
+  font-size: clamp(2.6rem, 13vw, 4.5rem);
+  letter-spacing: -0.04em;
+}
+
+.app-splash.is-leaving { opacity: 0; pointer-events: none; }
+
+/* App and phone browsers: no page pinch/double-tap zoom (the Leaflet map
+   keeps its own pinch handling, so map zoom still works) */
+html.is-pwa,
+html.is-pwa body { touch-action: pan-x pan-y; }
+/* a handheld only: a narrow desktop window keeps the trackpad's back and
+   forward swipe */
+@media (max-width: 840px) and (pointer: coarse), (max-width: 840px) and (hover: none) {
+  html:not(.is-pwa),
+  html:not(.is-pwa) body { touch-action: pan-x pan-y; }
+  /* no pull-from-edge back/forward swipe on phones either (the app
+     block below says the same for the installed app) */
+  html:not(.is-pwa),
+  html:not(.is-pwa) body { overscroll-behavior-x: none; }
+}
+
+/* ---------------- PWA app-mode chrome ---------------- */
+/* Installed app: the web footer is redundant (tab bar + info page cover it) */
+html.is-pwa .site-footer { display: none; }
+
+/* ---------------- While the keyboard is up ----------------
+   A phone's keyboard takes the bottom of the screen. The app's bar has
+   nothing to do while somebody is typing and was left sitting in the
+   gap between the keyboard and the field, so it leaves; what is being
+   typed into drops into the space it had. --kb-inset (site.js) is how
+   much of the layout viewport the keyboard covers, which is 0 wherever
+   the browser resized the view instead of laying the keyboard over it.
+   html.kb-up is set whenever a text field has focus on a handheld. */
+html.kb-up .tab-bar {
+  transform: translateY(100%);
+  opacity: 0;
+  pointer-events: none;
+}
+
+/* ---------------- Install nudge (mobile web) ---------------- */
+.install-nudge {
+  position: fixed;
+  left: 12px;
+  right: 12px;
+  bottom: calc(14px + env(safe-area-inset-bottom, 0px));
+  z-index: 1400;
+  background: var(--surface);
+  border: 1px solid var(--border-strong);
+  border-radius: 2px;
+  /* no shadow: at the foot of the screen one read as out of place, and
+     the hairline is edge enough */
+  padding: 0;
+  overflow: hidden;
+  opacity: 0;
+  transform: translateY(var(--distance-medium));
+  filter: blur(var(--blur-small));
+  transition:
+    opacity   var(--duration-medium) var(--ease-smooth-out),
+    transform var(--duration-medium) var(--ease-smooth-out),
+    filter    var(--duration-medium) var(--ease-smooth-out);
+}
+.install-nudge.is-open {
+  opacity: 1;
+  transform: none;
+  filter: blur(0);
+  transition:
+    opacity   var(--duration-slow) var(--ease-smooth-out),
+    transform var(--duration-slow) var(--ease-smooth-out),
+    filter    var(--duration-slow) var(--ease-smooth-out);
+}
+/* The name on the sign, the reason on the paper: the same two-part
+   object the page heroes and the confirm panel are. It used to be a
+   bold line of page ink over grey body text inside one white box,
+   which is the one shape this design system does not have. The bar is
+   flush into the card's own edge, so it keeps neither a corner of its
+   own nor a second shadow. */
+/* `.install-nudge p` is written after .sign-bar and outranks it, so
+   the title came out muted grey on the black — the one colour on the
+   card that had to be the sign ink. Named twice here to win it back. */
+.install-nudge .install-nudge-head {
+  color: var(--sign-ink);
+  margin: 0;
+  border-radius: 0;
+  box-shadow: none;
+  padding: 11px 16px;
+  font-size: var(--t-small);
+  font-weight: 800;
+  letter-spacing: -0.01em;
+}
+.install-nudge-body { padding: 13px 16px 14px; }
+.install-nudge p { margin: 0 0 10px; color: var(--muted); font-size: 0.92rem; line-height: 1.5; }
+.install-nudge-more { margin: 0 0 12px; }
+.install-nudge-more a {
+  color: var(--accent-dark);
+  font-weight: 800;
+  font-size: var(--t-micro);
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+  text-underline-offset: 3px;
+}
+.install-nudge-row { display: flex; gap: 8px; justify-content: flex-end; }
+.install-nudge-row button {
+  border: 1px solid var(--border);
+  border-radius: 2px;
+  background: var(--surface);
+  color: var(--text);
+  font: inherit;
+  font-weight: 700;
+  font-size: 0.9rem;
+  padding: 8px 12px;
+  cursor: pointer;
+}
+.install-nudge-row .install-nudge-later {
+  background: var(--accent-solid);
+  border-color: var(--accent-solid);
+  color: var(--on-accent);
+}
+@media (prefers-reduced-motion: reduce) { .install-nudge { transition: none !important; } }
+
+/* ---------------- PWA bottom tab bar ---------------- */
+/* Shown only when the site runs as an installed app (site.js adds
+   html.is-pwa in standalone display mode) — app-style reachability
+   navigation like Instagram's bottom bar. */
+
+.tab-bar { display: none; }
+
+@media (max-width: 840px) {
+  html.is-pwa .tab-bar {
+    display: grid;
+    grid-auto-flow: column;
+    grid-auto-columns: 1fr;
+    position: fixed;
+    left: 0;
+    right: 0;
+    /* a pixel below the edge: iOS rounds the viewport height so that a
+       bar sat exactly at 0 showed a hairline of page beneath it */
+    bottom: -1px;
+    z-index: 1150;
+    background: var(--bar-bg);
+    border-top: 1px solid var(--bar-edge);
+    /* The 12px above the icons was the five-route stripe's room: it was
+       painted over the top 10 of it, so the icons sat two pixels under
+       a rule. With a hairline there instead the same padding read as a
+       band of nothing, so it comes back to match the space below. */
+    padding: 8px 4px calc(8px + env(safe-area-inset-bottom, 0px));
+    font-family: "Helvetica Neue", "SCS Heros", Helvetica, Arial, "Liberation Sans", sans-serif; /* the signage face */
+    transition: opacity var(--duration-fast) var(--ease-smooth-out);
+  }
+  html.is-pwa .tab-bar {
+    transition: opacity var(--chrome-fade),
+      transform var(--duration-fast) var(--ease-smooth-out);
+  }
+  /* steps back while the top bar is away: the whole bar fades toward
+     transparent and the page shows through it */
+  html.is-pwa.nav-up .tab-bar { opacity: 0.45; }
+
+  /* Icon-only tabs: the filled icon, lit in that stop's line colour,
+     marks the active page — no labels, for a slim bar */
+  html.is-pwa .tab-bar a {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 5px 2px;
+    text-decoration: none;
+    color: var(--bar-muted);
+    -webkit-tap-highlight-color: transparent;
+    transition: color var(--duration-fast) var(--ease-smooth-out), opacity var(--chrome-fade);
+  }
+  /* Each tab lights in its page's route colour, the one the desktop bar
+     gives the same page. Keyed by page rather than by position, so the
+     colours stay with their pages when Submit takes the middle. */
+  html.is-pwa .tab-bar .tab-home { --tab-line: var(--line-green); }
+  html.is-pwa .tab-bar .tab-quests { --tab-line: var(--line-blue); }
+  html.is-pwa .tab-bar .tab-info { --tab-line: var(--line-orange); }
+  html.is-pwa .tab-bar .tab-welfare { --tab-line: var(--line-red); }
+  html.is-pwa .tab-bar .tab-tab { --tab-line: var(--tab-yellow); }
+  html.is-pwa .tab-bar .tab-submit { --tab-line: var(--line-purple); }
+  /* the line green is darker than the unlit grey on the dark bar, so the
+     lit house read as the one tab that was off */
+  html[data-theme="dark"].is-pwa .tab-bar .tab-home { --tab-line: var(--accent); }
+
+  /* labels stay for screen readers only */
+  html.is-pwa .tab-bar a span {
+    position: absolute;
+    width: 1px;
+    height: 1px;
+    overflow: hidden;
+    clip: rect(0 0 0 0);
+    clip-path: inset(50%);
+    white-space: nowrap;
+  }
+
+  html.is-pwa .tab-bar svg { width: 27px; height: 27px; }
+  html.is-pwa .tab-bar .icon-fill { display: none; }
+  html.is-pwa .tab-bar a.is-active svg:not(.icon-fill) { display: none; }
+  html.is-pwa .tab-bar a.is-active .icon-fill { display: block; }
+  html.is-pwa .tab-bar a.is-active { color: var(--tab-line, var(--bar-ink)); }
+  html.is-pwa .tab-bar a:active { opacity: 0.65; }
+
+  /* ---- Submit in the bottom bar ----
+     Submit takes the middle of the bar and Welfare moves up beside the
+     bell. */
+  html.is-pwa .tab-bar .tab-welfare { display: none; }
+
+  /* Welfare in the top bar, hard against the bell and drawn the way the
+     bell is: bar ink, no box, the solid face on its own page. */
+  html.is-pwa .welfare-toggle {
+    display: inline-grid;
+    place-items: center;
+    position: absolute;
+    left: 40px;
+    top: 50%;
+    transform: translateY(-50%);
+    width: 40px;
+    height: 40px;
+    border: 1px solid transparent;
+    border-radius: 2px;
+    color: var(--bar-ink);
+    text-decoration: none;
+  }
+  /* The two faces cross-fade with the bell's rules. Lifted 1px: the
+     bell's weight is its dome, in the top two thirds of the box, and a
+     heart centred on the same line read as sitting lower than it. */
+  html.is-pwa .welfare-toggle svg {
+    grid-area: 1 / 1;
+    width: 19px;
+    height: 19px;
+    translate: 0 -1px;
+    will-change: opacity, filter, transform;
+  }
+
+  /* Fix the top bar to the viewport (outside the bouncing scroller) so it
+     stays put while content rubber-bands beneath it. It slides away on
+     downward scroll and returns on a fast upward flick (site.js drives
+     html.nav-up); the Season 1 archive keeps its bar put. */
+  html.is-pwa .site-nav {
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+    padding-top: env(safe-area-inset-top, 0px);
+    transition: transform var(--chrome-slide);
+  }
+  /* Bar drops in only when the chrome was hidden on the page you left
+     (the boot script sets html.nav-enter from a sessionStorage flag) */
+  html.is-pwa.nav-enter .site-nav { animation: nav-drop var(--duration-fast) var(--ease-smooth-out); }
+  @keyframes nav-drop {
+    from { transform: translateY(calc(-100% + 1px)); }
+    to { transform: none; }
+  }
+  @media (prefers-reduced-motion: reduce) {
+    html.is-pwa.nav-enter .site-nav { animation: none; }
+  }
+  /* mobile web hides the bar the same way the app does */
+  html:not(.is-pwa) .site-nav { transition: transform var(--chrome-slide); }
+  /* the extra 8px takes the route stripe out with the bar */
+  html.nav-up .site-nav:not(.site-nav--static) { transform: translateY(calc(-100% - 8px)); }
+  html.is-pwa .site-nav-inner { height: 52px; padding-top: 0; padding-bottom: 0; }
+
+  /* Keep page content and pop-ups clear of the fixed bars */
+  html.is-pwa body {
+    padding-top: calc(53px + env(safe-area-inset-top, 0px));
+    padding-bottom: calc(52px + env(safe-area-inset-bottom, 0px));
+    /* The strip the top bar covers — the notch included — painted by
+       the page's own background rather than waiting for the bar to lay
+       out. On iPhone a page switch shows the new document's background
+       a frame or two before its fixed bars are drawn, and that frame
+       was the paper colour flashing behind the cutout before the black
+       arrived. A background is up on the first paint, so there is no
+       frame where the strip is the wrong colour. It is the body's own
+       background layer, so nothing is painted over the page and the
+       bar still draws itself on top as it always did. The height is
+       the body's top padding, which exists for exactly this bar. */
+    background-image: linear-gradient(var(--bar-bg), var(--bar-bg));
+    background-repeat: no-repeat;
+    background-size: 100% calc(53px + env(safe-area-inset-top, 0px));
+  }
+  /* With the bar away the strip has nothing left to stand in for, and
+     the body's background is the screen's, not the page's: it stayed
+     at the top of the screen as a band of the bar's white over the
+     paper while the page scrolled under it. */
+  html.is-pwa.nav-up body { background-size: 100% 0; }
+
+  /* What covers the cutout once the bar has slid away. The bar itself
+     covers it while it is there (its padding-top IS the inset), and the
+     strip painted on the body's background is only there to stop a
+     paper flash on a page switch — a background sits behind the page's
+     own content, so it covers nothing, and text scrolled straight up
+     under the notch. This is the band that does cover it, and it is the
+     PAGE's ground rather than the bar's: with the bar gone there is no
+     bar for it to continue, so drawing it in the bar's white put a
+     stray white band across the top of a paper page every time the
+     chrome slid away. In the page's own colour it is invisible as a
+     band and still stops the content reaching the cutout.
+     `html::after` is the free slot; `body::after` is the quest page's
+     sheet dim and must not be taken. */
+  html.is-pwa::after {
+    content: '';
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+    height: env(safe-area-inset-top, 0px);
+    z-index: 1099;   /* under the bar, over the page */
+    /* site.js reads what is actually under the notch and writes it here
+       while the bar is away; the page's own paper is the fallback and
+       is right on every page whose top is paper. On the home page it is
+       the board's black, and the paper painted across it read as a pale
+       band on the black — white in the light theme, grey in the dark. */
+    background: var(--cutout-bg, var(--page-bg));
+    opacity: 0;
+    transition: opacity var(--chrome-fade);
+    pointer-events: none;
+  }
+  html.is-pwa.nav-up::after { opacity: 1; }
+
+  /* Season 1 archive page: its retro header/tab strip would stick behind
+     the fixed app bar, so let them scroll normally in app mode */
+  html.is-pwa .header,
+  html.is-pwa .nav { position: static; }
+
+  /* The bottom bar handles navigation — simplify the top bar into a
+     centred app title (no burger, no dropdown menu); theme toggle pins right */
+  html.is-pwa .site-nav-toggle { display: none; }
+  html.is-pwa .site-menu { display: none; }
+  html.is-pwa .site-nav-inner { justify-content: center; }
+  html.is-pwa .site-brand { margin-right: 0; }
+  html.is-pwa .settings-toggle {
+    position: absolute;
+    right: 0;
+    top: 50%;
+    transform: translateY(-50%);
+  }
+  /* The app bar centres the brand as its title, so the bell takes the
+     empty left end rather than the gear's shoulder: at phone widths the
+     title runs the width of the bar and would slide under a button
+     parked beside the gear. */
+  html.is-pwa .bell-toggle {
+    position: absolute;
+    left: 0;
+    top: 50%;
+    transform: translateY(-50%);
+  }
+
+  /* The bar is the page's title bar. The page's name takes the brand's
+     place in it, and the page stops drawing the name a second time at
+     the top of its own content: on most pages that is the h1 alone, and
+     on the four whose band held nothing else it is the band. The home
+     page carries neither class, so its bar still reads SCS.2 Legends of
+     the City and its board is untouched.
+
+     Both rules key off html.is-pwa rather than off a class added once,
+     so turning App layout off in the settings menu puts the brand and
+     every page title straight back with no reload. */
+  html.is-pwa .site-brand.has-page-title .site-brand-badge,
+  html.is-pwa .site-brand.has-page-title .site-brand-name { display: none; }
+  html.is-pwa .site-brand.has-page-title .site-brand-page { display: block; }
+  html.is-pwa .app-titled { display: none; }
+
+  /* A long name must not run under the bell or the gear, which are both
+     40px and sit hard against the ends: it gives up its last words
+     rather than sliding beneath one. */
+  html.is-pwa .site-brand.has-page-title {
+    max-width: calc(100% - 108px);
+    overflow: hidden;
+  }
+  /* the title is centred, so the heart beside the bell takes the same
+     room off both ends */
+  html.is-pwa .site-brand.has-page-title {
+    max-width: calc(100% - 188px);
+  }
+  /* The home page's bar is the mark and the season's name. On a phone
+     that no longer fits between the heart and the gear, so the mark
+     stands alone: the name is the headline straight under it. */
+  @media (max-width: 440px) {
+    html.is-pwa .site-brand:not(.has-page-title) .site-brand-name { display: none; }
+  }
+  html.is-pwa .site-brand-page {
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+  }
+  /* The bar's name is a title here, not a way home: Home is in the
+     bottom bar. A tap goes through it to the bar, and site.js stops a
+     key press on it. */
+  html.is-pwa .site-brand { pointer-events: none; }
+
+  /* A row that belongs under the bar — the quest list's chips, the
+     submit page's Submit/Compress row, marked .app-pin in the markup —
+     is fixed to the screen under it rather than stuck in the page.
+     Stuck, it was part of what scrolls, and the bounce at the top of
+     the page dragged it down with everything else; fixed, the page
+     bounces under it and the pull's arrow comes out from beneath it.
+     The page makes room with its own top padding, --pin-h, which
+     site.js keeps at the row's height. Only while the row is in the
+     page: the quest list's chips also travel into the full-screen
+     map's search panel, where they are part of that panel. */
+  html.is-pwa main > .app-pin {
+    position: fixed;
+    top: calc(53px + env(safe-area-inset-top, 0px));
+    left: 0;
+    right: 0;
+    margin: 0;
+    padding-left: max(calc(16px + env(safe-area-inset-left, 0px)), calc((100% - var(--col, 36rem)) / 2));
+    padding-right: max(calc(16px + env(safe-area-inset-right, 0px)), calc((100% - var(--col, 36rem)) / 2));
+  }
+  html.is-pwa main.page-shell:has(> .app-pin) { padding-top: var(--pin-h, 55px); }
+  /* Safari before 15.4: site.js sets the class */
+  @supports not selector(:has(a)) {
+    html.is-pwa main.page-shell.has-app-pin { padding-top: var(--pin-h, 55px); }
+  }
+}
+
+/* ---------------- PWA / notched devices ---------------- */
+/* Keeps content clear of the notch and home indicator when the site is
+   installed to the home screen (viewport-fit=cover). */
+
+@supports (padding: max(0px)) {
+  .site-nav-inner,
+  .site-footer-inner,
+  .page-shell {
+    padding-left: max(0px, env(safe-area-inset-left));
+    padding-right: max(0px, env(safe-area-inset-right));
+  }
+
+  .site-footer { padding-bottom: env(safe-area-inset-bottom); }
+}
+
+/* ---------------- Small screens ---------------- */
+
+@media (max-width: 930px) {
+  .hero { display: block; }
+}
+
+@media (max-width: 560px) {
+  /* --shell-top has to follow the shell's own padding here, or the
+     band pulls up by 32 to meet a bar that moved to 18 and overshoots
+     by fourteen. */
+  :root { --after-title: 24px; }
+  .page-shell { --shell-top: 18px; width: min(100% - 32px, 1180px); padding-top: var(--shell-top); }
+  html.is-pwa .page-shell { --shell-top: var(--after-title); }
+  .hero { padding-top: 22px; }
+  .hero h1.sign-bar { gap: 14px; }
+  .hero-copy.sign-bar { padding: 12px 16px; }
+}
+
+/* ---------------- Pull to refresh (phones) ----------------
+   The page itself follows the finger down on a rubber band and eases
+   back when let go. The arrow is part of the page: it sits in the
+   strip under the top bar, above the first content, so the pull carries
+   it out from under the bar and it is never drawn over content. It
+   flips up once the pull is far enough, and a bar runs under the top
+   bar while the page reloads. The native bounce stays for the bottom
+   of the page; at the top the script claims the gesture first. */
+html.has-pull body { overscroll-behavior-y: contain; }
+/* the page: positioned so the arrow is placed in it, opaque, its own
+   stacking context so the arrow stays beneath everything in it */
+html.has-pull main[data-pull] { position: relative; z-index: 1; background: var(--page-bg); }
+/* What moves is everything in the page but a row pinned under the bar
+   (.ptr-still, marked by site.js): the page's own paper stays where it
+   is behind them, and the row, fixed to the screen in the app layout,
+   is not inside anything that moves. It was the page that moved, and a
+   moved page carries its fixed children with it. On `translate`, which
+   nothing in the page uses for anything else, so no transform of its
+   own is taken over — the arrow is centred with one. Only while a pull
+   is in progress: it would otherwise pin fixed layers inside the page,
+   like the fullscreen map. */
+html.is-pulling main[data-pull] > :not(.ptr-still) { translate: 0 var(--pull, 0px); }
+html.is-pull-settling main[data-pull] > :not(.ptr-still) { transition: translate var(--duration-fast) var(--ease-smooth-out); }
+html.is-pull-settling main[data-pull] > .ptr {
+  transition: translate var(--duration-fast) var(--ease-smooth-out), opacity var(--duration-quick) var(--ease-smooth-out);
+}
+/* The arrow parks with its bottom edge at the bottom of whatever is
+   pinned to the top of the page: the bar, and on a page that has one a
+   sticky row under it — the quest list's chips, the submit page's view
+   switch. site.js measures how far below the top of the page that row
+   ends into --ptr-lift. Without it the arrow sat 44px above the page's
+   content, which in the app layout is inside the chip row's own band,
+   so the pull slid it out through the middle of the row.
+   The row has to hold still for this to read: a pull moves everything
+   in the page but it, so the page moves down under it the way it moves
+   down under the bar, and the arrow comes out from behind it. */
+.ptr {
+  position: absolute;
+  left: 50%;
+  top: calc(-44px + var(--ptr-lift, 0px));
+  z-index: -1; /* beneath the page's content, whatever happens */
+  pointer-events: none;
+  transform: translateX(-50%);
+}
+.ptr.is-loading { opacity: 0; transition: opacity var(--duration-quick) var(--ease-smooth-out); }
+.ptr-disc {
+  display: grid;
+  place-items: center;
+  width: 40px;
+  height: 40px;
+  color: var(--text);
+}
+.ptr-disc svg { width: 28px; height: 28px; transition: transform var(--duration-fast) var(--ease-smooth-out); }
+.ptr.is-armed .ptr-disc svg { transform: rotate(180deg); }
+.ptr-bar {
+  position: fixed;
+  left: 0;
+  right: 0;
+  top: calc(var(--nav-h, 60px));
+  height: 4px;
+  z-index: 1200;
+  background: var(--border);
+  opacity: 0;
+  pointer-events: none;
+  transition: opacity var(--duration-quick) var(--ease-smooth-out);
+}
+html.is-pwa .ptr-bar { top: calc(53px + env(safe-area-inset-top, 0px)); }
+.ptr-bar span { display: block; height: 100%; width: 0; background: var(--accent); }
+.ptr-bar.is-loading { opacity: 1; }
+.ptr-bar.is-loading span { animation: ptr-fill 650ms linear forwards; }
+@keyframes ptr-fill { from { width: 0; } to { width: 100%; } }
+
+/* "New quests" and a new version of the site drop in under the top
+   bar; a tap reloads */
+.update-banner {
+  position: fixed;
+  left: 50%;
+  top: calc(var(--nav-h, 60px) + 10px);
+  z-index: 1190;
+  transform: translate(-50%, calc(-100% - 20px));
+  transition: transform var(--duration-medium) var(--ease-smooth-out);
+  background: var(--accent-solid);
+  color: var(--on-accent);
+  border: 0;
+  border-radius: 2px;
+  box-shadow: var(--shadow);
+  padding: 0;
+  font: inherit;
+  font-weight: 700;
+  font-size: 0.92rem;
+  white-space: nowrap;
+  display: inline-flex;
+  align-items: stretch;
+}
+.update-banner button {
+  background: transparent;
+  border: 0;
+  color: inherit;
+  font: inherit;
+  font-weight: 700;
+  padding: 10px 14px;
+  display: inline-flex;
+  gap: 10px;
+  align-items: center;
+  cursor: pointer;
+}
+.update-banner button + button { border-left: 1px solid rgba(255, 255, 255, 0.35); padding: 10px 12px; font-size: 1.1rem; line-height: 1; }
+html.is-pwa .update-banner { top: calc(63px + env(safe-area-inset-top, 0px)); }
+.update-banner[hidden] { display: none !important; }
+.update-banner.is-shown { transform: translate(-50%, 0); }
+/* both at once: the site's under the quest list's */
+.update-banner.is-shown ~ .site-update { margin-top: 52px; }
+.update-banner svg { width: 16px; height: 16px; }
+@media (prefers-reduced-motion: reduce) {
+  .ptr, .ptr-disc svg, .update-banner { transition: none; }
+}
+
+/* ---------------- The loading bar ----------------
+   The pull's bar says a page is on its way too (site.js, "The loading
+   bar"): shown when the page is still here 250ms after a tap on a link
+   to another one. Its fill creeps rather than running to the end in
+   650ms, since how long the next page takes is not known; the next page
+   taking over is what ends it. With the top bar slid away it runs along
+   the top of the screen, under the notch, rather than across the middle
+   of the page where the bar's edge would be. */
+.ptr-bar.is-going { opacity: 1; }
+.ptr-bar.is-going span { transition: width 300ms linear; }
+@media (max-width: 840px) {
+  html.nav-up .ptr-bar { top: env(safe-area-inset-top, 0px); }
+}
+@media (prefers-reduced-motion: reduce) {
+  .ptr-bar.is-going span { transition: none; }
+}
+
+/* ---------------- Urgent message ----------------
+   An urgent message opens over whatever page it lands on: one card on
+   dimmed ground, above the bars, closed by the button, the ground
+   around it, Escape or the system back. */
+.urgent-overlay {
+  position: fixed;
+  inset: 0;
+  z-index: 1450;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 20px;
+  background: rgba(10, 12, 14, 0.62);
+  opacity: 0;
+  transition: opacity var(--duration-fast) var(--ease-smooth-out);
+}
+
+.urgent-overlay.is-open { opacity: 1; }
+
+.urgent-card {
+  width: min(420px, 100%);
+  max-height: calc(100% - 24px);
+  overflow: auto;
+  background: var(--card-bg);
+  border: 1px solid var(--border);
+  border-radius: 2px;
+  box-shadow: var(--shadow);
+  transform: translateY(var(--distance-medium));
+  transition: transform var(--duration-fast) var(--ease-smooth-out);
+}
+
+.urgent-overlay.is-open .urgent-card { transform: none; }
+
+.urgent-head {
+  margin: 0;
+  padding: 10px 16px;
+  background: var(--sign-bg);
+  color: var(--sign-ink);
+  font-size: 0.72rem;
+  font-weight: 800;
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+}
+
+.urgent-body { padding: 16px; }
+
+.urgent-title {
+  margin: 0 0 10px;
+  font-size: 1.08rem;
+  font-weight: 850;
+  letter-spacing: -0.02em;
+}
+
+.urgent-text { line-height: 1.6; }
+.urgent-actions { display: flex; gap: 10px; flex-wrap: wrap; margin-top: 16px; }
+
+@media (prefers-reduced-motion: reduce) {
+  .urgent-overlay, .urgent-card { transition: none; }
+}
+
+/* ---------------- Slide to confirm ----------------
+   In front of something that cannot be undone: a thumb slid the whole
+   way across and released at the far end, then a plain button on a
+   second panel. One card on dimmed ground, built by
+   window.scs.confirmSlide.
+
+   Three sizes and one black object. The question sits on the card's
+   own sign bar rather than under an eyebrow repeating it, the copy and
+   the buttons read at body size, and the only label — the one in the
+   track — is the site's uppercase label voice. The word that does the
+   damage is red; nothing else in the card asks to be looked at. */
+.confirm-overlay {
+  position: fixed;
+  inset: 0;
+  z-index: 1460;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 20px;
+  background: rgba(10, 12, 14, 0.62);
+  opacity: 0;
+  transition: opacity var(--duration-fast) var(--ease-smooth-out);
+}
+
+.confirm-overlay.is-open { opacity: 1; }
+
+.confirm-card {
+  width: min(430px, 100%);
+  max-height: calc(100% - 24px);
+  overflow: auto;
+  background: var(--card-bg);
+  border: 1px solid var(--border);
+  border-radius: 2px;
+  box-shadow: var(--shadow);
+  transform: translateY(var(--distance-medium));
+  transition: transform var(--duration-fast) var(--ease-smooth-out);
+}
+
+.confirm-overlay.is-open .confirm-card { transform: none; }
+
+/* The two steps are one card. The panel that arrives raises itself out
+   of a blur while site.js tweens the card between the two heights, so
+   the step reads as one movement rather than a swap. overflow goes hard
+   for the length of it: `auto` would put a scrollbar up while the card
+   is still shorter than what is already in it. */
+@keyframes confirm-step-in {
+  from {
+    opacity: 0;
+    transform: translateY(var(--distance-medium));
+    filter: blur(var(--blur-small));
+  }
+}
+.confirm-card.is-stepping { overflow: hidden; }
+.confirm-card.is-stepping > * {
+  animation: confirm-step-in var(--duration-fast) var(--ease-smooth-out) both;
+}
+@media (prefers-reduced-motion: reduce) {
+  .confirm-card.is-stepping > * { animation: none; }
+}
+
+/* Flush into the card's own edge: the bar is the top of the card, so
+   it keeps neither a corner of its own nor the shadow the card is
+   already casting. */
+.confirm-title.sign-bar {
+  margin: 0;
+  border-radius: 0;
+  box-shadow: none;
+  padding: 14px 18px;
+  font-size: var(--t-head);
+  line-height: 1.2;
+  letter-spacing: -0.025em;
+}
+
+.confirm-body { padding: 18px; }
+
+.confirm-copy {
+  margin: 0;
+  color: var(--muted);
+  font-size: var(--t-body);
+  line-height: 1.6;
+}
+
+.confirm-slide {
+  position: relative;
+  height: 52px;
+  margin: 16px 0 0;
+  border: 1px solid var(--border-strong);
+  border-radius: 2px;
+  background: var(--tint);
+  touch-action: none;
+  overflow: hidden;
+}
+
+/* Centred in the run the thumb has left, not in the whole track: the
+   thumb is parked over the first 46px of it. */
+.confirm-slide-label {
+  position: absolute;
+  inset: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding-left: 46px;
+  color: var(--muted);
+  font-size: var(--t-micro);
+  font-weight: 800;
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+  pointer-events: none;
+}
+
+.confirm-slide-thumb {
+  position: absolute;
+  top: 3px;
+  left: 3px;
+  width: 46px;
+  height: 44px;
+  padding: 0;
+  display: grid;
+  place-items: center;
+  background: var(--surface);
+  border: 1px solid var(--border-strong);
+  border-radius: 2px;
+  color: var(--text);
+  cursor: grab;
+  touch-action: none;
+  /* The colour arrives and leaves on a clock; the transform never does,
+     because it tracks the finger. Enumerated rather than shorthand for
+     that reason — `all` would put a lag between the thumb and the
+     hand. */
+  transition:
+    background-color var(--duration-quick) var(--ease-in-out),
+    border-color     var(--duration-quick) var(--ease-in-out),
+    color            var(--duration-quick) var(--ease-in-out);
+}
+
+.confirm-slide-thumb svg { width: 20px; height: 20px; }
+.confirm-slide-thumb:active { cursor: grabbing; }
+/* letting go early eases the thumb home; while the finger holds it the
+   transform transition stands down so it tracks exactly. The colour
+   clock is restated here because this is the whole shorthand. */
+.confirm-slide-thumb.is-settling {
+  transition:
+    transform        var(--duration-fast)  var(--ease-smooth-out),
+    background-color var(--duration-quick) var(--ease-in-out),
+    border-color     var(--duration-quick) var(--ease-in-out),
+    color            var(--duration-quick) var(--ease-in-out);
+}
+/* far enough to count: the thumb says so before the finger lets go */
+.confirm-slide-thumb.is-armed {
+  background: var(--accent-solid);
+  border-color: var(--accent-solid);
+  color: var(--on-accent);
+}
+
+.confirm-actions {
+  margin-top: 16px;
+  display: flex;
+  gap: 10px;
+  flex-wrap: wrap;
+  justify-content: flex-end;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .confirm-overlay, .confirm-card,
+  .confirm-slide-thumb, .confirm-slide-thumb.is-settling { transition: none; }
+}
+
+/* A quest embedded in a message ([[quest:SQ40]] on its own line): the
+   quest's chip and name with the two ways in. Built by scs.messageBody,
+   shown on the messages page and inside the urgent pop-up. */
+.mq {
+  margin: 12px 0;
+  padding: 12px;
+  border: 1px solid var(--border);
+  border-radius: 2px;
+  background: var(--tint);
+}
+
+.mq-head {
+  margin: 0;
+  display: flex;
+  align-items: baseline;
+  gap: 8px;
+  flex-wrap: wrap;
+}
+
+.mq-name { font-weight: 700; }
+.mq-points { margin-left: auto; color: var(--muted); font-size: 0.85rem; white-space: nowrap; }
+.mq-meta { margin: 6px 0 0; color: var(--muted); font-size: 0.88rem; }
+.mq-actions { margin: 12px 0 0; display: flex; gap: 10px; flex-wrap: wrap; }
+
+/* the card sits inside a markdown body, whose link colour must not
+   reach the buttons */
+.md .mq-actions a { color: var(--text); }
+.md .mq-actions a.btn-accent { color: var(--on-accent); }
+
+/* ---------------- Lightbox ----------------
+   Proof photos and videos preview over the page instead of opening
+   the raw file in a new tab. Above the sheet and the fullscreen map.
+   Layers, bottom up: the photo (2), and the file name, the buttons and
+   the slide arrows (4), which nothing covers. */
+.lb-overlay {
+  --lb-bar-h: 64px;
+  position: fixed;
+  inset: 0;
+  z-index: 1400;
+  background: #0b0d0f;
+  animation: lb-in var(--duration-quick) var(--ease-smooth-out);
+  transition: background var(--duration-medium) var(--ease-smooth-out);
+}
+html.is-pwa .lb-overlay { --lb-bar-h: calc(60px + env(safe-area-inset-top, 0px)); }
+.lb-overlay.is-leaving { opacity: 0; pointer-events: none; transition: opacity 240ms var(--ease-smooth-out); }
+@keyframes lb-in { from { opacity: 0; } }
+
+/* The photo's area is the whole screen, the photo centred in it with
+   room for the controls kept clear at both ends. */
+.lb-frame {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  z-index: 2;
+  margin: 0;
+  padding: var(--lb-bar-h) 16px;
+  box-sizing: border-box;
+  container-type: size;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  will-change: transform;
+  /* the area itself takes no taps: a tap beside the photo reaches the
+     backdrop (which closes) and a tap on the bar reaches the bar */
+  pointer-events: none;
+  transition:
+    transform 240ms cubic-bezier(0.22, 1, 0.36, 1),
+    padding 300ms cubic-bezier(0.22, 1, 0.36, 1),
+    right var(--duration-slow) var(--ease-smooth-out),
+    bottom var(--duration-slow) var(--ease-smooth-out);
+}
+.lb-frame > * { pointer-events: auto; }
+/* a finger is moving it: no easing between moves */
+.lb-frame.is-dragging { transition: none; }
+.lb-media {
+  max-width: min(100%, 1100px);
+  max-height: 100%;
+  border-radius: 2px;
+  box-shadow: 0 0 0 1px rgba(255, 255, 255, 0.14);
+  animation: lb-media-in var(--duration-fast) var(--ease-smooth-out);
+  background: #000;
+}
+/* once its shape is known, as large as the frame allows */
+.lb-media.is-fitted {
+  width: min(100cqw, 100cqh * var(--lb-ratio));
+  height: auto;
+  max-width: 100%;
+  max-height: 100%;
+}
+/* photos zoom in place: the browser's own gestures stand down so
+   pinch, wheel and drag reach the script; videos keep theirs */
+img.lb-media { touch-action: none; cursor: zoom-in; }
+img.lb-media.is-zoomed { cursor: grab; }
+/* while the open/close morph drives transform, the entry animation
+   must not fight it */
+.lb-media.lb-morphing { animation: none; }
+/* a video the encoder has not reached: its still, dimmed, with the
+   line over it */
+.lb-processing {
+  display: grid;
+  place-items: center;
+  min-width: min(100%, 320px);
+  min-height: 180px;
+}
+.lb-processing > * { grid-area: 1 / 1; }
+.lb-processing img {
+  display: block;
+  width: min(calc(100vw - 32px), 960px);
+  max-height: calc(100vh - 2 * var(--lb-bar-h));
+  object-fit: contain;
+  opacity: 0.4;
+}
+.lb-processing-note {
+  /* positioned, or the dimmed still (opacity paints as a layer) covers it */
+  position: relative;
+  margin: 0 16px;
+  padding: 10px 14px;
+  border: 1px solid rgba(255, 255, 255, 0.22);
+  border-radius: 2px;
+  background: var(--sign-bg);
+  color: var(--sign-ink);
+  font-size: 0.95rem;
+  font-weight: 700;
+  text-align: center;
+}
+@keyframes lb-media-in { from { opacity: 0; transform: translateY(6px); } }
+
+/* One tap on the photo: alone on a black screen, edge to edge, the
+   name and the buttons gone until the next tap. */
+.lb-overlay.is-immersive { background: #000; }
+.lb-overlay.is-immersive .lb-frame { bottom: 0; padding: 0; }
+.lb-overlay.is-immersive .lb-media { width: 100%; height: 100%; max-width: 100%; object-fit: contain; border-radius: 0; box-shadow: none; }
+.lb-overlay.is-immersive .lb-bar,
+.lb-overlay.is-immersive .lb-top { transform: translateY(-110%) !important; }
+.lb-overlay.is-immersive .lb-top { pointer-events: none; }
+.lb-overlay.is-immersive .lb-nav { opacity: 0; pointer-events: none; }
+
+/* The whole picture on its way: the loading bar along the top edge, on
+   a track that reads on the viewer's black in either theme. */
+.lb-overlay .ptr-bar.lb-load {
+  top: env(safe-area-inset-top, 0px);
+  background: rgba(255, 255, 255, 0.16);
+}
+
+/* No bar across the top: the file name and the count sit top left and
+   the buttons top right, floating over the photo. Both slide off the
+   top as the photo is swiped away, and slide in on arrival. */
+.lb-bar,
+.lb-top {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  z-index: 4;
+  display: flex;
+  align-items: flex-start;
+  pointer-events: none;
+  animation: lb-bar-in 260ms cubic-bezier(0.2, 0.7, 0.3, 1);
+  transition: transform 240ms cubic-bezier(0.22, 1, 0.36, 1),
+    opacity var(--duration-fast) var(--ease-smooth-out),
+    right var(--duration-slow) var(--ease-smooth-out);
+}
+.lb-top { justify-content: flex-end; }
+.lb-top button,
+.lb-top a,
+.lb-top select { pointer-events: auto; }
+html.is-pwa .lb-bar,
+html.is-pwa .lb-top { padding-top: env(safe-area-inset-top, 0px); }
+.lb-overlay.is-chrome-dragging .lb-bar,
+.lb-overlay.is-chrome-dragging .lb-top { transition: none; }
+.lb-overlay.is-leaving .lb-bar,
+.lb-overlay.is-leaving .lb-top { transform: translateY(-110%); }
+@keyframes lb-bar-in { from { transform: translateY(-110%); } }
+.lb-bar-inner {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+  min-width: 0;
+  max-width: calc(100% - var(--lb-top-w, 132px));
+  padding: 14px 16px;
+}
+.lb-top .lb-bar-inner {
+  flex-direction: row;
+  gap: 8px;
+  max-width: none;
+  padding: 12px 16px;
+}
+.lb-caption {
+  min-width: 0;
+  color: #ffffff;
+  font-size: 0.9rem;
+  font-weight: 700;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+.lb-counter {
+  color: rgba(255, 255, 255, 0.7);
+  font-size: 0.8rem;
+  font-variant-numeric: tabular-nums;
+}
+/* a zoomed photo takes the screen: the name steps out of its way */
+.lb-overlay.is-zoomed .lb-bar { opacity: 0; }
+.lb-close {
+  width: 40px;
+  height: 40px;
+  padding: 0;
+  border: 1px solid var(--sign-edge, rgba(255, 255, 255, 0.22));
+  border-radius: 2px;
+  background: var(--sign-bg);
+  color: var(--sign-ink);
+  cursor: pointer;
+  display: grid;
+  place-items: center;
+}
+.lb-close:hover { border-color: var(--sign-ink); }
+.lb-close svg { display: block; }
+.lb-share,
+.lb-download,
+.lb-info-btn {
+  width: 40px;
+  height: 40px;
+  padding: 0;
+  border: 1px solid var(--sign-edge, rgba(255, 255, 255, 0.22));
+  border-radius: 2px;
+  background: var(--sign-bg);
+  color: var(--sign-ink);
+  cursor: pointer;
+  display: grid;
+  place-items: center;
+}
+.lb-share[hidden],
+.lb-download[hidden] { display: none; }
+.lb-share:hover,
+.lb-download:hover,
+.lb-info-btn:hover { border-color: var(--sign-ink); }
+.lb-share svg,
+.lb-download svg,
+.lb-info-btn svg { display: block; }
+/* the details panel is open: the button says so */
+.lb-info-btn[aria-pressed="true"],
+.lb-download[aria-expanded="true"] {
+  background: var(--sign-ink);
+  border-color: var(--sign-ink);
+  color: var(--sign-bg);
+}
+/* a choice of file to save: a list under the buttons, against the right */
+.lb-top .lb-bar-inner { position: relative; }
+.lb-save-menu {
+  position: absolute;
+  top: calc(100% - 6px);
+  right: 16px;
+  min-width: 220px;
+  max-width: calc(100vw - 32px);
+  display: grid;
+  background: var(--sign-bg);
+  border: 1px solid rgba(255, 255, 255, 0.22);
+  border-radius: 2px;
+  pointer-events: auto;
+  animation: lb-menu-in var(--duration-fast) var(--ease-smooth-out);
+}
+.lb-save-menu[hidden] { display: none; }
+.lb-save-menu a {
+  padding: 13px 16px;
+  color: var(--sign-ink);
+  font-size: 0.9rem;
+  font-weight: 700;
+  text-decoration: none;
+  overflow-wrap: anywhere;
+}
+.lb-save-menu a + a { border-top: 1px solid rgba(255, 255, 255, 0.14); }
+.lb-save-menu a:hover { background: rgba(255, 255, 255, 0.12); }
+.lb-save-menu a:focus-visible { outline: 2px solid #ffffff; outline-offset: -2px; }
+@keyframes lb-menu-in { from { opacity: 0; transform: translateY(-4px); } }
+
+/* A pane's pull tab: two halves hinged in the middle, as the quest
+   sheet's, folding into a v the way the finger goes and lying flat to
+   stretch with the rubber band (scs.pullTab sets the classes). The
+   pane's own rule draws it and decides where it sits. */
+.pull-tab {
+  --pull-ink: var(--border-strong);
+  --stretch: 1;
+  position: relative;
+  display: none;
+  height: 18px;
+  touch-action: none;
+  cursor: grab;
+}
+.pull-tab::before,
+.pull-tab::after {
+  content: '';
+  position: absolute;
+  top: 7px;
+  width: 23px;
+  height: 5px;
+  background: var(--pull-ink);
+  border-radius: 2px;
+  transition: transform 160ms ease;
+}
+.pull-tab::before { left: calc(50% - 22px); }
+.pull-tab::after { right: calc(50% - 22px); }
+.pull-tab.is-vee::before { transform: translateY(3px) rotate(15deg); }
+.pull-tab.is-vee::after { transform: translateY(3px) rotate(-15deg); }
+.pull-tab.is-up::before { transform: translateY(3px) rotate(-15deg); }
+.pull-tab.is-up::after { transform: translateY(3px) rotate(15deg); }
+.pull-tab:not(.is-vee):not(.is-up)::before,
+.pull-tab:not(.is-vee):not(.is-up)::after { transform: scaleX(var(--stretch)); }
+.pull-tab.is-stretching::before,
+.pull-tab.is-stretching::after { transition: none; }
+@media (prefers-reduced-motion: reduce) {
+  .pull-tab::before,
+  .pull-tab::after { transition: none; }
+}
+
+/* a kept picture is hidden until it is there (scs.keepPicture) */
+img[data-src]:not([src]),
+img.is-missing { visibility: hidden; }
+
+/* Under the viewer the page's own ground is the viewer's, so a browser
+   whose bars leave a strip below a fixed layer shows black there */
+html.lb-open { background: #0b0d0f; }
+
+/* A photo's details: a panel down the right beside the photo, which
+   moves over to make room; under 761px a sheet across the bottom with
+   the photo above it. */
+.lb-info {
+  position: fixed;
+  top: 0;
+  right: 0;
+  bottom: 0;
+  z-index: 5;
+  width: 360px;
+  box-sizing: border-box;
+  padding: 14px 20px calc(24px + env(safe-area-inset-bottom, 0px));
+  background: var(--sign-bg);
+  color: var(--sign-ink);
+  border-left: 1px solid rgba(255, 255, 255, 0.14);
+  overflow-y: auto;
+  overscroll-behavior: contain;
+  transform: translateX(100%);
+  visibility: hidden;
+  transition: transform var(--duration-medium) var(--ease-smooth-out), visibility 0s linear var(--duration-medium);
+}
+html.is-pwa .lb-info { padding-top: calc(14px + env(safe-area-inset-top, 0px)); }
+.lb-overlay.has-info .lb-info {
+  transform: none;
+  visibility: visible;
+  transition: transform var(--duration-slow) var(--ease-smooth-out), visibility 0s;
+}
+.lb-overlay.has-info .lb-frame,
+.lb-overlay.has-info .lb-top { right: 360px; }
+.lb-overlay.has-info .lb-next { right: calc(360px + 10px); }
+.lb-info-head {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  margin-bottom: 18px;
+}
+.lb-info-head h2 {
+  margin: 0;
+  font-size: 1.05rem;
+  font-weight: 800;
+}
+.lb-info-close {
+  width: 40px;
+  height: 40px;
+  padding: 0;
+  border: 1px solid rgba(255, 255, 255, 0.22);
+  border-radius: 2px;
+  background: transparent;
+  color: var(--sign-ink);
+  cursor: pointer;
+  display: grid;
+  place-items: center;
+}
+.lb-info-close:hover { border-color: var(--sign-ink); }
+.lb-info-close svg { display: block; }
+.lb-info-body { display: grid; gap: 18px; }
+.lb-info-row {
+  display: grid;
+  grid-template-columns: 24px minmax(0, 1fr);
+  gap: 14px;
+  align-items: start;
+}
+.lb-info-icon { color: rgba(255, 255, 255, 0.7); }
+.lb-info-icon svg { display: block; width: 22px; height: 22px; }
+.lb-info-text { min-width: 0; display: grid; gap: 3px; }
+.lb-info-title {
+  margin: 0;
+  font-size: 0.95rem;
+  font-weight: 700;
+  overflow-wrap: anywhere;
+}
+.lb-info-line,
+.lb-info-note {
+  margin: 0;
+  font-size: 0.85rem;
+  color: rgba(255, 255, 255, 0.7);
+  font-variant-numeric: tabular-nums;
+  overflow-wrap: anywhere;
+}
+.lb-info-link {
+  justify-self: start;
+  margin-top: 4px;
+  color: var(--sign-ink);
+  font-size: 0.85rem;
+  font-weight: 800;
+  text-decoration: none;
+  border-bottom: 2px solid currentColor;
+}
+.lb-info-close:focus-visible,
+.lb-info-link:focus-visible,
+.lb-info-btn:focus-visible { outline: 2px solid #ffffff; outline-offset: 2px; }
+/* the sheet's tab, in the sheet's black at its top */
+.lb-info .lb-info-tab {
+  display: none;
+  position: sticky;
+  top: -14px;
+  z-index: 1;
+  margin: -14px -20px 0;
+  background: var(--sign-bg);
+  --pull-ink: #6d6d6d;
+}
+@media (max-width: 760px) {
+  .lb-info .lb-info-tab { display: block; }
+  html.lb-open.lb-info-on { background: var(--sign-bg); }
+  .lb-info {
+    top: auto;
+    left: 0;
+    width: auto;
+    height: 48vh;
+    border-left: 0;
+    border-top: 1px solid rgba(255, 255, 255, 0.14);
+    transform: translateY(100%);
+  }
+  html.is-pwa .lb-info { padding-top: 14px; }
+  .lb-overlay.has-info .lb-frame,
+  .lb-overlay.has-info .lb-top { right: 0; }
+  .lb-overlay.has-info .lb-frame { bottom: 48vh; padding-bottom: 12px; }
+  .lb-overlay.has-info .lb-next { right: 10px; }
+  .lb-overlay.has-info .lb-nav { top: calc(52vh / 2); }
+}
+/* a finger closes the sheet by its tab; a mouse keeps the cross */
+@media (max-width: 760px) and (hover: none), (max-width: 760px) and (pointer: coarse) {
+  .lb-info-close { display: none; }
+}
+/* alone on black: the panel steps aside with everything else */
+.lb-overlay.has-info.is-immersive .lb-info { visibility: hidden; }
+.lb-overlay.has-info.is-immersive .lb-frame,
+.lb-overlay.has-info.is-immersive .lb-top { right: 0; bottom: 0; }
+/* which copy of a video plays: Auto, each size, Original */
+.lb-size-slot:empty { display: none; }
+.lb-size {
+  height: 40px;
+  max-width: 132px;
+  padding: 0 10px;
+  border: 1px solid var(--sign-edge, rgba(255, 255, 255, 0.22));
+  border-radius: 2px;
+  background: var(--sign-bg);
+  color: var(--sign-ink);
+  font: inherit;
+  font-size: 0.85rem;
+  font-weight: 700;
+  font-variant-numeric: tabular-nums;
+  cursor: pointer;
+}
+.lb-size:hover { border-color: var(--sign-ink); }
+.lb-size:focus-visible { outline: 2px solid var(--sign-ink); outline-offset: 2px; }
+.lb-nav {
+  position: fixed;
+  top: 50%;
+  z-index: 4;
+  transform: translateY(-50%);
+  width: 40px;
+  height: 64px;
+  border: 0;
+  border-radius: 2px;
+  background: rgba(255, 255, 255, 0.12);
+  color: #ffffff;
+  font: inherit;
+  font-size: 2rem;
+  line-height: 1;
+  cursor: pointer;
+  display: grid;
+  place-items: center;
+  transition: opacity var(--duration-fast) var(--ease-smooth-out);
+}
+.lb-prev { left: 10px; }
+.lb-next { right: 10px; }
+
+/* A mouse: the arrows answer a hover, and a photo that is not zoomed
+   is not a thing to drag — dragging pans it once it is. */
+.lb-nav:hover { background: rgba(255, 255, 255, 0.24); }
+.lb-nav:focus-visible,
+.lb-close:focus-visible { outline: 2px solid #ffffff; outline-offset: 2px; }
+.lb-overlay.is-mouse img.lb-media.is-zoomed:active { cursor: grabbing; }
+
+@media (prefers-reduced-motion: reduce) {
+  .lb-overlay, .lb-media, .lb-bar, .lb-top, .lb-save-menu { animation: none; }
+  .lb-frame, .lb-bar, .lb-top, .lb-overlay, .lb-info, .lb-overlay.has-info .lb-info { transition: none; }
+}
+/* a button off doing its work: dimmed, with a ticking ellipsis */
+button.is-busy { opacity: 0.65; pointer-events: none; }
+button.is-busy::after {
+  content: '…';
+  display: inline-block;
+  overflow: hidden;
+  white-space: nowrap;
+  vertical-align: bottom;
+  width: 0;
+  animation: busy-dots 900ms steps(3, end) infinite;
+}
+@keyframes busy-dots { to { width: 1.05em; } }
+@media (prefers-reduced-motion: reduce) {
+  button.is-busy::after { animation: none; width: auto; }
+}
+
+/* The settings menu's Phone group is only meaningful where the phone
+   things are on offer, and the whole group goes with its rows so no
+   label is left standing over nothing. App layout: a handheld, in a
+   browser tab, at phone width — the installed app is always the app,
+   a window this wide has no app layout to choose, and a desktop
+   pointing device means a small window rather than a phone, which is
+   the same test site.js makes. Haptic feedback: any handheld, since
+   the engine runs in the app and in phone browsers alike; a desktop
+   pointing device hides it too, whatever the window's width, because
+   a mouse does not buzz. Each row keeps a rule of its own as well as
+   the group's, so a script asking whether a row is shown gets the
+   right answer either way. */
+html.is-installed .settings-app-row { display: none; }
+@media (min-width: 841px) {
+  .settings-app-row { display: none; }
+  html:not(.is-pwa) .settings-haptics-row,
+  html:not(.is-pwa) .settings-phone-group { display: none; }
+}
+@media (hover: hover) and (pointer: fine) {
+  .settings-app-row,
+  .settings-haptics-row,
+  .settings-phone-group { display: none; }
+}
+
+/* ---------------- A page pushed over another ----------------
+   A team's page over the tab and a quest's over the recap: in the app
+   bar a back arrow where the bell is, drawn like the bar's other icons,
+   and nothing else beside the name. */
+.back-toggle { display: none; }
+@media (max-width: 840px) {
+  html.is-pwa .back-toggle {
+    display: inline-grid;
+    place-items: center;
+    position: absolute;
+    left: 0;
+    top: 50%;
+    transform: translateY(-50%);
+    width: 40px;
+    height: 40px;
+    border: 1px solid transparent;
+    border-radius: 2px;
+    color: var(--bar-ink);
+    text-decoration: none;
+  }
+  html.is-pwa .back-toggle svg { width: 22px; height: 22px; }
+  html.is-pwa .site-nav:has(.back-toggle) :is(.bell-toggle, .welfare-toggle, .settings-toggle) { display: none; }
+  @supports not selector(:has(a)) {
+    html.is-pwa .site-nav.has-back :is(.bell-toggle, .welfare-toggle, .settings-toggle) { display: none; }
+  }
+}
+@media (max-width: 840px) and (hover: hover) and (pointer: fine) {
+  html.is-pwa .back-toggle:hover { background: var(--bar-hover); }
+}
+/* on the web, a line over the name back to the page underneath */
+.back-link {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  margin: 0 0 14px -3px;
+  color: var(--text);
+  font-size: var(--t-small);
+  font-weight: 800;
+  text-decoration: none;
+}
+.back-link svg { width: 16px; height: 16px; flex: none; }
+.back-link:hover { text-decoration: underline; text-underline-offset: 3px; }
+html.is-pwa .back-link { display: none; }
+
+/* ---------------- Figures and facts ----------------
+   A figure is a number set on the page with its words under it, no box
+   (the recap's headline, a team's and a quest's page): the number at the
+   page name's size and never above it, the words at reading size, any
+   number among the words a size down. Four, three or two to a row, two
+   under 900px, one under 560px. */
+.figures {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  display: grid;
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+  gap: 24px var(--gutter);
+}
+.figures-3 { grid-template-columns: repeat(3, minmax(0, 1fr)); }
+.figures-2 { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+@media (max-width: 900px) {
+  .figures, .figures-3 { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+}
+@media (max-width: 560px) {
+  .figures, .figures-3, .figures-2 { grid-template-columns: minmax(0, 1fr); }
+}
+.figure-n {
+  display: block;
+  font-size: var(--t-display);
+  font-weight: 800;
+  line-height: 1;
+  letter-spacing: -0.03em;
+  font-variant-numeric: tabular-nums;
+}
+.figure-words {
+  display: block;
+  margin-top: 8px;
+  font-size: var(--t-body);
+  line-height: 1.4;
+  text-wrap: balance;
+}
+.figure-words b {
+  font-size: var(--t-head);
+  font-weight: 800;
+  /* adds nothing to the line's height, so a line with a number in it sits
+     where a line without one does */
+  line-height: 0;
+  letter-spacing: -0.02em;
+}
+
+/* A fact is a name and its value as a timetable row, a hairline under
+   each but the last; the same at every width, a long value wrapping in
+   its own column. The rule is on both cells, so the column's padding is
+   on the name rather than a gap that would break it. */
+.facts {
+  margin: 0;
+  display: grid;
+  grid-template-columns: max-content minmax(0, 1fr);
+}
+.facts dt,
+.facts dd {
+  margin: 0;
+  padding: 10px 0;
+  border-bottom: 1px solid var(--border);
+}
+.facts dt { font-weight: 800; padding-right: 24px; }
+.facts dd { font-variant-numeric: tabular-nums; }
+.facts dt:first-of-type,
+.facts dd:first-of-type { padding-top: 0; }
+.facts dt:last-of-type,
+.facts dd:last-of-type { border-bottom: 0; }
+@media (max-width: 560px) {
+  .facts { grid-template-columns: minmax(0, max-content) minmax(0, 1fr); }
+  .facts dt { max-width: 45vw; }
+}
+
+/* ---------------- A page pushed over another ----------------
+   (assets/push.js) The page it came from as it was left, under a sheet
+   of paper the page's width with a hairline down its left edge that
+   moves with the page, then the page itself; the bars stay over all
+   three. */
+html.push-in main { transform: translateX(100%); }
+html.push-moving main { position: relative; z-index: 3; will-change: transform; }
+.push-under,
+.push-sheet {
+  position: fixed;
+  inset: 0;
+  background: var(--page-bg);
+  visibility: hidden;
+  will-change: transform;
+}
+.push-under { z-index: 1; overflow: hidden; pointer-events: none; }
+.push-sheet { z-index: 2; border-left: 1px solid var(--border-strong); }
+html.push-moving .push-under,
+html.push-moving .push-sheet { visibility: visible; }
+
+/* ---------------- A chart's step ----------------
+   Picked in the chart's heading (scs.chartStep): the word underlined
+   with a chevron that turns over while its list is open; the list grows
+   from the word. */
+.chart-step { position: relative; display: inline-block; }
+.chart-step-btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 2px;
+  margin: 0;
+  padding: 0;
+  border: 0;
+  background: none;
+  color: inherit;
+  font: inherit;
+  letter-spacing: inherit;
+  white-space: nowrap;
+  cursor: pointer;
+}
+.chart-step-text {
+  text-decoration: underline;
+  text-decoration-thickness: 2px;
+  text-underline-offset: 0.18em;
+}
+.chart-step-go {
+  width: 0.75em;
+  height: 0.75em;
+  flex: none;
+  transition: rotate var(--duration-fast) var(--ease-smooth-out);
+}
+.chart-step.is-open .chart-step-go { rotate: 180deg; }
+.chart-step-btn:focus-visible { outline: 2px solid var(--accent); outline-offset: 3px; border-radius: 2px; }
+@media (hover: hover) and (pointer: fine) {
+  .chart-step-btn:hover .chart-step-text { text-decoration-thickness: 3px; }
+}
+.chart-step-menu {
+  position: absolute;
+  top: calc(100% + 6px);
+  left: 0;
+  z-index: 20;
+  display: grid;
+  min-width: 11rem;
+  background: var(--surface);
+  color: var(--text);
+  border: 1px solid var(--border);
+  border-radius: 2px;
+  box-shadow: var(--shadow);
+  font-size: var(--t-body);
+  font-weight: 400;
+  letter-spacing: normal;
+  line-height: 1.3;
+  transform-origin: top left;
+  animation: chart-step-open var(--dropdown-open-dur) var(--ease-smooth-out);
+}
+.chart-step-menu[hidden] { display: none; }
+.chart-step-menu.is-closing {
+  opacity: 0;
+  transform: translateY(-4px) scale(var(--dropdown-closing-scale));
+  transition:
+    opacity var(--dropdown-close-dur) var(--ease-smooth-out),
+    transform var(--dropdown-close-dur) var(--ease-smooth-out);
+}
+@keyframes chart-step-open {
+  from { opacity: 0; transform: translateY(-4px) scale(var(--dropdown-pre-scale)); }
+}
+.chart-step-menu [role="option"] {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 16px;
+  padding: 11px 14px;
+  white-space: nowrap;
+  cursor: pointer;
+}
+.chart-step-menu [role="option"] + [role="option"] { border-top: 1px solid var(--border); }
+.chart-step-menu [role="option"]:focus { outline: none; background: var(--tint); }
+.chart-step-menu [aria-selected="true"] { font-weight: 800; }
+.chart-step-tick { width: 1em; height: 1em; flex: none; color: var(--accent); visibility: hidden; }
+.chart-step-menu [aria-selected="true"] .chart-step-tick { visibility: visible; }
+@media (hover: hover) and (pointer: fine) {
+  .chart-step-menu [role="option"]:hover { background: var(--tint); }
+}
+@media (prefers-reduced-motion: reduce) {
+  .chart-step-go { transition: none; }
+  .chart-step-menu { animation: none; }
+  .chart-step-menu.is-closing { transition: none; }
+}
+
+/* ---------------- Hour bars ----------------
+   A bar chart of counts per hour, half hour or quarter (the recap and
+   the team pages), or a line per count by the minute: plain boxes, the
+   accent as the bar and a dark green inner bar for the part that was
+   accepted, the times under the line in the label voice. The pages'
+   notes name the two greens, so they change together. */
+/* flow-root keeps the room under the line that the labels sit in */
+.hour-bars-wrap { display: flow-root; margin-top: 12px; }
+.hour-bars {
+  position: relative;
+  display: flex;
+  align-items: flex-end;
+  gap: 3px;
+  height: 160px;
+  margin-bottom: 28px;
+  border-bottom: 1px solid var(--border-strong);
+  box-sizing: content-box;
+  /* a finger running along the bars moves the figures, not the page */
+  touch-action: pan-y;
+}
+.hour-col {
+  flex: 1;
+  min-width: 0;
+  height: 100%;
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  justify-content: flex-end;
+}
+.hour-bar {
+  width: 100%;
+  background: var(--accent);
+  border-radius: 2px 2px 0 0;
+  overflow: hidden;
+  position: relative;
+  min-height: 0;
+}
+.hour-bar-inner {
+  position: absolute;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: #00421b;
+  background: color-mix(in srgb, var(--accent) 45%, #000);
+}
+/* centred under its bar and free to run over the unlabelled ones beside
+   it; hourBars spaces the labels so two never meet */
+.hour-tick {
+  position: absolute;
+  top: 100%;
+  left: 50%;
+  margin-top: 7px;
+  transform: translateX(-50%);
+  font-size: var(--t-micro);
+  font-weight: 800;
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+  line-height: 1.2;
+  color: var(--muted);
+  white-space: nowrap;
+}
+.hour-bars-none { color: var(--muted); }
+/* a bar's hour and figures, along the chart's top over the bar picked */
+.hour-tip {
+  position: absolute;
+  top: 0;
+  z-index: 1;
+  padding: 6px 9px;
+  background: var(--sign-bg);
+  color: var(--sign-ink);
+  border: 1px solid var(--sign-edge);
+  border-radius: 2px;
+  font-size: var(--t-small);
+  line-height: 1.3;
+  white-space: nowrap;
+  pointer-events: none;
+}
+.hour-tip[hidden] { display: none; }
+.hour-tip strong { display: block; font-weight: 800; }
+.hour-bars.has-pick .hour-col:not(.is-picked) .hour-bar { opacity: 0.45; }
+/* many steps: the bars close up */
+.hour-bars.is-dense { gap: 1px; }
+/* the minute chart: the two counts as lines, the same greens as the bars */
+.hour-line {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  overflow: visible;
+}
+.hour-line path {
+  fill: none;
+  stroke-width: 1.5px;
+  stroke-linejoin: round;
+  vector-effect: non-scaling-stroke;
+}
+.hour-line .hour-area { stroke: none; }
+.hour-line-outer { stroke: var(--accent); }
+.hour-line-outer.hour-area { fill: var(--accent); }
+.hour-line-inner {
+  stroke: #00421b;
+  stroke: color-mix(in srgb, var(--accent) 45%, #000);
+}
+.hour-line-inner.hour-area {
+  fill: #00421b;
+  fill: color-mix(in srgb, var(--accent) 45%, #000);
+}
+.hour-guide {
+  position: absolute;
+  top: 0;
+  bottom: 0;
+  width: 1px;
+  margin-left: -0.5px;
+  background: var(--text);
+  pointer-events: none;
+}
+.hour-guide[hidden] { display: none; }
+.hour-dot {
+  position: absolute;
+  left: 0.5px;
+  width: 8px;
+  height: 8px;
+  margin: 0 0 -4px -4px;
+  border-radius: 2px;
+  background: var(--accent);
+  outline: 2px solid var(--page-bg);
+}
+.hour-dot.is-inner {
+  background: #00421b;
+  background: color-mix(in srgb, var(--accent) 45%, #000);
+}
+
+/* the underline in the footer is doing nothing the position does not */
+.site-footer-links a { text-decoration: none; }
+.site-footer-links a:hover { text-decoration: underline; }
+
+/* ---------------- The board's clock ----------------
+   The most time-sensitive fact on the page, set in the board's own
+   type as the last cell of the departure strip. It used to be a
+   split-flap module in a narrow rail below the fold: a fourth
+   reference borrowed from airport departure boards, in a page built on
+   subway signage, and the only decorative gesture on it. Minutes are
+   shown because the last hour matters; seconds at thirty days out were
+   false precision and a digit that never moves reads as broken.
+   The last cell of the strip takes the same label and the same
+   baseline as the four beside it, so the one fact that is moving reads
+   as part of the row rather than as a widget bolted under it. */
+.board-clock { color: var(--sign-ink); }
+
+.board-cta {
+  display: inline-block;
+  background: var(--accent-solid);
+  color: var(--on-accent);
+  border-radius: 2px;
+  padding: 19px 38px;
+  font-size: var(--t-lede);
+  font-weight: 800;
+  letter-spacing: -0.01em;
+  text-decoration: none;
+  transition: background var(--duration-quick) var(--ease-smooth-out);
+}
+
+.board-cta:hover { background: var(--accent-dark); }
+
+.board-clock-figs {
+  display: flex;
+  align-items: baseline;
+  flex-wrap: wrap;
+  gap: 2px 18px;
+  margin: 5px 0 0;
+}
+
+.board-clock-fig {
+  color: var(--sign-muted);
+  font-size: var(--t-micro);
+  font-weight: 700;
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+}
+
+.board-clock-fig b {
+  font-size: var(--t-lede);
+  font-weight: 800;
+  letter-spacing: -0.025em;
+  font-variant-numeric: tabular-nums lining-nums;
+  color: var(--sign-ink);
+  margin-right: 4px;
+}
+
+.board-clock-msg {
+  margin: 5px 0 0;
+  font-size: var(--t-lede);
+  font-weight: 800;
+  letter-spacing: -0.02em;
+}
+
+/* The black is the page edge, which is what makes it signage rather
+   than a content box sitting on paper. A wayfinding system has one
+   reading edge, and everything on the plate keeps it. */
+
+/* On the dark ground the plates all but disappear: the sign is #131313
+   and the page is #121212, so the alternation the page's whole rhythm
+   is built on — paper, signage, paper — reads as one unbroken dark
+   field. The sign cannot be lightened (it is the same black in both
+   themes, by design) and the page cannot go darker than it already is,
+   so the edge is what says where a plate starts and stops. */
+html[data-theme="dark"] .board,
+html[data-theme="dark"] .plate {
+  border-top: 1px solid var(--border);
+  border-bottom: 1px solid var(--border);
+}
+
+/* The SCS mark stands in for the old green SCS.2 badge: the badge keeps
+   its class so every rule that hides it in the app bar still applies. */
+.site-brand-badge { background: none; padding: 0; display: inline-flex; }
+.site-brand-badge img { display: block; height: 32px; width: auto; }
+/* The mark is transparent, and its black edge needs white beside it: on
+   a dark ground it sits on a white square. The splash is always dark. */
+html[data-theme="dark"] .site-brand-badge img,
+html[data-theme="dark"] .site-footer-brand img,
+.app-splash img { background: #fff; border-radius: 2px; box-sizing: border-box; padding: 3px; }
+.app-splash img { padding: 8px; }
+.app-splash img { display: block; width: min(38vw, 155px); height: auto; }
+/* The mark in a column of its own and the words in theirs. Floated,
+   the lines after the first ran back under the mark. The column is the
+   mark's width (39px at this height) and a 14px gap. */
+.site-footer-brand { position: relative; padding-left: 53px; }
+.site-footer-brand img { position: absolute; left: 0; top: 2px; height: 32px; width: auto; }
+
+/* Safari's Share icon and the square with a plus on its Add to Home
+   Screen row, drawn into the iPhone install steps (scs.pushSub.paint),
+   at the size of the words around them and in their colour. */
+.share-glyph {
+  display: inline-block;
+  width: 1.15em;
+  height: 1.15em;
+  margin: 0 0.1em;
+  vertical-align: -0.2em;
+  fill: none;
+  stroke: currentColor;
+  stroke-width: 2;
+  stroke-linecap: square;
+  stroke-linejoin: miter;
+}
+
+/* In the app layout the install pop-up sits above the bottom bar rather
+   than over it; --tabbar-h carries the bar's safe area already. */
+html.is-pwa .install-nudge { bottom: calc(var(--tabbar-h, 57px) + 12px); }

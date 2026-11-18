@@ -1,0 +1,694 @@
+/* Albums: a list of albums, and one album as a waterfall or in rows. */
+
+/* the parts the script switches, over their own display rules */
+.alb-head [hidden],
+.alb-drawer[hidden],
+.alb-drawer [hidden],
+.alb-list[hidden],
+.alb-grid[hidden],
+#alb-skel[hidden],
+.alb-retry[hidden] { display: none; }
+
+.alb-head { display: grid; gap: 12px; }
+.alb-about {
+  margin: 0;
+  max-width: 44em;
+  font-size: var(--t-lede);
+  line-height: 1.5;
+  white-space: pre-line;
+}
+.alb-line {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: baseline;
+  gap: 16px;
+  margin: 0;
+  font-size: 1rem;
+  line-height: 1.5;
+  font-variant-numeric: tabular-nums lining-nums;
+}
+.alb-line.is-empty { display: none; }
+/* the way back to every album, ahead of the album's own words */
+.alb-back {
+  justify-self: start;
+  display: inline-flex;
+  align-items: center;
+  gap: 2px;
+  margin-left: -4px;
+  color: var(--text);
+  font-size: var(--t-small);
+  font-weight: 800;
+  text-decoration: none;
+}
+.alb-back svg { width: 18px; height: 18px; flex: none; }
+.alb-back:hover span,
+.alb-back:hover { text-decoration: underline; text-underline-offset: 3px; }
+.alb-back:focus-visible { outline: 2px solid var(--accent); outline-offset: 2px; }
+
+/* what the album holds: a figure and its word, as a stat card says it */
+.alb-counts {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px 22px;
+  margin: 0;
+}
+.alb-count-item {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  font-variant-numeric: tabular-nums lining-nums;
+}
+.alb-count-item svg { width: 18px; height: 18px; flex: none; color: var(--muted); }
+.alb-count-item b { font-weight: 800; }
+.alb-count-word {
+  color: var(--muted);
+  font-size: var(--t-micro);
+  font-weight: 800;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+}
+
+/* The order and the layout: one box each, and the choice in use under
+   a block of the sign's black that travels to it the way the O/I
+   switch's does (--seg-x and --seg-w, set from the button in use).
+   The order on the left, the layout and the buttons on the right; where
+   they do not fit in one row the buttons go under the two switches. */
+.alb-tools {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: flex-end;
+  gap: 10px;
+  margin-top: 4px;
+}
+#alb-order { margin-right: auto; }
+.alb-short { display: none; }
+.alb-tools-end {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+/* the way in to adding: a photo-add mark the height of the switches,
+   solid while what it opens is open */
+.alb-add-btn {
+  display: inline-grid;
+  place-items: center;
+  width: 44px;
+  height: 44px;
+  padding: 0;
+  border: 1px solid var(--border-strong);
+  border-radius: 2px;
+  background: var(--surface);
+  color: var(--text);
+  cursor: pointer;
+  transition: background-color var(--duration-quick) var(--ease-smooth-out), color var(--duration-quick) var(--ease-smooth-out);
+}
+.alb-add-btn svg { width: 22px; height: 22px; }
+.alb-add-btn[aria-expanded="true"] {
+  border-color: var(--sign-bg);
+  background: var(--sign-bg);
+  box-shadow: inset 0 0 0 1px var(--pick-edge);
+  color: var(--sign-ink);
+}
+.alb-add-btn:focus-visible { outline: 2px solid var(--accent); outline-offset: 2px; }
+@media (hover: hover) and (pointer: fine) {
+  .alb-add-btn[aria-expanded="false"]:hover { background: var(--tint); }
+}
+.alb-seg {
+  position: relative;
+  display: inline-flex;
+  padding: 3px;
+  border: 1px solid var(--border-strong);
+  border-radius: 2px;
+  background: var(--surface);
+}
+.alb-seg::before {
+  content: '';
+  position: absolute;
+  top: 3px;
+  bottom: 3px;
+  left: 0;
+  width: var(--seg-w, 0);
+  border-radius: 2px;
+  background: var(--sign-bg);
+  box-shadow: inset 0 0 0 1px var(--pick-edge);
+  transform: translateX(var(--seg-x, 0));
+  transition: transform var(--duration-fast) var(--ease-bounce), width var(--duration-fast) var(--ease-bounce);
+}
+.alb-seg.is-still::before { transition: none; }
+.alb-seg button {
+  position: relative;
+  z-index: 1;
+  display: inline-flex;
+  align-items: center;
+  gap: 7px;
+  min-height: 36px;
+  padding: 0 12px;
+  border: 0;
+  border-radius: 2px;
+  background: transparent;
+  color: var(--text);
+  font: inherit;
+  font-size: var(--t-small);
+  font-weight: 800;
+  cursor: pointer;
+  transition: color var(--duration-quick) var(--ease-smooth-out);
+}
+.alb-seg button[aria-pressed="true"] {
+  color: var(--sign-ink);
+  transition: color var(--duration-quick) var(--ease-smooth-out) 140ms;
+}
+.alb-seg button:focus-visible { outline: 2px solid var(--accent); outline-offset: 1px; }
+@media (hover: hover) and (pointer: fine) {
+  .alb-seg button[aria-pressed="false"]:hover { background: var(--tint); }
+}
+.alb-seg svg { width: 18px; height: 18px; flex: none; }
+.alb-seg-icons button { padding: 0 9px; }
+
+/* ---------------- who added them ---------------- */
+
+/* under the counts, the people the filter names, each one a tap away
+   from leaving it */
+.alb-filtered {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 8px 10px;
+  min-width: 0;
+}
+.alb-filtered-word {
+  color: var(--muted);
+  font-size: var(--t-micro);
+  font-weight: 800;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+}
+.alb-tag {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  max-width: 100%;
+  min-height: 32px;
+  padding: 0 8px 0 10px;
+  border: 1px solid var(--border-strong);
+  border-radius: 2px;
+  background: var(--surface);
+  color: var(--text);
+  font: inherit;
+  font-size: var(--t-small);
+  font-weight: 700;
+  cursor: pointer;
+}
+.alb-tag-name { min-width: 0; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+.alb-tag svg { width: 14px; height: 14px; flex: none; color: var(--muted); }
+.alb-tag:focus-visible { outline: 2px solid var(--accent); outline-offset: 2px; }
+.alb-tag:active { transform: translate(1px, 1px); }
+@media (hover: hover) and (pointer: fine) {
+  .alb-tag:hover { background: var(--tint); }
+  .alb-tag:hover svg { color: var(--text); }
+}
+
+/* the drawer: which way the filter goes, then everyone in the album */
+.alb-filter-card {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr);
+  gap: 14px;
+}
+.alb-mode { display: flex; }
+.alb-mode button { flex: 1 1 0; justify-content: center; }
+.alb-find { margin: 0; }
+.alb-people {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+  max-height: min(46vh, 340px);
+  margin: -3px;
+  padding: 3px;
+  overflow-y: auto;
+  overscroll-behavior: contain;
+}
+.alb-person {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  max-width: 100%;
+  min-height: 36px;
+  padding: 0 12px;
+  border: 1px solid var(--border-strong);
+  border-radius: 2px;
+  background: var(--surface);
+  color: var(--text);
+  font: inherit;
+  font-size: var(--t-small);
+  font-weight: 700;
+  cursor: pointer;
+  transition: background-color var(--duration-quick) var(--ease-smooth-out), color var(--duration-quick) var(--ease-smooth-out);
+}
+.alb-person-name { min-width: 0; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+.alb-person-n { color: var(--muted); font-variant-numeric: tabular-nums lining-nums; }
+.alb-person[aria-pressed="true"] {
+  border-color: var(--pick-edge);
+  background: var(--sign-bg);
+  color: var(--sign-ink);
+}
+.alb-person[aria-pressed="true"] .alb-person-n { color: var(--sign-muted); }
+.alb-person:focus-visible { outline: 2px solid var(--accent); outline-offset: 2px; }
+.alb-person:active { transform: translate(1px, 1px); }
+@media (hover: hover) and (pointer: fine) {
+  .alb-person[aria-pressed="false"]:hover { background: var(--tint); }
+}
+.alb-people-none { margin: 0; color: var(--muted); font-size: var(--t-small); }
+.alb-filter-foot {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 12px 20px;
+}
+
+/* ---------------- adding ---------------- */
+
+/* Opens under its button: the row grows from nothing to the height of
+   what is in it, and what is in it drops down into place. The filter
+   and the adding open this way, one at a time. */
+.alb-drawer {
+  display: grid;
+  grid-template-rows: 0fr;
+  transition: grid-template-rows var(--duration-medium) var(--ease-smooth-out);
+}
+.alb-drawer.is-open {
+  grid-template-rows: 1fr;
+  transition-duration: var(--duration-slow);
+}
+.alb-drawer-clip {
+  min-height: 0;
+  overflow: hidden;
+  visibility: hidden;
+  transition: visibility 0s linear var(--duration-medium);
+}
+.alb-drawer.is-open .alb-drawer-clip {
+  visibility: visible;
+  transition-delay: 0s;
+}
+.alb-drawer-body {
+  display: grid;
+  justify-items: end;
+  padding-top: 12px;
+  opacity: 0;
+  transform: translateY(calc(var(--distance-medium, 12px) * -1));
+  transition: opacity var(--duration-quick) var(--ease-smooth-out), transform var(--duration-medium) var(--ease-smooth-out);
+}
+.alb-drawer.is-open .alb-drawer-body {
+  opacity: 1;
+  transform: none;
+  transition-duration: var(--duration-slow);
+}
+.alb-drawer-body > .card { width: min(100%, 440px); box-sizing: border-box; }
+.alb-drawer.is-still,
+.alb-drawer.is-still .alb-drawer-clip,
+.alb-drawer.is-still .alb-drawer-body { transition: none; }
+.alb-ask { margin: 0 0 14px; }
+/* one box for adding: the name where an album asks for one, the button,
+   and with a mouse, the box itself takes files dropped on it */
+.alb-picker {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr);
+  gap: 14px;
+  transition: background-color var(--duration-quick) var(--ease-smooth-out), border-color var(--duration-quick) var(--ease-smooth-out);
+}
+.alb-picker.is-dropping {
+  background: var(--glow-fill);
+  border-color: var(--glow-edge);
+}
+.alb-by { margin: 0; }
+.alb-turnstile:empty { display: none; }
+.alb-go {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 12px 16px;
+}
+.alb-pick { display: inline-flex; align-items: center; gap: 10px; }
+.alb-pick svg { width: 20px; height: 20px; flex: none; }
+.alb-drop-hint { color: var(--muted); font-size: var(--t-small); }
+@media (hover: none), (pointer: coarse) {
+  .alb-drop-hint { display: none; }
+}
+.alb-who {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: baseline;
+  gap: 16px;
+  color: var(--muted);
+}
+.alb-who:empty { display: none; }
+.alb-who strong { color: var(--text); font-weight: 800; }
+.alb-who a {
+  color: var(--text);
+  font-weight: 800;
+  text-decoration: none;
+  border-bottom: 2px solid currentColor;
+}
+.alb-progress { margin: 0; font-variant-numeric: tabular-nums lining-nums; }
+.alb-progress:empty { display: none; }
+
+/* one row per file being added: its small copy, name, state and bar */
+.alb-queue {
+  display: grid;
+  gap: 14px;
+  min-width: 0;
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+.alb-q-row {
+  display: grid;
+  grid-template-columns: 44px minmax(0, 1fr);
+  grid-template-areas: "pic text" "pic bar";
+  align-items: center;
+  gap: 6px 12px;
+  min-width: 0;
+}
+.alb-q-pic {
+  grid-area: pic;
+  width: 44px;
+  height: 44px;
+  border-radius: 2px;
+  background: var(--tint);
+  overflow: hidden;
+}
+.alb-q-pic img { display: block; width: 100%; height: 100%; object-fit: cover; }
+.alb-q-text {
+  grid-area: text;
+  display: flex;
+  flex-wrap: wrap;
+  align-items: baseline;
+  gap: 2px 12px;
+  min-width: 0;
+}
+.alb-q-name {
+  flex: 1 1 140px;
+  min-width: 0;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  font-weight: 800;
+}
+.alb-q-state {
+  font-size: var(--t-small);
+  color: var(--muted);
+  font-variant-numeric: tabular-nums lining-nums;
+}
+.alb-q-row .sub-progress { grid-area: bar; max-width: none; }
+.alb-q-row.is-done .alb-q-state { color: var(--accent-dark); }
+.alb-q-row.is-failed .alb-q-state { color: var(--alert-ink); }
+.alb-q-row.is-failed .sub-progress > span { background: var(--alert-ink); }
+.alb-q-retry,
+.alb-text-btn {
+  padding: 0;
+  border: 0;
+  border-bottom: 2px solid currentColor;
+  border-radius: 0;
+  background: none;
+  color: var(--text);
+  font: inherit;
+  font-size: var(--t-small);
+  font-weight: 800;
+  cursor: pointer;
+}
+.alb-q-retry:focus-visible,
+.alb-text-btn:focus-visible { outline: 2px solid var(--accent); outline-offset: 2px; }
+
+/* ---------------- every album ---------------- */
+
+.alb-list {
+  list-style: none;
+  margin: 32px 0 0;
+  padding: 0;
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(220px, 1fr));
+  gap: 40px 24px;
+}
+.alb-item { min-width: 0; }
+.alb-card {
+  display: grid;
+  gap: 2px;
+  color: inherit;
+  text-decoration: none;
+}
+.alb-card:focus-visible { outline: 2px solid var(--accent); outline-offset: 3px; }
+.alb-card:hover .alb-name { text-decoration: underline; text-underline-offset: 3px; }
+.alb-cover {
+  display: block;
+  aspect-ratio: 1 / 1;
+  margin-bottom: 8px;
+  overflow: hidden;
+  border-radius: 2px;
+  background: var(--tint);
+}
+.alb-cover img {
+  display: block;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+.alb-name {
+  font-size: 1rem;
+  font-weight: 700;
+  line-height: 1.25;
+  letter-spacing: -0.012em;
+  overflow-wrap: anywhere;
+}
+.alb-count {
+  font-size: 0.75rem;
+  line-height: 1.35;
+  color: var(--muted);
+  font-variant-numeric: tabular-nums lining-nums;
+}
+
+/* ---------------- while it loads ----------------
+   Grey shapes where the albums, or an album's pictures, will land,
+   pulsing one after another until they come: album cards on the list,
+   and on an album its columns or its rows, whichever this device shows. */
+
+.alb-skel {
+  margin-top: 32px;
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(220px, 1fr));
+  gap: 40px 24px;
+}
+.alb-skel-item { display: grid; gap: 8px; min-width: 0; }
+.alb-skel-item:nth-child(n+7) { display: none; }
+.alb-skel-cover,
+.alb-skel-line {
+  display: block;
+  border-radius: 2px;
+  background: var(--tint);
+  animation: alb-skel-pulse var(--pulse-dur) ease-in-out infinite;
+  animation-delay: calc(var(--i, 0) * 110ms);
+}
+.alb-skel-cover { aspect-ratio: 1 / 1; }
+.alb-skel-line { height: 14px; width: 68%; }
+.alb-skel-line + .alb-skel-line { height: 10px; width: 36%; }
+.alb-skel-item:nth-child(2) { --i: 1; }
+.alb-skel-item:nth-child(3) { --i: 2; }
+.alb-skel-item:nth-child(4) { --i: 3; }
+.alb-skel-item:nth-child(5) { --i: 4; }
+.alb-skel-item:nth-child(6) { --i: 5; }
+.alb-skel-item:nth-child(7) { --i: 6; }
+.alb-skel-item:nth-child(8) { --i: 7; }
+.alb-skel-item:nth-child(9) { --i: 8; }
+.alb-skel-item:nth-child(10) { --i: 9; }
+.alb-skel-item:nth-child(11) { --i: 10; }
+.alb-skel-item:nth-child(12) { --i: 11; }
+@keyframes alb-skel-pulse {
+  0%, 100% { opacity: 1; }
+  50% { opacity: var(--pulse-min); }
+}
+.alb-skel.is-album {
+  display: block;
+  columns: 4 180px;
+  column-gap: 6px;
+}
+.alb-skel.is-album .alb-skel-item {
+  display: block;
+  margin-bottom: 6px;
+  break-inside: avoid;
+}
+.alb-skel.is-album .alb-skel-line { display: none; }
+.alb-skel.is-album .alb-skel-item:nth-child(3n+1) .alb-skel-cover { aspect-ratio: 4 / 5; }
+.alb-skel.is-album .alb-skel-item:nth-child(4n+2) .alb-skel-cover { aspect-ratio: 3 / 2; }
+.alb-skel.is-album .alb-skel-item:nth-child(5n+3) .alb-skel-cover { aspect-ratio: 2 / 3; }
+.alb-skel.is-album.is-rows {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px;
+}
+.alb-skel.is-album.is-rows .alb-skel-item {
+  margin: 0;
+  flex: var(--w, 1.33) 1 calc(var(--w, 1.33) * 150px);
+  height: 150px;
+}
+.alb-skel.is-album.is-rows .alb-skel-cover { aspect-ratio: auto; height: 100%; }
+.alb-skel.is-rows .alb-skel-item:nth-child(3n+1) { --w: 0.8; }
+.alb-skel.is-rows .alb-skel-item:nth-child(4n+2) { --w: 1.5; }
+.alb-skel.is-rows .alb-skel-item:nth-child(5n+3) { --w: 0.67; }
+.alb-retry { margin: 0; }
+
+/* ---------------- one album: the waterfall ----------------
+   Columns the script fills, each picture at its own shape. */
+
+.alb-grid {
+  margin-top: 32px;
+  display: flex;
+  align-items: flex-start;
+  gap: 6px;
+  transition: opacity var(--duration-quick) var(--ease-smooth-out);
+}
+/* the filter changed and the album is being read again */
+.alb-grid.is-waiting { opacity: 0.45; }
+.alb-col {
+  flex: 1 1 0;
+  min-width: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+.alb-tile {
+  position: relative;
+  display: block;
+  width: 100%;
+  aspect-ratio: var(--wide, 1);
+  margin: 0;
+  padding: 0;
+  border: 0;
+  border-radius: 2px;
+  overflow: hidden;
+  background: var(--tint);
+  cursor: pointer;
+}
+.alb-tile img {
+  display: block;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  transition: opacity var(--duration-quick) var(--ease-smooth-out);
+}
+@media (hover: hover) and (pointer: fine) {
+  .alb-tile:hover img { opacity: 0.86; }
+}
+.alb-tile:focus-visible { outline: 2px solid var(--accent); outline-offset: 2px; z-index: 1; }
+.alb-play {
+  position: absolute;
+  left: 0;
+  bottom: 0;
+  display: grid;
+  place-items: center;
+  width: 26px;
+  height: 26px;
+  background: var(--sign-bg);
+  color: var(--sign-ink);
+}
+/* the foot of an album: a bar while more is coming, the count at the end */
+.alb-more {
+  display: grid;
+  justify-items: center;
+  gap: 12px;
+  min-height: 1px;
+  color: var(--muted);
+  font-size: var(--t-small);
+  font-variant-numeric: tabular-nums lining-nums;
+  text-align: center;
+}
+.alb-more.is-loading,
+.alb-more.is-end,
+.alb-more.is-failed { padding: 28px 0 8px; }
+.alb-more-bar {
+  position: relative;
+  display: block;
+  width: min(240px, 60%);
+  height: 4px;
+  overflow: hidden;
+  border-radius: 2px;
+  background: var(--border);
+}
+.alb-more-bar::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  bottom: 0;
+  left: 0;
+  width: 40%;
+  background: var(--accent);
+  animation: alb-more-run 1100ms var(--ease-in-out) infinite;
+}
+@keyframes alb-more-run {
+  from { transform: translateX(-100%); }
+  to { transform: translateX(250%); }
+}
+@media (prefers-reduced-motion: reduce) {
+  .alb-more-bar::before { animation: none; width: 100%; opacity: 0.5; }
+}
+.alb-more-note { margin: 0; }
+
+/* ---------------- or as rows ----------------
+   Each picture grows by its width over its height, so a full row is
+   one height and exactly the page's width; the last row keeps the
+   height rows aim for. */
+
+.alb-grid.is-rows {
+  flex-direction: column;
+  align-items: stretch;
+}
+.alb-row {
+  display: flex;
+  gap: 6px;
+}
+.alb-row .alb-tile {
+  flex: var(--wide, 1) 1 0;
+  min-width: 0;
+  width: auto;
+}
+.alb-row:not(.is-full) .alb-tile {
+  flex: 0 0 auto;
+  width: calc(var(--row-h, 200px) * var(--wide, 1));
+}
+
+/* a phone: the order's short words, so the switches and the add
+   button keep to one row */
+@media (max-width: 420px) {
+  .alb-tools { column-gap: 8px; }
+  .alb-tools-end { gap: 8px; }
+  .alb-long { display: none; }
+  .alb-short { display: inline; }
+  .alb-seg:not(.alb-seg-icons) button { padding: 0 10px; }
+}
+
+@media (max-width: 560px) {
+  .alb-list,
+  .alb-skel {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 28px 16px;
+  }
+  .alb-skel.is-album { columns: 2; column-gap: 4px; }
+  .alb-seg:not(.alb-seg-icons) svg { display: none; }
+  .alb-skel.is-album .alb-skel-item { margin-bottom: 4px; }
+  .alb-skel.is-album.is-rows { gap: 4px; }
+  .alb-skel.is-album.is-rows .alb-skel-item { height: 110px; flex-basis: calc(var(--w, 1.33) * 110px); }
+  .alb-grid,
+  .alb-col,
+  .alb-row { gap: 4px; }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .alb-tile img { transition: none; }
+  .alb-skel-cover,
+  .alb-skel-line { animation: none; }
+  .alb-seg::before,
+  .alb-seg button,
+  .alb-picker,
+  .alb-drawer,
+  .alb-drawer-clip,
+  .alb-drawer-body,
+  .alb-person,
+  .alb-add-btn { transition: none; }
+}

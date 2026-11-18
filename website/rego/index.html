@@ -1,0 +1,344 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
+  <script>try{if(localStorage.getItem('scs2-submit-session')){document.documentElement.classList.add('team-signed-in')}var t=localStorage.getItem('scs2-theme');if(t==='dark'||(!t&&matchMedia('(prefers-color-scheme: dark)').matches)){document.documentElement.setAttribute('data-theme','dark')}var st=matchMedia('(display-mode: standalone)').matches||navigator.standalone===true;if(st){if(matchMedia('(max-width: 840px)').matches)document.documentElement.classList.add('is-pwa');document.documentElement.classList.add('is-installed');if(!sessionStorage.getItem('scs2-launched')){sessionStorage.setItem('scs2-launched','1');document.documentElement.classList.add('show-splash');setTimeout(function(){document.documentElement.classList.remove('show-splash')},4000)}if(sessionStorage.getItem('scs2-chrome-hidden')==='1'){sessionStorage.removeItem('scs2-chrome-hidden');document.documentElement.classList.add('nav-enter')}if(parseInt(sessionStorage.getItem('scs2-scroll:'+location.pathname),10)>0&&!location.hash){document.documentElement.classList.add('scroll-restoring');setTimeout(function(){document.documentElement.classList.remove('scroll-restoring')},900)}}else if((matchMedia('(pointer: coarse)').matches||matchMedia('(hover: none)').matches)&&matchMedia('(max-width: 840px)').matches&&localStorage.getItem('scs2-app-layout')!=='0'){document.documentElement.classList.add('is-pwa');if(parseInt(sessionStorage.getItem('scs2-scroll:'+location.pathname),10)>0&&!location.hash){document.documentElement.classList.add('scroll-restoring');setTimeout(function(){document.documentElement.classList.remove('scroll-restoring')},900)}}var f=parseInt(localStorage.getItem('scs2-font-scale'),10);if(f&&f>=33&&f<=200&&f!==100){document.documentElement.style.fontSize=f+'%'}if(localStorage.getItem('scs2-justify')==='1'){document.documentElement.classList.add('justify-text')}}catch(e){}</script>
+  <title>Register | SCS.2</title>
+  <meta name="description" content="Sign your team up for SCS.2 — Legends of the City: a city-wide points race across Sydney on Tuesday 20 October." />
+  <!-- Link preview. Discord shows the card from tab/src/embed.js; other apps read the tags below. -->
+  <link rel="discord:component-embed" type="application/json" href="https://files.scs.andyrew.space/api/embed/rego" />
+  <meta property="og:site_name" content="SCS.2 Legends of the City" />
+  <meta property="og:type" content="website" />
+  <meta property="og:title" content="Register" />
+  <meta property="og:description" content="Teams of three to five. One person signs up the whole team." />
+  <meta property="og:url" content="https://scs.andyrew.space/rego/" />
+  <meta property="og:image" content="https://files.scs.andyrew.space/api/slides/cover" />
+  <meta name="twitter:card" content="summary_large_image" />
+  <link rel="icon" href="../assets/icons/favicon-32.png" type="image/png" />
+  <link rel="manifest" href="../manifest.webmanifest" />
+  <link rel="apple-touch-icon" href="../assets/icons/apple-touch-icon.png" />
+  <meta name="theme-color" content="#ffffff" />
+  <meta name="mobile-web-app-capable" content="yes" />
+  <meta name="apple-mobile-web-app-capable" content="yes" />
+  <meta name="apple-mobile-web-app-status-bar-style" content="default" />
+  <meta name="apple-mobile-web-app-title" content="SCS.2" />
+  <link rel="preconnect" href="https://files.scs.andyrew.space" crossorigin />
+  <link rel="stylesheet" href="../assets/site.css" />
+  <link rel="stylesheet" href="../assets/photo-strip.css" />
+  <link rel="stylesheet" href="rego.css" />
+</head>
+<body class="themed">
+<div id="app-splash" class="app-splash" aria-hidden="true"><img src="../assets/icons/logo-128.png" srcset="../assets/icons/logo-256.png 2x" width="155" height="128" alt="" /></div>
+  <header class="site-nav">
+    <div class="site-nav-inner">
+      <a class="site-brand has-page-title" href="../">
+        <span class="site-brand-badge"><img src="../assets/icons/logo-64.png" srcset="../assets/icons/logo-128.png 2x" width="39" height="32" alt="SCS" /></span>
+        <span class="site-brand-name">Legends of the City</span>
+        <span class="site-brand-page">Register</span>
+      </a>
+      <button class="site-nav-toggle" type="button" aria-label="Menu" aria-expanded="false" aria-controls="site-menu">
+        <span class="nav-burger" aria-hidden="true"><span></span><span></span><span></span></span>
+      </button>
+      <nav id="site-menu" class="site-menu" aria-label="Site">
+        <a href="../">Home</a>
+        <a href="../questlist/">Quest List</a>
+        <a href="../info/">Event Info</a>
+        <a href="../welfare/">Welfare &amp; Safety</a>
+        <a href="../tab/">Tab</a>
+        <a href="../submit/"><span class="menu-signed">Submit a Quest</span><span class="menu-signin">Sign In</span></a>
+      </nav>
+      <a class="bell-toggle" href="../messages/" aria-label="Messages">
+        <svg class="icon-bell-outline" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M18 8a6 6 0 0 0-12 0c0 7-3 9-3 9h18s-3-2-3-9"/><path d="M13.73 21a2 2 0 0 1-3.46 0"/></svg>
+        <svg class="icon-bell-fill" viewBox="0 0 24 24" fill="currentColor" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M18 8a6 6 0 0 0-12 0c0 7-3 9-3 9h18s-3-2-3-9z"/><path d="M13.73 21a2 2 0 0 1-3.46 0"/></svg>
+        <span class="bell-dot" hidden></span>
+      </a>
+      <a class="welfare-toggle" href="../welfare/" aria-label="Welfare &amp; Safety">
+        <svg class="icon-heart-outline" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M19 14c1.49-1.46 3-3.21 3-5.5A5.5 5.5 0 0 0 16.5 3c-1.76 0-3 .5-4.5 2-1.5-1.5-2.74-2-4.5-2A5.5 5.5 0 0 0 2 8.5c0 2.3 1.5 4.05 3 5.5l7 7Z"/></svg>
+        <svg class="icon-heart-fill" viewBox="0 0 24 24" fill="currentColor" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M19 14c1.49-1.46 3-3.21 3-5.5A5.5 5.5 0 0 0 16.5 3c-1.76 0-3 .5-4.5 2-1.5-1.5-2.74-2-4.5-2A5.5 5.5 0 0 0 2 8.5c0 2.3 1.5 4.05 3 5.5l7 7Z"/></svg>
+      </a>
+      <button class="settings-toggle" type="button" aria-label="Settings" aria-expanded="false" aria-controls="site-settings">
+        <svg class="icon-gear-outline" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12.22 2h-.44a2 2 0 0 0-2 2v.18a2 2 0 0 1-1 1.73l-.43.25a2 2 0 0 1-2 0l-.15-.08a2 2 0 0 0-2.73.73l-.22.38a2 2 0 0 0 .73 2.73l.15.1a2 2 0 0 1 1 1.72v.51a2 2 0 0 1-1 1.74l-.15.09a2 2 0 0 0-.73 2.73l.22.38a2 2 0 0 0 2.73.73l.15-.08a2 2 0 0 1 2 0l.43.25a2 2 0 0 1 1 1.73V20a2 2 0 0 0 2 2h.44a2 2 0 0 0 2-2v-.18a2 2 0 0 1 1-1.73l.43-.25a2 2 0 0 1 2 0l.15.08a2 2 0 0 0 2.73-.73l.22-.39a2 2 0 0 0-.73-2.73l-.15-.08a2 2 0 0 1-1-1.74v-.5a2 2 0 0 1 1-1.74l.15-.09a2 2 0 0 0 .73-2.73l-.22-.38a2 2 0 0 0-2.73-.73l-.15.08a2 2 0 0 1-2 0l-.43-.25a2 2 0 0 1-1-1.73V4a2 2 0 0 0-2-2z"/><circle cx="12" cy="12" r="3"/></svg>
+        <svg class="icon-gear-fill" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path fill-rule="evenodd" clip-rule="evenodd" d="M12.22 2h-.44a2 2 0 0 0-2 2v.18a2 2 0 0 1-1 1.73l-.43.25a2 2 0 0 1-2 0l-.15-.08a2 2 0 0 0-2.73.73l-.22.38a2 2 0 0 0 .73 2.73l.15.1a2 2 0 0 1 1 1.72v.51a2 2 0 0 1-1 1.74l-.15.09a2 2 0 0 0-.73 2.73l.22.38a2 2 0 0 0 2.73.73l.15-.08a2 2 0 0 1 2 0l.43.25a2 2 0 0 1 1 1.73V20a2 2 0 0 0 2 2h.44a2 2 0 0 0 2-2v-.18a2 2 0 0 1 1-1.73l.43-.25a2 2 0 0 1 2 0l.15.08a2 2 0 0 0 2.73-.73l.22-.39a2 2 0 0 0-.73-2.73l-.15-.08a2 2 0 0 1-1-1.74v-.5a2 2 0 0 1 1-1.74l.15-.09a2 2 0 0 0 .73-2.73l-.22-.38a2 2 0 0 0-2.73-.73l-.15.08a2 2 0 0 1-2 0l-.43-.25a2 2 0 0 1-1-1.73V4a2 2 0 0 0-2-2zM12 15a3 3 0 1 0 0-6 3 3 0 0 0 0 6z"/></svg>
+      </button>
+      <div id="site-settings" class="settings-panel is-hidden" role="dialog" aria-label="Settings">
+        <div class="settings-page" id="set-page-main">
+        <div class="settings-group" role="group" aria-labelledby="set-group-display">
+          <p class="settings-group-title" id="set-group-display">Display</p>
+          <div class="settings-row">
+            <span class="settings-name" id="set-theme-name"><svg class="ic" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="12" r="9"/><path d="M12 3v18a9 9 0 0 0 0-18z" fill="currentColor"/></svg>Appearance</span>
+            <button class="theme-toggle" type="button" aria-label="Switch to dark mode" aria-pressed="false">
+              <svg class="icon-moon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M21 12.8A9 9 0 1 1 11.2 3a7 7 0 0 0 9.8 9.8z"/></svg>
+              <svg class="icon-sun" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="12" r="4"/><path d="M12 2v2"/><path d="M12 20v2"/><path d="m4.9 4.9 1.4 1.4"/><path d="m17.7 17.7 1.4 1.4"/><path d="M2 12h2"/><path d="M20 12h2"/><path d="m4.9 19.1 1.4-1.4"/><path d="m17.7 6.3 1.4-1.4"/></svg>
+            </button>
+          </div>
+          <div class="settings-row">
+            <span class="settings-name" id="set-font-name"><svg class="ic" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M4 7V5h16v2"/><path d="M12 5v14"/><path d="M9 19h6"/></svg>Text Size</span>
+            <span class="settings-desc" id="set-font-val" aria-live="polite">100%</span>
+            <span class="settings-size" role="group" aria-labelledby="set-font-name">
+              <button id="set-font-dec" class="settings-size-btn" type="button" aria-label="Decrease text size">A&minus;</button>
+              <button id="set-font-inc" class="settings-size-btn" type="button" aria-label="Increase text size">A+</button>
+            </span>
+          </div>
+          <div class="settings-row settings-more">
+            <span class="settings-name" id="set-visual-name"><svg class="ic" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M2 12s3.5-7 10-7 10 7 10 7-3.5 7-10 7S2 12 2 12z"/><circle cx="12" cy="12" r="3"/></svg>Optional Visual Settings</span>
+            <button id="set-visual-open" class="settings-more-btn" type="button" aria-labelledby="set-visual-name" aria-expanded="false" aria-controls="set-page-visual">
+              <svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5.5 2.5 11 8l-5.5 5.5"/></svg>
+            </button>
+          </div>
+        </div>
+        <div class="settings-group" role="group" aria-labelledby="set-group-day">
+          <p class="settings-group-title" id="set-group-day">On the day</p>
+          <div class="settings-row settings-check">
+            <span class="settings-name" id="set-push-name"><svg class="ic" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M18 8a6 6 0 0 0-12 0c0 7-3 9-3 9h18s-3-2-3-9"/><path d="M13.73 21a2 2 0 0 1-3.46 0"/></svg>Push Notifications</span>
+            <span class="settings-desc" id="set-push-hint">Enable to receive announcements and submission rejections as a push notification.</span>
+            <label class="settings-knob">
+              <input id="set-push" type="checkbox" aria-labelledby="set-push-name" aria-describedby="set-push-hint" />
+              <span class="settings-switch" aria-hidden="true"><span class="switch-o">O</span><span class="switch-i">I</span></span>
+            </label>
+          </div>
+          <div class="settings-row settings-check">
+            <span class="settings-name" id="set-tile-cache-name"><svg class="ic" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M3 6.5 9 4l6 2.5L21 4v13.5L15 20l-6-2.5L3 20z"/><path d="M9 4v13.5"/><path d="M15 6.5V20"/></svg>Offline Map</span>
+            <span class="settings-desc" id="set-tile-cache-desc">Save previously loaded map data to reduce mobile data usage; may use up to a few hundred megabytes of storage.</span>
+            <label class="settings-knob">
+              <input id="set-tile-cache" type="checkbox" checked aria-labelledby="set-tile-cache-name" aria-describedby="set-tile-cache-desc" />
+              <span class="settings-switch" aria-hidden="true"><span class="switch-o">O</span><span class="switch-i">I</span></span>
+            </label>
+          </div>
+        </div>
+        <div class="settings-group settings-phone-group" role="group" aria-labelledby="set-group-phone">
+          <p class="settings-group-title" id="set-group-phone">Phone</p>
+          <div class="settings-row settings-check settings-app-row">
+            <span class="settings-name" id="set-app-layout-name"><svg class="ic" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="6.5" y="2.5" width="11" height="19" rx="2"/><path d="M6.5 17h11"/></svg>App Layout</span>
+            <span class="settings-desc" id="set-app-layout-desc">Use the App Layout mode instead.</span>
+            <label class="settings-knob">
+              <input id="set-app-layout" type="checkbox" checked aria-labelledby="set-app-layout-name" aria-describedby="set-app-layout-desc" />
+              <span class="settings-switch" aria-hidden="true"><span class="switch-o">O</span><span class="switch-i">I</span></span>
+            </label>
+          </div>
+          <div class="settings-row settings-check settings-haptics-row">
+            <span class="settings-name" id="set-haptics-name"><svg class="ic" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="8" y="4" width="8" height="16" rx="1.5"/><path d="m3 9 1.5 1.5L3 12l1.5 1.5L3 15"/><path d="m21 9-1.5 1.5L21 12l-1.5 1.5L21 15"/></svg>Haptic Feedback</span>
+            <label class="settings-knob">
+              <input id="set-haptics" type="checkbox" checked aria-labelledby="set-haptics-name" />
+              <span class="settings-switch" aria-hidden="true"><span class="switch-o">O</span><span class="switch-i">I</span></span>
+            </label>
+          </div>
+        </div>
+        </div>
+
+        <!-- Settings, second page: display options -->
+        <div class="settings-page" id="set-page-visual" hidden>
+          <div class="settings-group" role="group" aria-labelledby="set-group-visual">
+            <button id="set-visual-back" class="settings-back" type="button">
+              <svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M10.5 2.5 5 8l5.5 5.5"/></svg>
+              <span>Settings</span>
+            </button>
+            <p class="settings-group-title" id="set-group-visual">Visual</p>
+            <div class="settings-row settings-check">
+              <span class="settings-name" id="set-map-full-name"><svg class="ic" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M8 3.5H5A1.5 1.5 0 0 0 3.5 5v3"/><path d="M20.5 8V5A1.5 1.5 0 0 0 19 3.5h-3"/><path d="M3.5 16v3A1.5 1.5 0 0 0 5 20.5h3"/><path d="M16 20.5h3a1.5 1.5 0 0 0 1.5-1.5v-3"/></svg>Full Screen Map</span>
+              <span class="settings-desc" id="set-map-full-desc">Have the full screen map as the default view on the quest list.</span>
+              <label class="settings-knob">
+                <input id="set-map-full" type="checkbox" aria-labelledby="set-map-full-name" aria-describedby="set-map-full-desc" />
+                <span class="settings-switch" aria-hidden="true"><span class="switch-o">O</span><span class="switch-i">I</span></span>
+              </label>
+            </div>
+            <div class="settings-row settings-check">
+              <span class="settings-name" id="set-map-sharp-name"><svg class="ic" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M9 4 3.5 6v14L9 18l6 2 5.5-2V4L15 6 9 4z"/><path d="M9 4v14"/><path d="M15 6v14"/></svg>Sharper Map</span>
+              <span class="settings-desc" id="set-map-sharp-desc">Draw the map at your screen's full sharpness. Uses more battery.</span>
+              <label class="settings-knob">
+                <input id="set-map-sharp" type="checkbox" aria-labelledby="set-map-sharp-name" aria-describedby="set-map-sharp-desc" />
+                <span class="settings-switch" aria-hidden="true"><span class="switch-o">O</span><span class="switch-i">I</span></span>
+              </label>
+            </div>
+            <div class="settings-row settings-check">
+              <span class="settings-name" id="set-map-groups-name"><svg class="ic" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="8" cy="8.5" r="3.5"/><circle cx="16" cy="8.5" r="3.5"/><circle cx="12" cy="16" r="3.5"/></svg>Group Map Pins</span>
+              <span class="settings-desc" id="set-map-groups-desc">Show pins close together as one circle with a count until you zoom in.</span>
+              <label class="settings-knob">
+                <input id="set-map-groups" type="checkbox" checked aria-labelledby="set-map-groups-name" aria-describedby="set-map-groups-desc" />
+                <span class="settings-switch" aria-hidden="true"><span class="switch-o">O</span><span class="switch-i">I</span></span>
+              </label>
+            </div>
+            <div class="settings-row settings-check">
+              <span class="settings-name" id="set-hide-checklist-name"><svg class="ic" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="m3 17 2 2 4-4"/><path d="m3 7 2 2 4-4"/><path d="M13 6h8"/><path d="M13 12h8"/><path d="M13 18h8"/></svg>Hide Checklist</span>
+              <span class="settings-desc" id="set-hide-checklist-desc">Hide the checklist features on the quest list.</span>
+              <label class="settings-knob">
+                <input id="set-hide-checklist" type="checkbox" aria-labelledby="set-hide-checklist-name" aria-describedby="set-hide-checklist-desc" />
+                <span class="settings-switch" aria-hidden="true"><span class="switch-o">O</span><span class="switch-i">I</span></span>
+              </label>
+            </div>
+            <div class="settings-row settings-check">
+              <span class="settings-name" id="set-hide-dates-name"><svg class="ic" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="3.5" y="5" width="17" height="15.5" rx="2"/><path d="M3.5 10h17"/><path d="M8 3v4"/><path d="M16 3v4"/></svg>Hide Dates</span>
+              <label class="settings-knob">
+                <input id="set-hide-dates" type="checkbox" aria-labelledby="set-hide-dates-name" />
+                <span class="settings-switch" aria-hidden="true"><span class="switch-o">O</span><span class="switch-i">I</span></span>
+              </label>
+            </div>
+            <div class="settings-row settings-check">
+              <span class="settings-name" id="set-24h-name"><svg class="ic" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="12" r="9"/><path d="M12 7v5l3 2"/></svg>24-hour Time</span>
+              <label class="settings-knob">
+                <input id="set-24h" type="checkbox" aria-labelledby="set-24h-name" />
+                <span class="settings-switch" aria-hidden="true"><span class="switch-o">O</span><span class="switch-i">I</span></span>
+              </label>
+            </div>
+            <div class="settings-row settings-check">
+              <span class="settings-name" id="set-anim-name"><svg class="ic" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="3.5" y="3.5" width="17" height="17" rx="2"/><path d="M3.5 13.5h17"/><path d="m9.5 9.5 2.5-2.5 2.5 2.5"/></svg>Quest Panel Animation</span>
+              <span class="settings-desc" id="set-anim-desc">Enable alternative quest panel animation.</span>
+              <label class="settings-knob">
+                <input id="set-anim" type="checkbox" checked aria-labelledby="set-anim-name" aria-describedby="set-anim-desc" />
+                <span class="settings-switch" aria-hidden="true"><span class="switch-o">O</span><span class="switch-i">I</span></span>
+              </label>
+            </div>
+            <div class="settings-row settings-check">
+              <span class="settings-name" id="set-justify-name"><svg class="ic" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M4 5.5h16"/><path d="M4 10h16"/><path d="M4 14.5h16"/><path d="M4 19h9"/></svg>Justified Text</span>
+              <span class="settings-desc" id="set-justify-desc">Format paragraphs as justified rather than ragged.</span>
+              <label class="settings-knob">
+                <input id="set-justify" type="checkbox" aria-labelledby="set-justify-name" aria-describedby="set-justify-desc" />
+                <span class="settings-switch" aria-hidden="true"><span class="switch-o">O</span><span class="switch-i">I</span></span>
+              </label>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </header>
+
+  <main class="page-shell">
+    <section class="hero app-titled">
+      <div class="hero-board">
+        <h1 class="sign-bar app-titled">Register</h1>
+      </div>
+    </section>
+
+    <section class="section prose rg-top">
+      <p>Register for SCS.2 here. You can register as a team of three to five people, or as a
+        partner/individual (and we will assign you a team). At least half of each team must be UNSW
+        students and Arc members, and at least one of you needs to be on the
+        <a href="https://discord.gg/7XcsRgvaAU">event Discord server</a>. Only one person needs to
+        register for the whole team/pair.</p>
+      <p><strong>Important:</strong> You will receive an email with your ticket and a link to accept
+        the <a href="../terms/">terms and waiver</a> for yourself. <strong>Accepting the terms prior
+        to the event is required.</strong></p>
+    </section>
+
+    <!-- Event photos, the same as the home page's. Hidden when there
+         are none. -->
+    <section class="section rg-top">
+      <ul class="photo-strip" data-photo-strip hidden aria-label="Photos from the event"></ul>
+    </section>
+
+    <div id="rg-closed" class="section is-hidden">
+      <p><strong id="rg-closed-msg">Registrations are closed.</strong></p>
+      <p>Questions: @OrgCom on Discord.</p>
+    </div>
+
+    <div id="rego-form" class="section">
+      <div class="card rg-team">
+        <div class="rg-head"><span>How are you signing up?</span></div>
+        <div class="rg-member-body rg-modes">
+          <label class="rg-radio"><input type="radio" name="rg-mode" value="team" checked /> <span>As a team of three to five</span></label>
+          <label class="rg-radio"><input type="radio" name="rg-mode" value="solo" /> <span>Without a team, on my own or as a pair</span></label>
+        </div>
+      </div>
+
+      <div class="card rg-team">
+        <div class="rg-head"><span id="rg-team-head">Team</span></div>
+        <div class="rg-member-body">
+        <label class="sub-field" id="rg-team-field"><span>Team name</span>
+          <input id="rg-team" type="text" maxlength="40" autocomplete="off" />
+        </label>
+        <p class="rg-label">Which societies are you in?</p>
+        <div id="rg-societies" class="rg-checks"></div>
+        <p class="rg-label">Can we publish photos of you taken on the day?&nbsp;<span class="rg-req">*</span></p>
+        <label class="rg-radio"><input type="radio" name="rg-photo" value="1" /> <span>Yes, I give permission</span></label>
+        <label class="rg-radio"><input type="radio" name="rg-photo" value="0" /> <span>No, and I will tell organisers and photographers on the day</span></label>
+        </div>
+      </div>
+
+      <div id="rg-members"></div>
+      <p class="rg-add-row"><button id="rg-add" class="btn" type="button"><svg class="ic" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="9" cy="8" r="3.5"/><path d="M2.5 20c0-3.6 2.9-6.5 6.5-6.5s6.5 2.9 6.5 6.5"/><path d="M19 8v6"/><path d="M22 11h-6"/></svg><span id="rg-add-text">Add another member</span></button></p>
+
+      <section class="section">
+        <label class="sub-field"><span>Questions? (Optional)</span>
+          <textarea id="rg-questions" rows="2" maxlength="1000"></textarea>
+        </label>
+        <div class="rg-trap" aria-hidden="true">
+          <label>Website <input id="rg-website" type="text" tabindex="-1" autocomplete="off" /></label>
+        </div>
+        <div id="rg-turnstile" class="rg-turnstile"></div>
+        <div class="sub-actions">
+          <button id="rg-send" class="btn btn-accent" type="button">Register the team</button>
+        </div>
+        <p id="rg-status" class="sub-status" aria-live="polite"></p>
+      </section>
+    </div>
+
+    <section id="rego-done" class="section prose is-hidden">
+      <h2 class="section-heading">You&rsquo;re in</h2>
+      <p id="rg-done-line"></p>
+      <p id="rg-done-each">Reminder that each person accepts the terms and waiver for themselves, using the link in
+        their email. Please make sure to remind your teammates to open their email and accept the terms and waiver.</p>
+      <p id="rg-done-terms" class="is-hidden"><a id="rg-done-terms-link" class="btn btn-accent" href="../terms/">Read and accept the terms</a></p>
+      <p>Questions: <a href="mailto:westsocunsw@gmail.com">westsocunsw@gmail.com</a>.</p>
+    </section>
+  </main>
+
+  <footer class="site-footer">
+    <div class="site-footer-inner">
+      <div class="site-footer-brand">
+        <img src="../assets/icons/logo-64.png" srcset="../assets/icons/logo-128.png 2x" width="39" height="32" alt="" />
+        <strong>Sydney Challenge Scramble</strong><br />
+        A free, student-run scavenger hunt, challenge filled race all across Sydney, with free food and a $700 prize pool, organised by UNSW societies.
+      </div>
+      <div class="site-footer-links">
+        <a href="https://discord.gg/7XcsRgvaAU"><svg class="ic" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path fill="currentColor" stroke="none" d="M20.317 4.37a19.79 19.79 0 0 0-4.885-1.515.074.074 0 0 0-.079.037c-.21.375-.444.864-.608 1.25a18.27 18.27 0 0 0-5.487 0 12.64 12.64 0 0 0-.617-1.25.077.077 0 0 0-.079-.037A19.74 19.74 0 0 0 3.677 4.37a.07.07 0 0 0-.032.027C.533 9.046-.32 13.58.099 18.057a.082.082 0 0 0 .031.057 19.9 19.9 0 0 0 5.993 3.03.078.078 0 0 0 .084-.028c.462-.63.874-1.295 1.226-1.994a.076.076 0 0 0-.041-.106 13.1 13.1 0 0 1-1.872-.892.077.077 0 0 1-.008-.128c.126-.094.252-.192.372-.291a.074.074 0 0 1 .078-.01c3.928 1.793 8.18 1.793 12.062 0a.074.074 0 0 1 .078.009c.12.1.246.198.373.292a.077.077 0 0 1-.006.127 12.3 12.3 0 0 1-1.873.892.077.077 0 0 0-.041.107c.36.698.772 1.362 1.225 1.993a.076.076 0 0 0 .084.028 19.84 19.84 0 0 0 6.002-3.03.077.077 0 0 0 .032-.054c.5-5.177-.838-9.674-3.549-13.66a.061.061 0 0 0-.031-.03zM8.02 15.33c-1.183 0-2.157-1.085-2.157-2.419 0-1.333.956-2.419 2.157-2.419 1.21 0 2.176 1.096 2.157 2.42 0 1.333-.956 2.418-2.157 2.418zm7.975 0c-1.183 0-2.157-1.085-2.157-2.419 0-1.333.955-2.419 2.157-2.419 1.21 0 2.176 1.096 2.157 2.42 0 1.333-.946 2.418-2.157 2.418z"/></svg><span>Discord</span></a>
+        <a href="../questlist/"><svg class="ic" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 21s-7-5.1-7-11a7 7 0 1 1 14 0c0 5.9-7 11-7 11z"/><circle cx="12" cy="10" r="2.5"/></svg><span>Quest List</span></a>
+        <a href="../info/"><svg class="ic" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="12" r="9"/><path d="M12 11v6"/><path d="M11.95 7.5h.1"/></svg><span>Event Info</span></a>
+        <a href="../welfare/"><svg class="ic" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 20.3 10.7 19C6 14.9 3 12.2 3 8.9 3 6.2 5.1 4 7.8 4c1.6 0 3.1.8 4.2 2 1.1-1.2 2.6-2 4.2-2 2.7 0 4.8 2.2 4.8 4.9 0 3.3-3 6-7.7 10.2L12 20.3z"/></svg><span>Welfare &amp; Safety</span></a>
+        <a href="../tab/"><svg class="ic" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M7.76 21.01h8.48"/><path d="M12 13.59v7.42"/><path d="M6.7 2.99h10.6v5.3a5.3 5.3 0 0 1-10.6 0V2.99z"/><path d="M6.7 5.11H3.52v1.06a4.24 4.24 0 0 0 3.18 4.13"/><path d="M17.3 5.11h3.18v1.06a4.24 4.24 0 0 1-3.18 4.13"/></svg><span>Tab</span></a>
+        <a href="../submit/"><svg class="ic" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M3 8A1.5 1.5 0 0 1 4.5 6.5h2.6l1.7-2.2h6.4l1.7 2.2h2.6A1.5 1.5 0 0 1 21 8v10a1.5 1.5 0 0 1-1.5 1.5h-15A1.5 1.5 0 0 1 3 18V8z"/><circle cx="12" cy="12.5" r="3.75"/></svg><span>Submit a Quest</span></a>
+      </div>
+    </div>
+  </footer>
+
+  <nav class="tab-bar" aria-label="App navigation">
+    <a href="../" class="tab-home">
+      <svg viewBox="0 0.75 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M3.63 10.61 12 3.63l8.37 6.98"/><path d="M5.49 9.68V20.37h4.65v-5.58h3.72v5.58h4.65V9.68"/></svg>
+      <svg class="icon-fill" viewBox="0 0.75 24 24" fill="currentColor" aria-hidden="true"><path d="M12 2.66 2.95 10.21a.95.95 0 0 0 1.22 1.47l.21-.18V19.43a1.91 1.91 0 0 0 1.91 1.91h3.9v-5.62h3.62v5.62h3.9a1.91 1.91 0 0 0 1.91-1.91v-7.94l.21.18a.95.95 0 0 0 1.22-1.47L12 2.66z"/></svg>
+      <span>Home</span>
+    </a>
+    <a href="../questlist/" class="tab-quests">
+      <svg viewBox="0 -0.55 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 21s-7-5.1-7-11a7 7 0 1 1 14 0c0 5.9-7 11-7 11z"/><circle cx="12" cy="10" r="2.5"/></svg>
+      <svg class="icon-fill" viewBox="0 -0.55 24 24" fill="currentColor" stroke="currentColor" stroke-width="2" stroke-linejoin="round" aria-hidden="true"><path fill-rule="evenodd" d="M12 21s-7-5.1-7-11a7 7 0 1 1 14 0c0 5.9-7 11-7 11zm0-7.25a3.75 3.75 0 1 0 0-7.5 3.75 3.75 0 0 0 0 7.5z"/></svg>
+      <span>Quests</span>
+    </a>
+    <a href="../submit/" class="tab-submit">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M3 8A1.5 1.5 0 0 1 4.5 6.5h2.6l1.7-2.2h6.4l1.7 2.2h2.6A1.5 1.5 0 0 1 21 8v10a1.5 1.5 0 0 1-1.5 1.5h-15A1.5 1.5 0 0 1 3 18V8z"/><circle cx="12" cy="12.5" r="3.75"/></svg>
+      <svg class="icon-fill" viewBox="0 0 24 24" fill="currentColor" stroke="currentColor" stroke-width="2" stroke-linejoin="round" aria-hidden="true"><path fill-rule="evenodd" d="M3 8A1.5 1.5 0 0 1 4.5 6.5h2.6l1.7-2.2h6.4l1.7 2.2h2.6A1.5 1.5 0 0 1 21 8v10a1.5 1.5 0 0 1-1.5 1.5h-15A1.5 1.5 0 0 1 3 18V8zm9 9.25a4.75 4.75 0 1 0 0-9.5 4.75 4.75 0 0 0 0 9.5zm0-3.7a1.05 1.05 0 1 0 0-2.1 1.05 1.05 0 0 0 0 2.1z"/></svg>
+      <span>Submit</span>
+    </a>
+    <a href="../info/" class="tab-info">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="12" r="9"/><path d="M12 11v6"/><path d="M11.95 7.5h.1"/></svg>
+      <svg class="icon-fill" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path fill-rule="evenodd" clip-rule="evenodd" d="M12 22a10 10 0 1 0 0-20 10 10 0 0 0 0 20zM12 6.4a1.2 1.2 0 1 1 0 2.4 1.2 1.2 0 0 1 0-2.4zm-1.1 4.2h2.2v7h-2.2z"/></svg>
+      <span>Info</span>
+    </a>
+    <a href="../welfare/" class="tab-welfare">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 20.3 10.7 19C6 14.9 3 12.2 3 8.9 3 6.2 5.1 4 7.8 4c1.6 0 3.1.8 4.2 2 1.1-1.2 2.6-2 4.2-2 2.7 0 4.8 2.2 4.8 4.9 0 3.3-3 6-7.7 10.2L12 20.3z"/></svg>
+      <svg class="icon-fill" viewBox="0 0 24 24" fill="currentColor" stroke="currentColor" stroke-width="2" stroke-linejoin="round" aria-hidden="true"><path d="M12 20.3 10.7 19C6 14.9 3 12.2 3 8.9 3 6.2 5.1 4 7.8 4c1.6 0 3.1.8 4.2 2 1.1-1.2 2.6-2 4.2-2 2.7 0 4.8 2.2 4.8 4.9 0 3.3-3 6-7.7 10.2L12 20.3z"/></svg>
+      <span>Welfare</span>
+    </a>
+    <a href="../tab/" class="tab-tab">
+      <svg viewBox="0 -0.95 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M7.76 21.01h8.48"/><path d="M12 13.59v7.42"/><path d="M6.7 2.99h10.6v5.3a5.3 5.3 0 0 1-10.6 0V2.99z"/><path d="M6.7 5.11H3.52v1.06a4.24 4.24 0 0 0 3.18 4.13"/><path d="M17.3 5.11h3.18v1.06a4.24 4.24 0 0 1-3.18 4.13"/></svg>
+      <svg class="icon-fill" viewBox="0 -0.95 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M7.76 21.01h8.48"/><path d="M12 13.59v7.42"/><path fill="currentColor" d="M6.7 2.99h10.6v5.3a5.3 5.3 0 0 1-10.6 0V2.99z"/><path d="M6.7 5.11H3.52v1.06a4.24 4.24 0 0 0 3.18 4.13"/><path d="M17.3 5.11h3.18v1.06a4.24 4.24 0 0 1-3.18 4.13"/></svg>
+      <span>Tab</span>
+    </a>
+  </nav>
+
+  <script src="../assets/site.js" defer></script>
+  <script src="../assets/site-viewer.js" defer></script>
+  <script src="../assets/site-chrome.js" defer></script>
+  <script src="../assets/site-input.js" defer></script>
+  <script src="../assets/site-app.js" defer></script>
+  <script src="../assets/photo-strip.js" defer></script>
+  <script src="rego.js" defer></script>
+</body>
+</html>

@@ -1,0 +1,15 @@
+{
+  "name": "scs-phone",
+  "private": true,
+  "type": "module",
+  "scripts": {
+    "dev": "wrangler dev",
+    "deploy": "wrangler deploy",
+    "secrets": "wrangler secret bulk secrets.json",
+    "secrets:check": "wrangler secret list",
+    "test": "node tests/verify-phone.mjs"
+  },
+  "devDependencies": {
+    "wrangler": "^4.0.0"
+  }
+}

@@ -1,0 +1,10 @@
+{
+  // npm run typecheck, the dashboard's half: the parts of the page's
+  // script (src/dash/js/, joined into one script by console-page.js) and
+  // the spinner's, with the site's options (tsconfig.site.json says what
+  // they check). What the parts share through window.dash is declared in
+  // types/dash.d.ts.
+  "extends": "./tsconfig.site.json",
+  "include": ["src/dash/js/*.js", "src/dash/spinner.js", "types/browser.d.ts", "types/shared.d.ts", "types/dash.d.ts"],
+  "exclude": []
+}

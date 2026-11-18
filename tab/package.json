@@ -1,0 +1,43 @@
+{
+  "name": "scs-tab-bot",
+  "private": true,
+  "type": "module",
+  "imports": {
+    "#dash-files": {
+      "workerd": "./src/dash/files.js",
+      "node": "./src/dash/files-node.js"
+    }
+  },
+  "scripts": {
+    "seed": "node scripts/build-seed.mjs",
+    "vapid": "node scripts/gen-vapid.mjs",
+    "register": "node scripts/register.mjs",
+    "test": "node tests/verify-console.mjs && node tests/verify-migrations.mjs && node tests/verify-migrate.mjs && node tests/verify-email.mjs",
+    "test:ui": "node tests/verify-console-ui.cjs && node tests/verify-email.cjs",
+    "test:affected": "node scripts/affected.mjs --run",
+    "test:affected:list": "node scripts/affected.mjs",
+    "test:all": "node scripts/affected.mjs --all --run",
+    "dev": "wrangler dev",
+    "deploy": "node scripts/deploy.mjs",
+    "secrets": "wrangler secret bulk secrets.json",
+    "secrets:check": "node scripts/secrets-check.mjs",
+    "db:schema": "node scripts/d1-run.mjs schema.sql",
+    "db:seed": "node scripts/d1-run.mjs seed.sql",
+    "db:migrate": "node scripts/migrate.mjs",
+    "db:check": "node scripts/db-check.mjs",
+    "backup": "node scripts/backup.mjs",
+    "db:quests": "npm run db:migrate",
+    "test:workers": "node scripts/affected.mjs --all --workers --run",
+    "test:browsers": "node scripts/affected.mjs --all --browsers --run",
+    "check": "node scripts/check-rules.mjs",
+    "lint": "cd .. && eslint website",
+    "typecheck": "tsc && tsc -p tsconfig.site.json && tsc -p tsconfig.sw.json && tsc -p tsconfig.dash.json"
+  },
+  "devDependencies": {
+    "wrangler": "^4.0.0",
+    "eslint": "^9.0.0",
+    "playwright": "1.63.0",
+    "typescript": "^7.0.2",
+    "@cloudflare/workers-types": "^5.20261103.1"
+  }
+}

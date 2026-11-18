@@ -1,0 +1,47 @@
+/* The photo question under the terms, for the person the link is for.
+   The radios are the sign-up form's (rego.css): drawn rather than the
+   browser's own, round, the text boxes' edge and the green once picked. */
+
+.tc-photo { margin: 0; padding: 0; border: 0; min-width: 0; }
+.tc-photo legend {
+  padding: 0;
+  margin: 0 0 6px;
+  font-size: var(--t-small);
+  font-weight: 800;
+  line-height: 1.4;
+}
+.tc-radio {
+  display: flex;
+  gap: 10px;
+  align-items: center;
+  padding: 6px 0;
+  cursor: pointer;
+  line-height: 1.4;
+}
+.tc-radio input {
+  appearance: none;
+  -webkit-appearance: none;
+  flex: none;
+  width: 20px;
+  height: 20px;
+  margin: 0;
+  border: 2px solid var(--border-strong);
+  border-radius: 50%;
+  background: var(--surface);
+  cursor: pointer;
+}
+.tc-radio input:checked {
+  border-color: var(--accent-solid);
+  background: var(--accent-solid);
+  box-shadow: inset 0 0 0 3px var(--surface);
+}
+.tc-radio input:focus-visible { outline: 2px solid var(--accent); outline-offset: 2px; }
+#tc-photo-status:empty { display: none; }
+
+/* The terms are one long document read straight through, so they take
+   a wider measure than the 31em the other prose pages keep: held to
+   that, they sat down the left of a desktop screen with the rest of the
+   page empty beside them. 40em is about ninety characters a line. */
+#tc-terms > p,
+#tc-terms > ul,
+#tc-terms > ol { max-width: 40em; }

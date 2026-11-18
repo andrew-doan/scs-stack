@@ -1,0 +1,5 @@
+# The dashboard page's files are served as they are on disk. LF on every
+# checkout, so a deploy from Windows sends the same bytes as one from
+# anywhere else.
+src/dash/dash.* text eol=lf
+src/dash/js/*.js text eol=lf

@@ -1,0 +1,101 @@
+/* The full quest list: one readable page, prose on the paper. */
+
+.fl-summary {
+  color: var(--muted);
+  font-size: 0.92rem;
+  margin: 0 0 4px;
+}
+
+/* a region's heading opens straight on its rule: the shared heading
+   pulls itself up into a gap above it, and the quest before it has none */
+#fl-list > .section-heading {
+  margin: 0 0 4px;
+  padding-top: 12px;
+}
+
+.fl-quest {
+  padding: 18px 0 20px;
+  border-bottom: 1px solid var(--border);
+}
+.fl-quest:last-child { border-bottom: 0; }
+
+.fl-head {
+  display: flex;
+  align-items: baseline;
+  gap: 10px;
+  flex-wrap: wrap;
+}
+.fl-name {
+  margin: 0;
+  font-size: 1.15rem;
+  flex: 1;
+  min-width: 200px;
+}
+.fl-live {
+  color: var(--alert-ink);
+  font-size: 0.72rem;
+  font-weight: 700;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  margin-left: 8px;
+}
+.fl-points {
+  font-weight: 700;
+  color: var(--accent-dark);
+  white-space: nowrap;
+}
+
+.fl-location {
+  margin: 6px 0 0;
+  color: var(--muted);
+  font-size: 0.92rem;
+}
+.fl-body { margin-top: 8px; }
+.fl-flavour {
+  margin: 8px 0 0;
+  font-style: italic;
+  color: var(--muted);
+}
+
+/* three short columns fit any phone; the shared table's 520px
+   minimum is for tables that live in a scroll box (table.nice sets
+   it at the same specificity, so match it to win by load order) */
+.fl-codes { margin-top: 10px; }
+table.fl-codes { min-width: 0; }
+.fl-codes .fl-num { text-align: right; white-space: nowrap; font-variant-numeric: tabular-nums; }
+.fl-codes .fl-band td { color: var(--muted); }
+
+.fl-shots {
+  display: flex;
+  gap: 6px;
+  flex-wrap: wrap;
+  margin-top: 10px;
+}
+.fl-shot {
+  padding: 0;
+  border: 1px solid var(--border);
+  border-radius: 2px;
+  background: transparent;
+  cursor: pointer;
+  width: 128px;
+  height: 96px;
+  overflow: hidden;
+}
+.fl-shot img {
+  display: block;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+.fl-file { margin: 8px 0 0; }
+.fl-file a { color: var(--accent-dark); font-weight: 700; }
+
+.fl-links {
+  margin: 10px 0 0;
+  display: flex;
+  gap: 18px;
+}
+.fl-links a {
+  color: var(--accent-dark);
+  font-weight: 700;
+}

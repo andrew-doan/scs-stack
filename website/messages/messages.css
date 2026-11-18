@@ -1,0 +1,360 @@
+/* ---------------- Messages ----------------
+
+   Three edges, each with one job, and every row of the page uses them.
+   The key edge holds what identifies a row: the page name, the time on
+   each message, the notification switch. The reading edge holds
+   headlines and bodies, capped at about sixty-two characters. The
+   third edge holds what the message brought with it — its photos, then
+   its files one to a row with its size. A message with nothing
+   attached leaves that cell empty and the rules still cross it.
+
+   The photos go there rather than under the body because a page where
+   the third column only ever holds a file row is a page with a dead
+   third column, which is the fault the rail was put there to answer.
+   Text on the left, picture on the right is how a notice reads, and
+   the cost is that a two-line message with three photos leaves the
+   reading column short.
+
+   One black object. The board at the top carries the page name and,
+   when the newest message is flagged urgent, that message whole: the
+   largest type on the page, because it is the only thing here that
+   changes what somebody does in the next hour. Everything else is on
+   the paper. Severity is a word rather than a chip — the alert ink on
+   the paper, the sign's own red on the board — so red is on the page
+   once.
+
+   No cards. A message is a time, a headline, a body and rows of what
+   came with it, separated by a hairline. The notice is the same object
+   with the sign's ink.
+
+   Below 940px the rail has nowhere to go, so it drops under the body
+   and the page is two tracks. Below 700px the key column is a seventh
+   of the screen holding a date, so the time becomes a stamp line above
+   the headline and the page is one column. */
+
+.msg-page {
+  --msg-key: 124px;      /* the time, with the urgent flag under it */
+  --msg-gut: 32px;
+  --msg-measure: 500px;  /* about 62 characters at 16px */
+  --msg-head: clamp(1.3rem, 1.9vw, 1.6rem);
+  --msg-display: clamp(1.85rem, 3.2vw, 2.5rem);
+  --msg-title: clamp(1.125rem, 1.5vw, 1.25rem);
+  /* a hairline on the sign. It cannot follow --border, which is drawn
+     for paper; a sign is the same black in both themes. */
+  --msg-rule: rgba(255, 255, 255, 0.26);
+}
+
+/* one set of columns, every row */
+.msg-row {
+  display: grid;
+  grid-template-columns: var(--msg-key) var(--msg-measure) minmax(0, 1fr);
+  column-gap: var(--msg-gut);
+  align-items: start;
+}
+
+/* ---- the top: the page's name, then the urgent message ---- */
+
+/* The page's name on the paper: a .hero, so it sits where every other
+   page's name sits. An urgent message is a black board of its own under
+   it, the full width of the screen. */
+.msg-board {
+  --bleed-m: calc(50% - 50vw);
+  --bleed-p: calc(50vw - 50%);
+}
+
+.msg-mast { align-items: baseline; }
+
+/* The page's name at the size every other page's name is; `.themed h1`
+   has it. It used to be set small, on the argument that the urgent
+   notice under it is the largest type on the page — which left one page
+   whose name was a running head and eight whose name was the name. */
+.msg-board h1 { grid-column: 1 / -1; }
+
+.msg-notice-slot:empty { display: none; }
+.msg-notice-slot {
+  margin: var(--after-title) var(--bleed-m) 0;
+  padding: 0 var(--bleed-p) 34px;
+  background: var(--sign-bg);
+  color: var(--sign-ink);
+}
+
+/* The app bar already reads Messages, so the masthead is marked
+   app-titled in the markup and goes there. What is left at the top is
+   the urgent message, and until there is one it is empty — so it is
+   off the page until messages.js says there is something on it, and
+   then the black starts under the bar. */
+html.is-pwa .msg-board:not(.has-notice) { display: none; }
+html.is-pwa .msg-board { padding-top: 0; }
+html.is-pwa .msg-notice-slot { margin-top: 0; }
+.msg-notice { padding-top: 26px; }
+
+/* ---- a message ---- */
+
+.msg-list .msg-card { padding: 22px 0; }
+.msg-list .msg-card + .msg-card { border-top: 1px solid var(--border); }
+
+/* what identifies the message: the time, and the flag under it */
+.msg-key { align-self: baseline; grid-column: 1; grid-row: 1; }
+
+.msg-time {
+  display: block;
+  font-size: var(--t-small);
+  font-weight: 700;
+  line-height: 1.45;
+  font-variant-numeric: tabular-nums lining-nums;
+  color: var(--muted);
+}
+
+.msg-notice .msg-time { color: var(--sign-ink); }
+
+/* red as words, once on the page */
+.msg-urgent {
+  display: block;
+  margin: 0;
+  font-size: var(--t-small);
+  font-weight: 700;
+  line-height: 1.45;
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+  color: var(--alert-ink);
+}
+
+/* on the sign the paper red buzzes, so it takes the sign's own red */
+.msg-notice .msg-urgent { color: var(--alert-sign); }
+
+.msg-card .msg-title {
+  align-self: baseline;
+  grid-column: 2 / 4;
+  grid-row: 1;
+  margin: 0 0 10px;
+  font-size: var(--msg-title);
+  font-weight: 800;
+  letter-spacing: -0.02em;
+  line-height: 1.22;
+}
+
+.msg-notice .msg-title {
+  margin-bottom: 18px;
+  font-size: var(--msg-display);
+  font-weight: 850;
+  letter-spacing: -0.035em;
+  line-height: 1.06;
+}
+
+.msg-body {
+  grid-column: 2;
+  grid-row: 2;
+  font-size: var(--t-body);
+  line-height: 1.6;
+}
+
+.msg-notice .msg-body { color: var(--sign-ink); }
+
+/* ---- what the message brings with it ---- */
+
+.msg-rail { grid-column: 3; grid-row: 2; min-width: 0; }
+
+/* photos run one to a row at the column's width, in their own shape;
+   only a very tall one is cropped. A tap opens the full photo in
+   place, where it zooms. */
+.msg-shots {
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: 8px;
+}
+
+.msg-shots + .msg-files { margin-top: 10px; }
+
+.msg-shot {
+  display: block;
+  width: 100%;
+  padding: 0;
+  border: 0;
+  background: transparent;
+  cursor: pointer;
+}
+
+.msg-shot img {
+  display: block;
+  width: 100%;
+  height: auto;
+  max-height: 62vh;
+  object-fit: cover;
+  background: var(--tint);
+  border-radius: 2px;
+}
+
+/* The board is the top of the page and must not become the whole first
+   screen: a reader who cannot see that there is a log below it has no
+   reason to scroll. A tall picture on it is cropped harder than one in
+   the log, and a tap still opens the whole thing. */
+.msg-notice .msg-shot img {
+  max-height: 34vh;
+  background: rgba(255, 255, 255, 0.1);
+}
+
+/* everything else attached is a row: the name, and the figure that
+   belongs to it, on a hairline. A name that opens something is
+   underlined; nothing else in the column is. */
+.msg-files {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+}
+
+.msg-files li {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) auto;
+  column-gap: 16px;
+  align-items: baseline;
+  padding: 7px 0;
+  border-top: 1px solid var(--border);
+  font-size: var(--t-small);
+  line-height: 1.45;
+}
+
+.msg-notice .msg-files li { border-top-color: var(--msg-rule); }
+
+.msg-files a {
+  color: inherit;
+  font-weight: 700;
+  word-break: break-word;
+  text-decoration: underline;
+  text-decoration-thickness: 2px;
+  text-underline-offset: 3px;
+}
+
+.msg-file-size {
+  font-weight: 700;
+  font-variant-numeric: tabular-nums lining-nums;
+  text-align: right;
+  white-space: nowrap;
+  color: var(--muted);
+}
+
+.msg-notice .msg-file-size { color: var(--sign-muted); }
+
+/* ---- a quest embedded in the notice ----
+   The card is drawn for paper. On the sign it keeps its shape and
+   takes the sign's ink, or it reads as a hole cut in the board. */
+.msg-notice .mq {
+  background: transparent;
+  border-color: var(--msg-rule);
+}
+
+.msg-notice .mq-points,
+.msg-notice .mq-meta { color: var(--sign-muted); }
+
+/* the chip is black on white everywhere else, which is invisible here */
+.msg-notice .code {
+  background: var(--sign-ink);
+  color: var(--sign-bg);
+}
+
+.msg-notice .md code {
+  background: rgba(255, 255, 255, 0.12);
+  border-color: var(--msg-rule);
+}
+
+.msg-notice .md a { color: var(--sign-ink); }
+/* the two buttons are paper objects and keep their own ink */
+.msg-notice .md .mq-actions a.btn { color: var(--text); }
+.msg-notice .md .mq-actions a.btn-accent { color: var(--on-accent); }
+
+/* ---- the notification switch ----
+   The one thing on this page that is set rather than read, drawn the
+   way the settings menu draws a setting: its name, a line saying what
+   it does now, and the rocker at the far edge — all on the reading
+   column, so it lines up with the messages under
+   it instead of hanging the switch in the time column like a stray
+   control. */
+.msg-set {
+  grid-column: 2 / 3;
+  position: relative;
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) auto;
+  column-gap: 20px;
+  align-items: center;
+  margin: 0;
+  padding: 0;
+  cursor: pointer;
+}
+.msg-set-name {
+  grid-column: 1;
+  grid-row: 1;
+  display: flex;
+  align-items: flex-start;
+  gap: 8px;
+  font-weight: 700;
+  line-height: 1.35;
+}
+.msg-set-name .ic { width: 1.15em; }
+.msg-set .settings-switch { grid-column: 2; grid-row: 1; }
+.msg-set input { position: absolute; opacity: 0; width: 1px; height: 1px; }
+
+.msg-set input:disabled { cursor: default; }
+.msg-set input:disabled + .settings-switch { opacity: 0.55; }
+
+/* ---- the log ---- */
+
+.msg-set-sec + .section { margin-top: 34px; }
+
+/* The log opens on the rule whether or not it is given a word.
+   It has one only when a notice is sitting above it, because then the
+   rest of the list is the older part of it. */
+.msg-log {
+  border-top: var(--rule-w) solid var(--rule-ink);
+  padding-top: 14px;
+}
+
+.msg-log.has-head {
+  border-top: 0;
+  padding-top: 0;
+}
+
+.msg-log .section-heading {
+  margin: 0 0 4px;
+  font-size: var(--msg-head);
+  font-weight: 800;
+  letter-spacing: -0.03em;
+  line-height: 1.15;
+}
+
+/* the status line and the switch's reason both read, so both sit on
+   the reading edge */
+#msg-status,
+#msg-push-hint { margin-left: calc(var(--msg-key) + var(--msg-gut)); }
+#msg-status:empty { display: none; }
+
+/* ---- two tracks: the rail has nowhere left to go ---- */
+@media (max-width: 939px) {
+  .msg-row { grid-template-columns: var(--msg-key) minmax(0, var(--msg-measure)); }
+  /* the page's name stays on the page's edge, where every other page
+     has it, rather than stepping in to the reading edge */
+  .msg-card .msg-title { grid-column: 2 / 3; }
+  .msg-body { grid-column: 2; grid-row: 2; }
+  .msg-rail { grid-column: 2; grid-row: 3; margin-top: 14px; }
+}
+
+/* ---- one column: the time becomes a stamp above the headline ---- */
+@media (max-width: 699px) {
+  .msg-row { grid-template-columns: minmax(0, 1fr); column-gap: 0; }
+  .msg-board h1,
+  .msg-key,
+  .msg-card .msg-title,
+  .msg-body,
+  .msg-rail { grid-column: 1; grid-row: auto; }
+  .msg-key {
+    display: flex;
+    align-items: baseline;
+    gap: 10px;
+  }
+  .msg-card .msg-title { margin-top: 8px; }
+  .msg-notice .msg-title { margin-bottom: 14px; }
+  .msg-rail { margin-top: 14px; }
+  .msg-set { grid-column: 1; }
+  #msg-status,
+  #msg-push-hint { margin-left: 0; }
+  .msg-notice-slot { padding-bottom: 26px; }
+  .msg-notice { padding-top: 20px; }
+}

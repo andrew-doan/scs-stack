@@ -1,0 +1,589 @@
+/* The replay: the map, its key, the controls under it, the teams and
+   the latest quests. The replay page and a team's page both load it. */
+.rp-map-card {
+  position: relative;
+  border: 1px solid var(--border);
+  border-radius: 2px;
+  overflow: hidden;
+  background: var(--tint);
+}
+.rp-map { width: 100%; height: 62vh; height: clamp(260px, 62svh, 660px); }
+.rp-single .rp-map { height: 50vh; height: clamp(240px, 50svh, 520px); }
+.rp-map.maplibregl-map { font-family: inherit; -webkit-tap-highlight-color: transparent; }
+.rp-canvas { position: absolute; top: 0; left: 0; pointer-events: none; }
+.rp-status {
+  position: absolute;
+  inset: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin: 0;
+  padding: 16px;
+  color: var(--muted);
+  text-align: center;
+}
+.rp-status[hidden] { display: none; }
+
+/* the map's own controls, as on the quest map */
+.rp-map .maplibregl-ctrl-group {
+  border: 1px solid var(--border-strong);
+  border-radius: 2px;
+  background: var(--surface);
+  box-shadow: var(--shadow);
+}
+.rp-map .maplibregl-ctrl-group button,
+.rp-map .maplibregl-ctrl-group button:not(:disabled):hover {
+  display: grid;
+  place-items: center;
+  width: 38px;
+  height: 38px;
+  border: 0;
+  border-radius: 0;
+  background: var(--surface);
+  color: var(--text);
+  font: 800 22px/1 "Helvetica Neue", "SCS Heros", Helvetica, Arial, sans-serif;
+}
+.rp-map .maplibregl-ctrl-group button + button { border-top: 1px solid var(--border); }
+.rp-map .maplibregl-ctrl-group button .maplibregl-ctrl-icon { display: none; }
+.rp-map .maplibregl-ctrl-zoom-in::before { content: "+"; }
+.rp-map .maplibregl-ctrl-zoom-out::before { content: "\2212"; }
+.rp-map .maplibregl-ctrl-group button:disabled { color: var(--muted); }
+.rp-map .maplibregl-ctrl-group button:focus { box-shadow: none; }
+.rp-map .maplibregl-ctrl-group button:focus-visible { outline: 2px solid var(--accent); outline-offset: -2px; }
+.rp-map .maplibregl-ctrl-bottom-right .maplibregl-ctrl-attrib {
+  margin: 0;
+  border-radius: 2px 0 0 0;
+  background: var(--surface);
+  color: var(--muted);
+  font-family: inherit;
+  font-size: var(--t-micro);
+}
+.rp-map .maplibregl-ctrl-attrib a { color: var(--text); }
+
+/* the full-screen button over the map, as on the quest map; the two
+   glyphs cross-fade in one slot */
+.rp-map-btn {
+  position: absolute;
+  top: 10px;
+  right: 10px;
+  z-index: 3; /* over the map and its canvas */
+  display: inline-grid;
+  place-items: center;
+  width: 38px;
+  height: 38px;
+  padding: 0;
+  border: 1px solid var(--border-strong);
+  border-radius: 2px;
+  background: var(--surface);
+  color: var(--text);
+  box-shadow: var(--shadow);
+  cursor: pointer;
+}
+.rp-map-btn:active { transform: translate(1px, 1px); box-shadow: none; }
+.rp-map-btn svg {
+  grid-area: 1 / 1;
+  width: 19px;
+  height: 19px;
+  transition:
+    opacity   var(--icon-swap-dur) var(--icon-swap-ease),
+    filter    var(--icon-swap-dur) var(--icon-swap-ease),
+    transform var(--icon-swap-dur) var(--icon-swap-ease);
+}
+.rp-icon-shrink,
+.rp.is-full .rp-icon-expand {
+  opacity: 0;
+  filter: blur(var(--icon-swap-blur));
+  transform: scale(var(--icon-swap-start-scale));
+}
+.rp-icon-expand,
+.rp.is-full .rp-icon-shrink {
+  opacity: 1;
+  filter: blur(0);
+  transform: scale(1);
+}
+@media (prefers-reduced-motion: reduce) {
+  .rp-map-btn svg { transition: none !important; }
+}
+
+/* a tapped team or quest: the black sign */
+.rp-tip .maplibregl-popup-content {
+  padding: 7px 10px;
+  border-radius: 2px;
+  background: var(--sign-bg);
+  color: var(--sign-ink);
+  box-shadow: inset 0 0 0 1px var(--sign-edge);
+  font-family: inherit;
+  font-size: var(--t-small);
+  line-height: 1.35;
+}
+.rp-tip.maplibregl-popup-anchor-bottom .maplibregl-popup-tip,
+.rp-tip.maplibregl-popup-anchor-bottom-left .maplibregl-popup-tip,
+.rp-tip.maplibregl-popup-anchor-bottom-right .maplibregl-popup-tip { border-top-color: var(--sign-bg); }
+.rp-tip.maplibregl-popup-anchor-top .maplibregl-popup-tip,
+.rp-tip.maplibregl-popup-anchor-top-left .maplibregl-popup-tip,
+.rp-tip.maplibregl-popup-anchor-top-right .maplibregl-popup-tip { border-bottom-color: var(--sign-bg); }
+.rp-tip.maplibregl-popup-anchor-left .maplibregl-popup-tip { border-right-color: var(--sign-bg); }
+.rp-tip.maplibregl-popup-anchor-right .maplibregl-popup-tip { border-left-color: var(--sign-bg); }
+.rp-tip-body { display: grid; gap: 2px; }
+.rp-tip-name { font-weight: 800; }
+.rp-tip-quest { font-weight: 700; }
+.rp-tip-line { opacity: 0.85; }
+
+/* what the two marks on the map mean */
+.rp-key {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px 20px;
+  margin: 10px 0 0;
+  padding: 0;
+  list-style: none;
+  color: var(--muted);
+  font-size: var(--t-small);
+}
+.rp-key li { display: flex; align-items: center; gap: 8px; }
+.rp-key-dash {
+  width: 26px;
+  height: 0;
+  border-top: 3px dashed var(--text);
+}
+.rp-key-ring {
+  width: 9px;
+  height: 9px;
+  border: 2.5px solid var(--muted);
+  border-radius: 50%;
+  background: var(--surface);
+}
+/* a team with no route: an ink ring */
+.rp-key-ring-other { border: 2px solid var(--text); }
+.rp-key li[hidden] { display: none; }
+
+/* play, the time, the speed, and the day under them */
+.rp-controls { margin-top: 18px; }
+.rp-controls-head {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 12px 16px;
+}
+.rp-play { min-width: 8.5em; }
+.rp-play svg { width: 18px; height: 18px; flex: none; }
+.rp-icon-pause, .is-playing .rp-icon-play { display: none; }
+.is-playing .rp-icon-pause { display: block; }
+.rp-clock {
+  margin: 0;
+  min-width: 5.2em;
+  font-size: var(--t-head);
+  font-weight: 800;
+  font-variant-numeric: tabular-nums;
+  letter-spacing: -0.02em;
+}
+/* one control: three buttons sharing their edges */
+.rp-speed { display: flex; gap: 0; margin-left: auto; }
+.rp-speed button + button { margin-left: -2px; }
+.rp-speed button[aria-pressed="true"] { position: relative; z-index: 1; }
+.rp-speed button {
+  min-height: 48px;
+  padding: 0 14px;
+  border: 2px solid var(--text);
+  border-radius: 2px;
+  background: transparent;
+  color: var(--text);
+  font: inherit;
+  font-size: var(--t-body);
+  font-weight: 800;
+  cursor: pointer;
+  transition: background-color var(--duration-quick) var(--ease-smooth-out), color var(--duration-quick) var(--ease-smooth-out);
+}
+.rp-speed button[aria-pressed="true"] {
+  background: var(--sign-bg);
+  border-color: var(--pick-edge);
+  color: var(--sign-ink);
+}
+@media (max-width: 560px) {
+  .rp-speed { margin-left: 0; width: 100%; }
+  .rp-speed button { flex: 1; }
+}
+.rp-scrub-wrap { position: relative; margin-top: 14px; padding-bottom: 22px; }
+/* the slider is drawn in the system: a square thumb on a 4px bar, the
+   part played in green. The bar runs from the thumb's centre at one end
+   to its centre at the other, so the green ends under the thumb. */
+.rp-scrub-track {
+  position: absolute;
+  top: 14px;
+  left: 9px;
+  right: 9px;
+  height: 4px;
+  background: var(--border-strong);
+  pointer-events: none;
+}
+.rp-scrub-fill { position: absolute; top: 0; bottom: 0; left: 0; width: 0; background: var(--accent-solid); }
+.rp-scrub {
+  position: relative;
+  display: block;
+  width: 100%;
+  height: 32px;
+  margin: 0;
+  background: transparent;
+  -webkit-appearance: none;
+  appearance: none;
+  touch-action: pan-y;
+  cursor: pointer;
+}
+.rp-scrub:focus { outline: none; }
+.rp-scrub::-webkit-slider-runnable-track { height: 32px; background: transparent; border: 0; }
+.rp-scrub::-moz-range-track { height: 32px; background: transparent; border: 0; }
+.rp-scrub::-webkit-slider-thumb {
+  -webkit-appearance: none;
+  appearance: none;
+  box-sizing: border-box;
+  width: 18px;
+  height: 18px;
+  margin-top: 7px;
+  border: 2px solid var(--surface);
+  border-radius: 2px;
+  background: var(--text);
+  box-shadow: 0 0 0 1px var(--text);
+}
+.rp-scrub::-moz-range-thumb {
+  box-sizing: border-box;
+  width: 18px;
+  height: 18px;
+  border: 2px solid var(--surface);
+  border-radius: 2px;
+  background: var(--text);
+  box-shadow: 0 0 0 1px var(--text);
+}
+.rp-scrub:focus-visible::-webkit-slider-thumb { outline: 2px solid var(--accent); outline-offset: 2px; }
+.rp-scrub:focus-visible::-moz-range-thumb { outline: 2px solid var(--accent); outline-offset: 2px; }
+.rp-ticks { position: absolute; left: 9px; right: 9px; bottom: 0; height: 18px; }
+.rp-tick {
+  position: absolute;
+  top: 0;
+  transform: translateX(-50%);
+  color: var(--muted);
+  font-size: var(--t-micro);
+  font-weight: 800;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  white-space: nowrap;
+}
+/* a mark dropped from the bar at each hour, shorter where it has no label */
+.rp-tick::before {
+  content: "";
+  position: absolute;
+  left: 50%;
+  top: -18px;
+  width: 1px;
+  height: 6px;
+  background: var(--border-strong);
+}
+.rp-tick.is-bare::before { height: 4px; }
+
+/* the teams on the map: a chip each, picked while it is shown */
+.rp-teams {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+  margin-top: 28px;
+}
+/* on a phone the chips are one line that scrolls sideways, to the
+   screen's edges */
+@media (max-width: 560px) {
+  .rp-teams {
+    flex-wrap: nowrap;
+    overflow-x: auto;
+    margin-left: -16px;
+    margin-right: -16px;
+    padding: 0 16px 2px;
+    scrollbar-width: none;
+  }
+  .rp-teams::-webkit-scrollbar { display: none; }
+  .rp-team { flex: none; }
+}
+.rp-team {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  min-height: 40px;
+  max-width: 100%;
+  padding: 0 12px;
+  border: 1px solid var(--border-strong);
+  border-radius: 2px;
+  background: transparent;
+  color: var(--text);
+  font: inherit;
+  font-size: var(--t-small);
+  font-weight: 700;
+  text-align: left;
+  cursor: pointer;
+  transition: background-color var(--duration-quick) var(--ease-smooth-out), color var(--duration-quick) var(--ease-smooth-out);
+}
+.rp-team[aria-pressed="true"] {
+  background: var(--sign-bg);
+  border-color: var(--pick-edge);
+  color: var(--sign-ink);
+}
+.rp-team-name { overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+.rp-team-disc {
+  flex: none;
+  width: 12px;
+  height: 12px;
+  border-radius: 50%;
+  box-shadow: 0 0 0 2px var(--surface);
+}
+.rp-team[aria-pressed="false"] .rp-team-disc { opacity: 0.45; }
+/* the teams with no route: a hollow ink ring, as their quests are drawn */
+.rp-team-ring {
+  background: var(--surface);
+  box-shadow: inset 0 0 0 2px var(--text), 0 0 0 2px var(--surface);
+}
+/* the teams with no route, on their own line under the chips */
+.rp-others { margin-top: 10px; }
+.rp-others[hidden] { display: none; }
+/* All is a command, not a team: a keyline whichever teams are shown,
+   set a little apart from them */
+.rp-team-all,
+.rp-team-all[aria-pressed="true"] {
+  margin-right: 8px;
+  background: transparent;
+  border-color: var(--border-strong);
+  color: var(--text);
+  font-weight: 800;
+}
+
+/* the leaderboard on the left of a wide page, the latest quests and the
+   submissions beside it; one under the other on a narrow one. Each rule
+   sits 34px under what is above it. */
+.rp .section-heading { margin-top: 0; }
+.rp-pair { margin-top: 34px; }
+.rp-side .rp-feed,
+.rp-side .rp-stats { margin-top: 34px; }
+@media (min-width: 760px) {
+  .rp-pair { display: grid; grid-template-columns: minmax(0, 1fr) minmax(0, 1fr); gap: 0 40px; align-items: start; }
+  .rp-side .rp-feed { margin-top: 0; }
+}
+.rp-board-list { margin: 0; padding: 0; list-style: none; }
+.rp-board-row {
+  display: grid;
+  grid-template-columns: 40px minmax(0, 1fr) auto;
+  gap: 10px;
+  align-items: center;
+  padding: 9px 0;
+  border-bottom: 1px solid var(--border);
+}
+.rp-board-place { display: flex; justify-content: center; }
+.rp-board-team { display: flex; align-items: center; gap: 8px; min-width: 0; font-weight: 700; }
+.rp-board-name { overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+.rp-board-points { font-weight: 800; font-variant-numeric: tabular-nums lining-nums; }
+/* ends as Latest Quests does beside it */
+.rp-board-row:last-child { border-bottom: 0; }
+.rp-board-more { margin-top: 14px; }
+.rp-board-more[hidden] { display: none; }
+
+/* what had been sent by the replay's time, and the day in quarter hours */
+/* two short figures side by side at every width */
+.rp-figures.figures-2 { display: flex; flex-wrap: wrap; gap: 16px 48px; margin-bottom: 18px; }
+.rp-figures .figure { flex: none; }
+.rp-chart .hour-col.is-ahead .hour-bar { opacity: 0.22; }
+.rp-chart-note { margin: 10px 0 0; color: var(--muted); font-size: var(--t-small); }
+
+/* the latest quests the replay has passed */
+.rp-feed-list { margin: 0; padding: 0; list-style: none; }
+.rp-feed-row {
+  display: grid;
+  grid-template-columns: 5.4em minmax(0, 0.9fr) minmax(0, 1.4fr);
+  gap: 4px 14px;
+  align-items: center;
+  padding: 9px 0;
+  border-bottom: 1px solid var(--border);
+}
+.rp-feed-time { color: var(--muted); font-variant-numeric: tabular-nums; }
+.rp-feed-team { display: flex; align-items: center; gap: 8px; min-width: 0; font-weight: 700; }
+.rp-feed-quest { display: flex; align-items: center; gap: 8px; min-width: 0; }
+/* the codes one width, so the quests' names line up */
+.rp-feed-quest .code { flex: none; min-width: 3.6em; text-align: center; box-sizing: border-box; }
+.rp-feed-name { overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+.rp-feed-none { padding: 9px 0; color: var(--muted); }
+/* the section under it opens with its own rule */
+.rp-feed-row:last-child { border-bottom: 0; }
+@media (max-width: 560px) {
+  .rp-feed-row { grid-template-columns: 4.6em minmax(0, 1fr); }
+  .rp-feed-quest { grid-column: 2; }
+}
+
+/* ---------- full screen ----------
+   The map takes the screen, the site's bars step aside, and the parts
+   under the map move into the pane: a panel along the bottom on a phone,
+   a column down the left on a computer. Nothing pinned to an edge goes
+   under a notch or a rounded corner. */
+html.rp-map-full {
+  --rp-safe-l: env(safe-area-inset-left, 0px);
+  --rp-safe-r: env(safe-area-inset-right, 0px);
+  --rp-safe-t: env(safe-area-inset-top, 0px);
+  --rp-safe-b: env(safe-area-inset-bottom, 0px);
+}
+html.rp-map-full body { overflow: hidden; }
+html.rp-map-full .site-nav,
+html.rp-map-full .site-footer,
+html.rp-map-full .tab-bar { display: none; }
+.rp.is-full .rp-map-card {
+  position: fixed;
+  inset: 0;
+  z-index: 1300;
+  border: 0;
+  border-radius: 0;
+}
+.rp.is-full .rp-map { height: 100%; }
+.rp.is-full .rp-map-btn { top: calc(12px + var(--rp-safe-t)); right: calc(12px + var(--rp-safe-r)); }
+.rp.is-full .rp-map .maplibregl-ctrl-top-left { top: var(--rp-safe-t); left: var(--rp-safe-l); }
+
+.rp-pane { display: none; }
+.rp.is-full .rp-pane {
+  display: flex;
+  flex-direction: column;
+  position: fixed;
+  z-index: 1320;
+  background: var(--surface);
+}
+.rp-pane-head {
+  flex: none;
+  border-bottom: 1px solid transparent;
+  transition: border-color var(--duration-quick) var(--ease-smooth-out);
+}
+.rp-pane.is-scrolled .rp-pane-head { border-bottom-color: var(--border); }
+/* below the controls, scrolling once what is in it is taller than the pane */
+.rp-pane-more {
+  flex: 1 1 auto;
+  min-height: 0;
+  overflow-y: auto;
+  overscroll-behavior: contain;
+}
+/* the controls on one line: play as a square, the time, the speeds */
+.rp-pane .rp-controls { margin-top: 0; }
+.rp-pane .rp-controls-head { margin-top: 2px; flex-wrap: nowrap; gap: 10px; }
+.rp-pane .rp-play { flex: none; width: 48px; min-width: 0; padding: 0; }
+.rp-pane .rp-play-text {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  overflow: hidden;
+  clip-path: inset(50%);
+  white-space: nowrap;
+}
+.rp-pane .rp-clock { flex: 1; min-width: 0; font-size: var(--t-lede); }
+.rp-pane .rp-speed { flex: none; width: auto; margin-left: 0; }
+.rp-pane .rp-speed button { flex: none; padding: 0 10px; }
+.rp-pane .rp-scrub-wrap { margin-top: 4px; }
+.rp-pane .rp-key { margin-top: 0; }
+.rp-pane .rp-teams { margin-top: 18px; }
+.rp-pane .rp-feed { margin-top: 26px; }
+.rp-pane .rp-pair { display: block; margin-top: 26px; }
+.rp-pane .rp-stats { margin-top: 26px; }
+.rp-pane .figure-n { font-size: var(--t-head); }
+.rp-pane .rp-feed-row { grid-template-columns: 4.6em minmax(0, 1fr); }
+.rp-pane .rp-feed-quest { grid-column: 2; }
+/* after the rules above, which set the same margins */
+.rp-pane-more > :first-child { margin-top: 16px; }
+.rp-pane-more > :last-child { margin-bottom: 6px; }
+
+/* the pane's grab bar, the quest map's: two halves hinged in the middle,
+   flat at rest, a shallow v while the pane heads down and an up arrow
+   while it heads up, and at either end flat again and stretching with
+   the pull */
+.rp-pane-grab {
+  position: relative;
+  flex: none;
+  display: block;
+  width: 100%;
+  height: 13px;
+  padding: 0;
+  border: 0;
+  background: transparent;
+  cursor: grab;
+  touch-action: none;
+  --stretch: 1;
+}
+.rp-pane-grab::before,
+.rp-pane-grab::after {
+  content: '';
+  position: absolute;
+  top: 6px;
+  width: 23px;
+  height: 5px;
+  border-radius: 2px;
+  background: var(--border-strong);
+  transition: transform 160ms ease;
+}
+.rp-pane-grab::before { left: calc(50% - 22px); }
+.rp-pane-grab::after { right: calc(50% - 22px); }
+.rp-pane-grab.is-vee::before { transform: translateY(3px) rotate(15deg); }
+.rp-pane-grab.is-vee::after { transform: translateY(3px) rotate(-15deg); }
+.rp-pane-grab.is-up::before { transform: translateY(3px) rotate(-15deg); }
+.rp-pane-grab.is-up::after { transform: translateY(3px) rotate(15deg); }
+.rp-pane-grab:not(.is-vee):not(.is-up)::before,
+.rp-pane-grab:not(.is-vee):not(.is-up)::after { transform: scaleX(var(--stretch)); }
+.rp-pane-grab.is-stretching::before,
+.rp-pane-grab.is-stretching::after { transition: none; }
+.rp-pane-grab:focus-visible { outline: 2px solid var(--accent); outline-offset: -2px; }
+
+/* a phone: the map stops at the pane's bar, which holds the controls on
+   one line; the rest opens over the map */
+@media (max-width: 930px) {
+  .rp.is-full .rp-map-card { bottom: var(--rp-pane-h, 0px); }
+  .rp.is-full .rp-pane {
+    left: 0;
+    right: 0;
+    bottom: 0;
+    height: var(--rp-pane-bar, auto);
+    padding: 0 calc(14px + var(--rp-safe-r)) calc(10px + var(--rp-safe-b)) calc(14px + var(--rp-safe-l));
+    border-top: 1px solid var(--border-strong);
+    border-radius: 2px 2px 0 0;
+    overflow: hidden;
+    transition: height 280ms cubic-bezier(0.26, 1.12, 0.3, 1), opacity var(--chrome-fade);
+  }
+  .rp.is-full .rp-pane.is-open { height: var(--rp-pane-open, auto); }
+  .rp.is-full .rp-pane.is-dragging { transition: opacity var(--chrome-fade); }
+  /* the map moved by hand: the pane goes see-through, as the quest map's does */
+  .rp.is-full .rp-pane.is-faded { opacity: 0.5; }
+  /* the part below the bar shrinks to nothing while it is down */
+  .rp.is-full .rp-pane:not(.is-open) .rp-pane-head { border-bottom-color: transparent; }
+  /* two fingers zoom on a phone */
+  .rp.is-full .rp-map .maplibregl-ctrl-top-left { display: none; }
+}
+
+/* a computer: the phone's pane stood up as a column down the left, its
+   controls held at the top and the rest scrolling under them; the map
+   takes what is left */
+@media (min-width: 931px) {
+  .rp.is-full { --rp-side-w: 400px; }
+  .rp.is-full .rp-map-card { left: var(--rp-side-w); }
+  .rp.is-full .rp-pane {
+    top: 0;
+    bottom: 0;
+    left: 0;
+    width: var(--rp-side-w);
+    border-right: 1px solid var(--border-strong);
+    overflow: hidden;
+  }
+  .rp-pane-grab { display: none; }
+  .rp-pane-head { padding: calc(14px + var(--rp-safe-t)) 16px 8px calc(16px + var(--rp-safe-l)); }
+  .rp-pane-more { padding: 0 16px 24px calc(16px + var(--rp-safe-l)); }
+  .rp-pane-more > :last-child { margin-bottom: 0; }
+}
+
+
+/* the replay page: the map starts one title gap under the lead, as the
+   first section does on every page (the hidden "not open" note sits
+   between them) */
+#rp-body { margin-top: 0; }
+
+/* the map as it last stood, over the live one until it has drawn */
+.rp-shot {
+  position: absolute;
+  top: 0;
+  left: 0;
+  z-index: 2;
+  pointer-events: none;
+  transition: opacity var(--duration-quick) var(--ease-out);
+}
+.rp-shot.is-leaving { opacity: 0; }

@@ -1,0 +1,229 @@
+/* The recap page: the headline figures as type, hour bars, tables and
+   ranked lists. */
+
+/* one gap under the page's name, whichever block comes first */
+#rc-body > .section:first-child { margin-top: 0; }
+
+/* the facts under the chart */
+#rc-subs-facts { margin-top: 24px; }
+
+/* lists side by side, two to a row */
+.rc-pair {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 56px var(--gutter);
+}
+.rc-pair[hidden] { display: none; }
+@media (max-width: 760px) {
+  .rc-pair { grid-template-columns: minmax(0, 1fr); }
+}
+
+/* a ranked list: the place in a disc, the name, the figure at the end,
+   all three on one centre line between the rules */
+.rc-list { margin: 0; padding: 0; list-style: none; counter-reset: rc; }
+.rc-list li {
+  display: flex;
+  gap: 12px;
+  align-items: center;
+  padding: 10px 0;
+  border-bottom: 1px solid var(--border);
+  counter-increment: rc;
+}
+.rc-list li:first-child { padding-top: 0; }
+.rc-list li:last-child { border-bottom: 0; }
+.rc-list li::before {
+  content: counter(rc);
+  flex: none;
+  display: inline-grid;
+  place-items: center;
+  width: 26px;
+  height: 26px;
+  border-radius: 50%;
+  background: var(--sign-bg);
+  color: var(--sign-ink);
+  box-shadow: inset 0 0 0 1px var(--sign-edge);
+  font-size: var(--t-small);
+  font-weight: 800;
+  font-variant-numeric: tabular-nums;
+}
+.rc-name { flex: 1; min-width: 0; overflow-wrap: break-word; }
+.rc-num { color: var(--muted); text-align: right; font-variant-numeric: tabular-nums; }
+
+/* a quest's row opens its own page: the chip and the name in ink with a
+   chevron, centred on one line, the whole row taking the click */
+.rc-row-link {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  vertical-align: top;
+  color: inherit;
+  text-decoration: none;
+}
+.rc-row-link .code { flex: none; }
+.rc-row-name { min-width: 0; overflow-wrap: break-word; }
+.rc-row-go {
+  width: 0.8em;
+  height: 0.8em;
+  margin-left: 4px;
+  vertical-align: -0.05em;
+  color: var(--muted);
+}
+.has-quest-link { cursor: pointer; }
+@media (hover: hover) and (pointer: fine) {
+  tr.has-quest-link:hover { background: var(--tint); }
+  .has-quest-link:hover .rc-row-name { text-decoration: underline; text-underline-offset: 2px; }
+}
+tr.has-quest-link:active { background: var(--tint); }
+/* a list row's grey runs a little past the disc and the figure, behind them */
+.rc-list li.has-quest-link { position: relative; isolation: isolate; }
+.rc-list li.has-quest-link::after {
+  content: '';
+  position: absolute;
+  inset: 0 -8px;
+  z-index: -1;
+  background: var(--tint);
+  opacity: 0;
+}
+.rc-list li.has-quest-link:first-child::after { top: -10px; }
+.rc-list li.has-quest-link:active::after { opacity: 1; }
+@media (hover: hover) and (pointer: fine) {
+  .rc-list li.has-quest-link:hover::after { opacity: 1; }
+}
+
+/* a region opens to its quests: the name with a chevron that turns over,
+   the quests under it set in */
+/* the chevron follows the name's last word when the name wraps */
+.rc-region-toggle {
+  display: inline;
+  margin: 0;
+  padding: 0;
+  border: 0;
+  background: none;
+  color: inherit;
+  font: inherit;
+  text-align: left;
+  cursor: pointer;
+}
+.rc-region-toggle:focus-visible { outline: 2px solid var(--accent); outline-offset: 2px; }
+.rc-region-tail { white-space: nowrap; }
+.rc-region-go {
+  width: 0.8em;
+  height: 0.8em;
+  margin-left: 6px;
+  vertical-align: -0.05em;
+  color: var(--muted);
+  transition: rotate var(--duration-fast) var(--ease-smooth-out);
+}
+.rc-region.is-open .rc-region-go { rotate: 180deg; }
+tr.has-quests { cursor: pointer; }
+@media (hover: hover) and (pointer: fine) {
+  tr.has-quests:hover { background: var(--tint); }
+}
+tr.has-quests:active { background: var(--tint); }
+table.nice .rc-region-quest td:first-child { padding-left: 20px; }
+@media (prefers-reduced-motion: reduce) {
+  .rc-region-go { transition: none; }
+}
+
+/* the tables fit the column rather than scrolling sideways */
+table.nice.rc-table { min-width: 0; }
+
+/* On a phone each quest is two lines, as its heads are: the quest and
+   how many teams did it, then its region and the hour it was most done */
+@media (max-width: 560px) {
+  table.nice.rc-quests,
+  .rc-quests thead,
+  .rc-quests tbody { display: block; }
+  .rc-quests tr {
+    display: grid;
+    grid-template-columns: minmax(0, 1fr) auto;
+    column-gap: 16px;
+    row-gap: 2px;
+    padding: 11px 0;
+    border-bottom: 1px solid var(--border);
+  }
+  .rc-quests thead tr {
+    padding: 0 0 8px;
+    border-bottom: var(--rule-w) solid var(--rule-ink);
+  }
+  .rc-quests tbody tr:last-child { border-bottom: 0; }
+  table.nice.rc-quests th,
+  table.nice.rc-quests td { padding: 0; border: 0; }
+  .rc-quests :is(th, td):nth-child(1) { grid-area: 1 / 1; }
+  .rc-quests :is(th, td):nth-child(2) { grid-area: 2 / 1; }
+  .rc-quests :is(th, td):nth-child(3) { grid-area: 1 / 2; text-align: right; }
+  .rc-quests :is(th, td):nth-child(4) { grid-area: 2 / 2; text-align: right; }
+  .rc-quests td:nth-child(2),
+  .rc-quests td:nth-child(4) { color: var(--muted); font-size: var(--t-small); }
+}
+
+.rc-head-short { display: none; }
+
+/* On a phone the table is one grid with its rows let through to it, so the
+   columns line up from row to row at the width their heads need: a region
+   is one line, and an opened quest is its name across the whole width with
+   its figures on a line under it */
+@media (max-width: 560px) {
+  table.nice.rc-regions {
+    display: grid;
+    grid-template-columns: minmax(0, 1fr) auto auto auto;
+  }
+  .rc-regions thead,
+  .rc-regions tbody,
+  .rc-regions tr { display: contents; }
+  .rc-regions tr[hidden] { display: none; }
+  table.nice.rc-regions th:not(:first-child),
+  table.nice.rc-regions td:not(:first-child) { padding-left: 10px; }
+  /* the shorter head, so the column is as wide as its figures */
+  .rc-head-long {
+    position: absolute;
+    width: 1px;
+    height: 1px;
+    overflow: hidden;
+    clip-path: inset(50%);
+    white-space: nowrap;
+  }
+  .rc-head-short { display: inline; }
+  table.nice.rc-regions td { padding-top: 11px; padding-bottom: 11px; }
+  .rc-region-toggle span { hyphens: auto; overflow-wrap: break-word; }
+  table.nice .rc-region-quest td:first-child {
+    grid-column: 1 / -1;
+    padding: 11px 0 4px 20px;
+    border-bottom: 0;
+  }
+  table.nice .rc-region-quest td:nth-child(2) { grid-column: 1 / 3; }
+  table.nice .rc-region-quest td:not(:first-child) { padding-top: 0; }
+  tr.has-quests:active > td,
+  tr.has-quest-link:active > td { background: var(--tint); }
+}
+
+.rc-chips { display: flex; flex-wrap: wrap; gap: 6px; margin: 0; }
+.rc-chips a { text-decoration: none; }
+
+/* sections the organisers wrote: a few words under the heading, then
+   the entries two to a row, each its line, its words and its pictures */
+.rc-section-text { max-width: 720px; margin: 0 0 32px; color: var(--muted); }
+.rc-section-text > :first-child { margin-top: 0; }
+.rc-section-text > :last-child { margin-bottom: 0; }
+.rc-entries {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 32px var(--gutter);
+}
+@media (max-width: 760px) {
+  .rc-entries { grid-template-columns: minmax(0, 1fr); }
+}
+.rc-entry { display: grid; gap: 12px; align-content: start; }
+.rc-entry-title { margin: 0; font-size: var(--t-body); font-weight: 800; letter-spacing: -0.01em; line-height: 1.3; }
+.rc-entry-text > :first-child { margin-top: 0; }
+.rc-entry-text > :last-child { margin-bottom: 0; }
+.rc-entry-photo {
+  display: block;
+  padding: 0;
+  border: 1px solid var(--border);
+  border-radius: 2px;
+  background: var(--tint);
+  cursor: zoom-in;
+}
+.rc-entry-media { display: block; width: 100%; height: auto; border-radius: 2px; }
+video.rc-entry-media { background: var(--sign-bg); border: 1px solid var(--border); }

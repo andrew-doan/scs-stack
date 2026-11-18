@@ -1,0 +1,31 @@
+# SCS.2 check-in — Cloudflare Worker config.
+# Nothing in this file needs editing per account: the secrets come
+# from secrets.example.json via `npm run secrets`, and the database id
+# is looked up by name when you run `npm run deploy` (scripts/deploy.mjs).
+# Until a secret is set, the thing it guards stays locked.
+
+name = "scs-checkin"
+main = "src/index.js"
+compatibility_date = "2026-07-01"
+
+# Workers Logs: every request and every error, kept in the Cloudflare
+# dashboard (the worker's Observability tab) for a few days.
+[observability]
+enabled = true
+head_sampling_rate = 1
+
+[vars]
+# Where team-complete reports go (the tab bot worker). Blank disables
+# the reports without breaking check-in itself.
+TAB_API = "https://files.scs.andyrew.space"
+
+# The id is filled in from the account's database list by
+# `npm run deploy`; leave the placeholder as it is.
+[[d1_databases]]
+binding = "DB"
+database_name = "scs-checkin"
+database_id = "PASTE-FILLED-IN-BY-NPM-RUN-DEPLOY"
+
+[[r2_buckets]]
+binding = "QR"
+bucket_name = "scs-checkin-qr"

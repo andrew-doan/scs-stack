@@ -1,0 +1,13 @@
+-- A name for each subscribed device, so the Push tab's list is
+-- something an organiser can read. Everything else about a
+-- subscription is an opaque endpoint and two keys, which never leave
+-- the worker; without a name, two phones on the same team are told
+-- apart only by the minute they subscribed.
+--
+-- The site sends a first guess from the browser ("iPhone Safari",
+-- "Android Chrome"); the dashboard can rename it, and a rename is not
+-- overwritten the next time that device re-posts its subscription.
+--
+-- schema.sql has the column on a fresh database. This ALTER fails once
+-- it is there, which is the signal it has already run.
+ALTER TABLE push_subs ADD COLUMN label TEXT NOT NULL DEFAULT '';

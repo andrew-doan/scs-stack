@@ -1,0 +1,725 @@
+/* Submit a quest: the composer on one side, what has already gone on
+   the other, and one column with the composer first on a phone. Form
+   fields, hints, pills, buttons and the O/I rocker are shared in
+   ../assets/site.css; only what is particular to this page is here. */
+
+.sub-page {
+  /* One indent for every code chip on the page: the picker's matches,
+     the score sheet's lines, the submissions list and the numerals in
+     What happens next all start on it, so a column has two left edges
+     rather than five. In rem, so it grows with the text-size ladder —
+     at the 200% stop a code set in a 58px track ran into the words
+     beside it. */
+  --sub-chip: 3.65rem;
+  --sub-gap: 12px;
+}
+
+/* ---------------- signing in ----------------
+   The card itself (.sub-signin) is in site.css: the gallery signs in
+   with the same one. */
+
+/* ---------------- the two columns ----------------
+   Six of the site's twelve columns each, so the halves land on the
+   page's own verticals rather than on a grid of this page's own. */
+#sub-uploads,
+#sub-resume { margin: 0 0 26px; }
+.sub-cols { margin-top: 0; }
+.sub-col-send { grid-column: 1 / 7; }
+.sub-col-sent { grid-column: 7 / -1; }
+.sub-col > .section:first-child { margin-top: 0; }
+
+@media (max-width: 900px) {
+  .sub-col-send,
+  .sub-col-sent { grid-column: 1 / -1; }
+  .sub-col-sent { margin-top: 56px; }
+}
+
+/* ---------------- quest picker ----------------
+   Every match is listed; past a screen's worth the list scrolls.
+
+   One box with a list in it, not a stack of boxes. A bordered button
+   per row drew an edge round every quest, so a search for two letters
+   read as a pile of cards rather than a list of quests. The rows are
+   rows, told apart by the hairline between them — the same way the
+   fullscreen map's search panel lists the same quests. It sits in the
+   column under the box it belongs to and carries no shadow: it is part
+   of the form rather than something opened over it. */
+.sub-matches {
+  margin: -6px 0 12px;
+  max-height: min(46vh, 420px);
+  overflow-y: auto;
+  overscroll-behavior: contain;
+  border: 1px solid var(--border);
+  border-radius: 2px;
+  background: var(--surface);
+}
+.sub-matches[hidden] { display: none; }
+.sub-matches button {
+  display: grid;
+  /* the indent is a floor, not a cap: a seven-character code is wider
+     than it, and a fixed track put the code over the name */
+  grid-template-columns: minmax(var(--sub-chip), max-content) minmax(0, 1fr);
+  gap: var(--sub-gap);
+  align-items: baseline;
+  min-width: 0; /* a grid item's default minimum is its content, which let long names push past the edge */
+  width: 100%;
+  margin: 0;
+  padding: 11px 12px;
+  border: 0;
+  border-radius: 0;
+  background: none;
+  color: var(--text);
+  font: inherit;
+  text-align: left;
+  cursor: pointer;
+  transition: background var(--duration-quick) var(--ease-smooth-out);
+}
+.sub-matches button + button { border-top: 1px solid var(--border); }
+.sub-matches button:hover { background: var(--tint); }
+.sub-matches button:focus-visible { background: var(--tint); }
+.sub-matches button:focus-visible { outline: 2px solid var(--accent); outline-offset: -2px; }
+.sub-matches .sub-match-code { justify-self: start; }
+.sub-matches .sub-match-name {
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+/* nothing found is a line in the same box, not an empty one */
+.sub-matches .sub-none {
+  margin: 0;
+  padding: 11px 12px;
+  color: var(--muted);
+}
+
+/* The quest's claim: the one black object the composer spends, on the
+   line under the control that sets it. */
+.sub-picked {
+  margin: 0 0 14px;
+  padding: 12px 16px;
+  border: 1px solid var(--sign-edge);
+  background: var(--sign-bg);
+  color: var(--sign-ink);
+  border-radius: 2px;
+  font-weight: 800;
+  display: grid;
+  grid-template-columns: auto minmax(0, 1fr) auto;
+  column-gap: 14px;
+  row-gap: 8px;
+  align-items: baseline;
+}
+.sub-picked .code { justify-self: start; }
+.sub-picked a {
+  justify-self: end;
+  color: var(--sign-ink);
+  font-weight: 700;
+  text-decoration: none;
+  border-bottom: 2px solid currentColor;
+}
+.sub-picked .code { background: var(--sign-ink); color: var(--sign-bg); }
+
+/* A challenge's count, under the quest's claim: what the team has so
+   far and what is waiting on review. */
+.sub-tally { margin: 0 0 14px; }
+.sub-tally-count {
+  margin: 0;
+  display: flex;
+  flex-wrap: wrap;
+  gap: 4px 10px;
+  align-items: baseline;
+}
+.sub-tally-count b { font-weight: 800; font-variant-numeric: tabular-nums; }
+.sub-tally-items { margin-top: 4px; overflow-wrap: break-word; }
+
+/* ---------------- the quest's answer box ----------------
+   A count, a line, places or codes. On the paper with the rest of the
+   fields, between two hairlines rather than in a box of its own: the
+   quest asked the question, so it is part of the form and not an
+   aside. */
+.sub-answer {
+  margin: 0 0 14px;
+  padding: 14px 0 4px;
+  border-top: 1px solid var(--border);
+  border-bottom: 1px solid var(--border);
+}
+.sub-answer .sub-hint { margin-top: 0; }
+.sub-answer .sub-check { margin: 10px 0 0; }
+.sub-answer .sub-field:last-child { margin-bottom: 10px; }
+.sub-pick-results { margin: 0 0 8px; }
+.sub-pick-results:empty { display: none; }
+.sub-q + .sub-q { margin-top: 18px; }
+
+/* one answer out of a few: a tile each, the picked one in the sign's
+   black, as a picked chip is */
+.sub-choice { border: 0; margin: 0 0 12px; padding: 0; min-width: 0; }
+.sub-choice legend {
+  padding: 0;
+  margin: 0 0 6px;
+  font-size: var(--t-small);
+  font-weight: 800;
+  line-height: 1.4;
+  color: var(--text);
+}
+.sub-choice-opts {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(11rem, 1fr));
+  gap: 8px;
+}
+.sub-choice-opt {
+  position: relative;
+  display: flex;
+  align-items: center;
+  min-height: 48px;
+  padding: 10px 12px;
+  border: 1px solid var(--border-strong);
+  border-radius: 2px;
+  background: var(--surface);
+  color: var(--text);
+  font-weight: 700;
+  overflow-wrap: anywhere;
+  cursor: pointer;
+  transition: background var(--duration-quick) var(--ease-smooth-out),
+    border-color var(--duration-quick) var(--ease-smooth-out);
+}
+.sub-choice-opt input { position: absolute; width: 1px; height: 1px; margin: 0; opacity: 0; pointer-events: none; }
+.sub-choice-opt:has(input:focus-visible) { outline: 2px solid var(--accent); outline-offset: 1px; }
+@media (hover: hover) and (pointer: fine) {
+  .sub-choice-opt:hover:not(.is-selected) { background: var(--tint); }
+}
+.sub-choice-opt:active { transform: translate(1px, 1px); }
+.sub-choice-opt.is-selected {
+  background: var(--sign-bg);
+  border-color: var(--pick-edge);
+  color: var(--sign-ink);
+}
+
+/* a count: one control, with the minus and the plus a thumb can hit */
+.sub-step {
+  display: grid;
+  grid-template-columns: 52px minmax(84px, 1fr) 52px;
+  max-width: 220px;
+  height: 52px;
+  border: 1px solid var(--border-strong);
+  border-radius: 2px;
+  background: var(--surface);
+  overflow: hidden;
+}
+.sub-step-btn {
+  border: 0;
+  padding: 0;
+  background: transparent;
+  color: var(--text);
+  font: inherit;
+  font-size: var(--t-lede);
+  font-weight: 800;
+  line-height: 1;
+  cursor: pointer;
+}
+.sub-step-btn:hover { background: var(--tint); }
+.sub-field .sub-step input {
+  width: 100%;
+  height: 100%;
+  border: 0;
+  border-left: 1px solid var(--border-strong);
+  border-right: 1px solid var(--border-strong);
+  border-radius: 0;
+  background: transparent;
+  text-align: center;
+  font-weight: 800;
+  font-variant-numeric: tabular-nums lining-nums;
+}
+
+.sub-chips { display: flex; flex-wrap: wrap; gap: 6px; margin: 0 0 8px; }
+.sub-chip {
+  border: 1px solid var(--border-strong);
+  border-radius: 2px;
+  background: var(--surface);
+  color: var(--text);
+  padding: 4px 10px;
+  font: inherit;
+  font-size: var(--t-small);
+  font-weight: 700;
+  cursor: pointer;
+}
+.sub-chip::after { content: ' \00d7'; color: var(--muted); }
+.sub-chip:hover { border-color: var(--accent); }
+
+/* ---------------- the files waiting to go ----------------
+   A row per file: the name in a box to type over with the extension
+   fixed after it, and what it weighs. */
+/* the file field: its name, the files listed, then the site's button with
+   the browser's control hidden in it */
+.sub-field-name {
+  margin: 0 0 6px;
+  font-size: var(--t-small);
+  font-weight: 800;
+  line-height: 1.4;
+  color: var(--text);
+}
+.sub-files-btn { position: relative; cursor: pointer; }
+.sub-files-input {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  padding: 0;
+  border: 0;
+  opacity: 0;
+  pointer-events: none;
+}
+.sub-files-btn:focus-within { outline: 2px solid var(--accent); outline-offset: 2px; }
+.sub-files { list-style: none; margin: 0 0 10px; padding: 0; }
+.sub-files:empty { margin: 0; }
+.sub-files li {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) auto auto;
+  column-gap: var(--sub-gap);
+  row-gap: 4px;
+  align-items: center;
+  padding: 8px 0;
+  border-bottom: 1px solid var(--border);
+}
+.sub-files li:last-child { border-bottom: 0; }
+.sub-files .sub-file-nudge {
+  grid-column: 1 / -1;
+  color: var(--muted);
+  font-size: var(--t-small);
+}
+.sub-files .sub-file-size {
+  color: var(--muted);
+  font-size: var(--t-small);
+  text-align: right;
+  font-variant-numeric: tabular-nums lining-nums;
+}
+.sub-files .sub-file-name { display: flex; align-items: baseline; min-width: 0; }
+.sub-field-note { margin-top: 18px; }
+.sub-files .sub-file-rename {
+  flex: 1;
+  min-width: 0;
+  padding: 7px 8px;
+  border: 1px solid var(--border-strong);
+  border-radius: 2px;
+  background: var(--surface);
+  color: var(--text);
+  font: inherit;
+}
+.sub-files .sub-file-rename:focus { outline: none; border-color: var(--accent); }
+.sub-files .sub-file-ext { color: var(--muted); flex: none; padding-left: 2px; }
+
+/* Taking a file back off. The picker replaces its own selection, so
+   this only has something to do since the compressor started adding
+   files to a list the picker did not make. */
+.sub-files .sub-file-drop {
+  display: grid;
+  place-items: center;
+  width: 32px;
+  height: 32px;
+  margin-right: -8px;
+  padding: 0;
+  border: 1px solid transparent;
+  border-radius: 2px;
+  background: none;
+  color: var(--muted);
+  cursor: pointer;
+}
+.sub-files .sub-file-drop svg { width: 16px; height: 16px; }
+.sub-files .sub-file-drop:hover { border-color: var(--border-strong); color: var(--text); }
+.sub-files .sub-file-drop:active { transform: translate(1px, 1px); }
+.sub-files li.is-too-big,
+.sub-files li.is-too-big .sub-file-size { color: var(--alert-ink); font-weight: 700; }
+
+/* the action, and the thin bar that counts the request's own bytes */
+.sub-actions { display: grid; gap: 10px; margin-top: 18px; }
+/* the status line takes no room until it says something */
+#sub-status:empty { min-height: 0; margin-top: 0; }
+.sub-actions .sub-progress { max-width: none; }
+
+/* ---------------- picking an interrupted upload back up ---------- */
+.sub-resume-row {
+  display: flex;
+  gap: 10px;
+  align-items: center;
+  flex-wrap: wrap;
+  margin-top: 14px;
+}
+.sub-resume-row .sub-resume-label { flex: 1; min-width: 200px; }
+.sub-resume-row .sub-up-quest { align-self: center; }
+
+/* ---------------- the team's own score ----------------
+   Two figures on the paper over the lines behind them, not two boxes:
+   a row is a name and a value on a hairline. */
+.sub-score-stats {
+  margin: 0 0 20px;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 18px;
+}
+.sub-score-stats .stat {
+  border: 0;
+  background: transparent;
+  padding: 0;
+}
+.sub-score-stats .stat-value { font-variant-numeric: tabular-nums lining-nums; }
+.sub-score-name { margin-left: 10px; font-weight: 400; }
+.sub-score-num { white-space: nowrap; font-variant-numeric: tabular-nums lining-nums; }
+#sub-score-pending { margin-top: 10px; }
+
+/* ---------------- the two lists ----------------
+   One grammar: heads on a hairline, rows on hairlines, numbers to the
+   right, and the code chip on the page's own indent.
+
+   Already sent has five facts to a row and they need more line than a
+   phone has, so a row is three storeys at every width: the chip and
+   what was claimed, then when it went and what the tab team said, then
+   the files themselves. The score sheet has three and keeps them in
+   columns on a wide page, where a reader compares figures down one;
+   under 560px it goes to two storeys as well. Nothing is cut short and
+   nothing scrolls sideways. */
+.sub-table table.nice { display: block; min-width: 0; width: 100%; }
+.sub-table table.nice thead,
+.sub-table table.nice tbody { display: block; }
+/* the same label the rest of the page uses: uppercase, 0.72rem, muted.
+   `table.nice th` is a step off that in size and weight, which reads as
+   a second voice for one job. */
+.sub-table table.nice th {
+  padding: 0 0 7px;
+  font-size: var(--t-micro);
+  font-weight: 800;
+}
+.sub-table table.nice td {
+  padding: 0;
+  border: 0;
+  vertical-align: baseline;
+}
+
+/* the score sheet: one grid for the whole table, so the heads sit over
+   the figures they name rather than over a grid of their own */
+#sub-score-table table.nice {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) auto auto;
+  column-gap: 0;
+}
+#sub-score-table th:nth-child(n + 2),
+#sub-score-table table.nice td:nth-child(n + 2) { padding-left: 14px; }
+#sub-score-table thead,
+#sub-score-table tbody,
+#sub-score-table tr { display: contents; }
+#sub-score-table th:nth-child(n + 2) { text-align: right; }
+#sub-score-table table.nice td {
+  padding: 10px 0;
+  border-bottom: 1px solid var(--border);
+}
+#sub-score-table table.nice tr:last-child td { border-bottom: 0; }
+
+/* already sent: the heads have nothing to head once a row is three
+   storeys, and the row says what each part is by where it sits */
+#sub-mine table.nice thead { display: none; }
+#sub-mine table.nice tbody tr {
+  display: grid;
+  /* fit-content, not auto, on the last track: a track sized to its
+     content takes what it asks for before a flexible one gets anything,
+     and at the large end of the text ladder the time squeezed the quest
+     column to nothing and the words ran over each other. Capped at a
+     share of the row, the time wraps instead. */
+  grid-template-columns: minmax(var(--sub-chip), max-content) minmax(0, 1fr) fit-content(42%);
+  column-gap: var(--sub-gap);
+  row-gap: 6px;
+  align-items: baseline;
+  padding: 14px 0;
+  border-bottom: 1px solid var(--border);
+}
+#sub-mine table.nice tbody tr:first-child { padding-top: 0; }
+#sub-mine table.nice tbody tr:last-child { border-bottom: 0; padding-bottom: 0; }
+/* a row with no files has no files line and no switch, and no row for them */
+#sub-mine-rows tr.no-files td:nth-child(3),
+#sub-mine-rows tr.no-files td:nth-child(5) { display: none; }
+#sub-mine-empty:empty { display: none; }
+/* the quest's chip keeps its own width and starts on the indent:
+   stretched to the track it reads as a bar, and a long code would
+   overrun it */
+#sub-mine-rows td:nth-child(1) { grid-column: 1; grid-row: 1; align-self: center; }
+#sub-mine-rows td:nth-child(1) .code { display: inline-block; vertical-align: middle; }
+/* when it went */
+#sub-mine-rows td:nth-child(2) {
+  grid-column: 3;
+  grid-row: 1;
+  align-self: center;
+  justify-self: end;
+  text-align: right;
+  color: var(--muted);
+  font-size: var(--t-small);
+  font-variant-numeric: tabular-nums lining-nums;
+}
+/* the verdict on the first line; what was claimed and said under it,
+   across the row */
+#sub-mine-rows td:nth-child(4) { display: contents; }
+#sub-mine-rows td:nth-child(4) .pill { grid-column: 2; grid-row: 1; justify-self: start; align-self: center; }
+#sub-mine-rows .sub-notes { grid-column: 2 / -1; grid-row: 2; }
+#sub-mine-rows .sub-notes > :first-child { margin-top: 0; }
+/* the files, or their count when the worker sent no list */
+#sub-mine-rows td:nth-child(3) { grid-column: 2; grid-row: 2; align-self: center; }
+#sub-mine-rows tr.has-note td:nth-child(3) { grid-row: 3; }
+#sub-mine-rows td.sub-count-only {
+  color: var(--muted);
+  font-size: var(--t-small);
+  font-variant-numeric: tabular-nums lining-nums;
+}
+#sub-mine-rows td.sub-count-only::before { content: 'Files: '; }
+/* the gallery switch, named */
+#sub-mine-rows td:nth-child(5) {
+  grid-column: 3;
+  grid-row: 2;
+  justify-self: end;
+  align-self: center;
+}
+#sub-mine-rows tr.has-note td:nth-child(5) { grid-row: 3; }
+.sub-gal { gap: 8px; font-weight: 400; }
+.sub-gal > span:not(.settings-switch) { color: var(--muted); font-size: var(--t-small); }
+
+.sub-answer-text { display: block; color: var(--muted); font-size: var(--t-small); line-height: 1.45; }
+
+/* why a submission was turned down — red as words, on its own line
+   under the verdict */
+.sub-reason {
+  display: block;
+  color: var(--alert-ink);
+  font-size: var(--t-small);
+  line-height: 1.45;
+  margin-top: 4px;
+}
+/* a deletion's note is information, not a fault */
+.sub-reason.is-note { color: var(--muted); }
+/* who recorded it, over the reason they gave */
+.sub-reason.is-who { color: var(--text); }
+
+/* taken in past the team's review cap, waiting for a place in review */
+.pill.queued {
+  padding: 2px 8px;
+  border: 1px solid var(--glow-edge);
+  background: var(--glow-fill);
+  color: var(--text);
+}
+.sub-status.is-queued {
+  padding: 10px 12px;
+  border: 1px solid var(--glow-edge);
+  border-radius: 2px;
+  background: var(--glow-fill);
+}
+
+/* the per-row gallery rocker sits flush in its cell */
+.sub-gal { margin: 0; }
+/* the form's gallery line in the body's weight, as the field names around it are not heavier */
+#sub-gallery-row { font-weight: 400; }
+
+/* ---------------- proof thumbnails ---------------- */
+.sub-thumbs { display: flex; flex-wrap: wrap; gap: 6px; }
+.sub-thumb-btn { border: 0; padding: 0; background: transparent; font: inherit; cursor: pointer; }
+.sub-thumb {
+  display: block;
+  width: 44px;
+  height: 44px;
+  object-fit: cover;
+  border: 1px solid var(--border-strong);
+  border-radius: 2px;
+  background: var(--tint);
+}
+/* a video is a black plate with the play glyph on it — the markup is a
+   button, so this cannot be written against `a` */
+.sub-thumb-vid {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border-color: var(--sign-bg);
+  background: var(--sign-bg);
+  color: var(--sign-ink);
+  text-decoration: none;
+  font-size: var(--t-small);
+}
+.sub-thumb-up {
+  display: grid;
+  place-items: center;
+  color: var(--muted);
+  border: 1px dashed var(--border-strong);
+  font-size: var(--t-body);
+}
+/* a GPX track or a PDF: named, since nothing public serves it */
+.sub-thumb-doc {
+  display: inline-block;
+  max-width: 180px;
+  height: 44px;
+  padding: 0 10px;
+  border: 1px solid var(--border-strong);
+  border-radius: 2px;
+  color: var(--muted);
+  font-size: var(--t-small);
+  line-height: 42px;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+/* ---------------- about, and what happens next ---------------- */
+.sub-info { margin-top: 56px; }
+/* the two halves of the composer and the sent list, so the rules over them line up */
+.sub-about { grid-column: 1 / 7; }
+.sub-about p { max-width: 34em; }
+.sub-next { grid-column: 7 / -1; }
+.sub-info > .section { margin-top: 0; }
+.sub-info p { margin: 0; line-height: 1.6; }
+.sub-next ul {
+  margin: 0;
+  padding-left: 1.25em;
+  line-height: 1.6;
+}
+.sub-next li { margin: 0 0 10px; }
+.sub-next li:last-child { margin-bottom: 0; }
+.sub-next li > ul { margin-top: 10px; }
+@media (max-width: 900px) {
+  .sub-about,
+  .sub-next { grid-column: 1 / -1; }
+  .sub-info > .sub-next { margin-top: 56px; }
+}
+
+/* ---------------- who is sending ---------------- */
+.sub-who {
+  display: flex;
+  gap: 16px;
+  align-items: baseline;
+  flex-wrap: wrap;
+  margin: 0 0 48px;
+  color: var(--muted);
+}
+.sub-who strong { color: var(--text); font-weight: 800; }
+.sub-who a {
+  color: var(--text);
+  font-weight: 400;
+  text-decoration: none;
+  border-bottom: 2px solid currentColor;
+}
+
+/* the way to the compressor, under the files */
+.sub-compress-link { margin: 10px 0 0; }
+/* under the sign-in card, for somebody here to compress and not to send */
+.sub-compress-alt { margin-top: 16px; }
+/* a link in a sentence, the way Sign out is drawn: the text's weight and
+   colour over a 2px rule */
+.sub-compress-link a,
+.sub-compress-alt a,
+#sub-gallery-words a {
+  color: var(--text);
+  font-weight: 400;
+  text-decoration: none;
+  border-bottom: 2px solid currentColor;
+}
+
+/* ---------------- what is going up right now ----------------
+   A large upload used to say so in one line of status text beside the
+   Send button, which is easy to miss and says nothing about what is in
+   flight — so after closing the page and coming back, choosing the
+   file again looked like it had done nothing. This box is the answer:
+   it appears while anything is uploading, names the quest and the file,
+   and counts the slices. The warm fill is the same one the quest sheet
+   uses for something asking to be looked at — a flat colour laid
+   inside the box on ::before, over its own border so the edge warms
+   with it, never a shadow outside it. */
+.sub-uploads { position: relative; z-index: 0; }
+.sub-uploads::before {
+  content: "";
+  position: absolute;
+  inset: -1px;
+  z-index: -1;
+  border: 1px solid var(--glow-edge);
+  border-radius: 2px;
+  background: var(--glow-fill);
+  opacity: 0.7;
+  transition: opacity var(--duration-slow) var(--ease-in-out);
+  pointer-events: none;
+}
+/* finished, it is a receipt rather than something asking to be looked
+   at: the same light, turned down. Where it is does not move. */
+.sub-uploads.is-settled::before { opacity: 0.28; }
+.sub-up-title {
+  margin: 0 0 12px;
+  font-size: var(--t-micro);
+  font-weight: 800;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: var(--muted);
+}
+/* min-width: 0 all the way down, or a long file name stops the row
+   shrinking and pushes the bar past the edge of a phone */
+.sub-up-list { display: grid; gap: 14px; min-width: 0; }
+.sub-up-row { display: grid; gap: 5px; min-width: 0; }
+.sub-up-head { display: flex; gap: 8px; align-items: baseline; flex-wrap: wrap; min-width: 0; }
+.sub-up-quest {
+  flex: none;
+  background: var(--sign-bg);
+  color: var(--sign-ink);
+  border-radius: 2px;
+  padding: 2px 7px;
+  font-size: var(--t-micro);
+  font-weight: 800;
+  letter-spacing: 0.04em;
+}
+.sub-up-name {
+  min-width: 0;
+  flex: 1;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  font-weight: 800;
+}
+/* the bar is the shared one, full width and a little taller here */
+.sub-up-row .sub-progress { max-width: none; height: 12px; }
+.sub-up-count {
+  margin: 0;
+  font-size: var(--t-small);
+  color: var(--muted);
+  font-variant-numeric: tabular-nums lining-nums;
+}
+.sub-up-row.is-done .sub-up-count { color: var(--accent-dark); }
+.sub-up-warn { margin: 16px 0 0; font-size: var(--t-small); line-height: 1.5; }
+
+/* ---------------- a phone ---------------- */
+@media (max-width: 560px) {
+  .sub-page { --sub-chip: 3.25rem; --sub-gap: 10px; }
+  .sub-step { max-width: none; }
+  /* the name goes on its own line: "600 MB, uploads in the background"
+     is wider than the box to type the name into at this width, and the
+     two beside each other left the box a stub. The cross stays beside
+     the name — a full-width row for one small button reads as an
+     action on the whole list. */
+  .sub-files li.is-long { grid-template-columns: minmax(0, 1fr) auto; }
+  .sub-files li.is-long .sub-file-name { grid-column: 1; grid-row: 1; }
+  .sub-files li.is-long .sub-file-drop { grid-column: 2; grid-row: 1; }
+  .sub-files li.is-long .sub-file-size { grid-column: 1 / -1; grid-row: 2; text-align: left; }
+  /* the claim: the chip and change on the first row, the name under them */
+  .sub-picked { grid-template-columns: auto minmax(0, 1fr); }
+  .sub-picked .code { grid-column: 1; grid-row: 1; }
+  .sub-picked a { grid-column: 2; grid-row: 1; }
+  .sub-picked > span:not(.code) { grid-column: 1 / -1; grid-row: 2; }
+
+  /* the score lines go two storeys here as well, for the reason the
+     submissions list does: three columns and a quest name do not fit
+     one line at this width, and at the large end of the text ladder
+     the name ran under the figures */
+  #sub-score-table table.nice { display: block; }
+  #sub-score-table thead { display: none; }
+  #sub-score-table tbody { display: block; }
+  #sub-score-table tr {
+    display: grid;
+    grid-template-columns: minmax(0, 1fr) auto;
+    column-gap: var(--sub-gap);
+    row-gap: 2px;
+    padding: 10px 0;
+    border-bottom: 1px solid var(--border);
+  }
+  #sub-score-table tr:last-child { border-bottom: 0; }
+  #sub-score-table table.nice td { padding: 0; border-bottom: 0; }
+  #sub-score-table table.nice td:nth-child(n + 2) { padding-left: 0; }
+  #sub-score-rows td:nth-child(1) { grid-column: 1 / -1; grid-row: 1; }
+  #sub-score-rows td:nth-child(2) {
+    grid-column: 1;
+    grid-row: 2;
+    color: var(--muted);
+    font-size: var(--t-small);
+  }
+  #sub-score-rows td:nth-child(3) { grid-column: 2; grid-row: 2; justify-self: end; }
+}

@@ -1,0 +1,43 @@
+{
+  // npm run typecheck, the site's half: every script under website/ but
+  // the service worker (tsconfig.sw.json), the libraries copied in as
+  // published and the tests. The scripts stay plain ES5 with no type
+  // comments; what they share through window is declared in types/.
+  // tsconfig.sw.json and tsconfig.dash.json take these options too.
+  //
+  // Not strict. With no type comments, strictNullChecks makes every
+  // lookup that might find nothing an error (about 1,100 on the site,
+  // 4,900 on the dashboard) and noImplicitAny every untyped parameter
+  // (2,800 and 1,900). What is checked: a name nothing defines, a member
+  // of a shared object (window.scs, scsSite, scsQuestList, dash and the
+  // rest in types/) that is not declared there, a call with more
+  // arguments than the function takes or fewer than its declaration
+  // needs, an API newer than the lib below, code that can never run, a
+  // switch case that falls into the next, and a name a part declares and
+  // never uses.
+  "compilerOptions": {
+    "noEmit": true,
+    "target": "es2021",
+    // what the browsers of September 2021 have (website/assets/CLAUDE.md)
+    "lib": ["es2021", "dom", "dom.iterable"],
+    "types": [],
+    "allowJs": true,
+    "checkJs": true,
+    "strict": false,
+    "allowUnreachableCode": false,
+    "allowUnusedLabels": false,
+    "noFallthroughCasesInSwitch": true,
+    "noUnusedLocals": true,
+    // types/ is checked; lib.dom is not
+    "skipLibCheck": false,
+    "skipDefaultLibCheck": true
+  },
+  "include": ["../website/**/*.js", "types/browser.d.ts", "types/shared.d.ts", "types/site.d.ts"],
+  "exclude": [
+    "../website/**/tests/**",
+    "../website/sw.js",
+    "../website/assets/maplibre/**", "../website/assets/ffmpeg/**", "../website/assets/ffmpeg-mt/**", "../website/assets/pdfjs/**",
+    "../website/assets/heic/**", "../website/assets/haptics/**", "../website/assets/mp4box/**",
+    "../website/assets/mp4-muxer/**", "../website/ticket/qrcode.js"
+  ]
+}

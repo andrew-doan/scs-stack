@@ -1,0 +1,102 @@
+# The repo's checks. The repo is private, so every minute counts against
+# the account's Actions allowance, and a job is billed by the started
+# minute. So:
+# - they run on pull requests and on main, not on every branch push
+#   (a push to a pull request's branch would otherwise run twice);
+# - the quick checks (rules, lint, types, every worker suite) share one job,
+#   about two minutes;
+# - a change to notes, marketing or the copy tools alone runs nothing;
+# - the browser suites (about ten minutes) run only when asked: Run
+#   workflow on the Actions tab, or the "browser tests" label on the pull
+#   request, which runs them on every push until it is taken off.
+# "[skip ci]" in the last commit's message skips a run entirely. Commits
+# an AI agent makes end with it, since it runs the suites before
+# committing; people's commits leave it off and get the checks.
+name: Checks
+
+on:
+  pull_request:
+    types: [opened, synchronize, reopened, labeled]
+    paths-ignore: ['**/*.md', 'marketing/**', '.agents/**', '.claude/**', 'text/**']
+  push:
+    branches: [main]
+    paths-ignore: ['**/*.md', 'marketing/**', '.agents/**', '.claude/**', 'text/**']
+  workflow_dispatch:
+    inputs:
+      browsers:
+        description: Run the browser suites too (about ten minutes)
+        type: boolean
+        default: true
+
+concurrency:
+  group: checks-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  quick:
+    name: Rules, lint and worker suites
+    # a label being added is not a change to check again
+    if: github.event.action != 'labeled'
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    steps:
+      # the cache rule and the migration suites read the history
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+      - name: Install the tools
+        working-directory: tab
+        run: npm install --no-audit --no-fund
+      - name: The pull request bumps CACHE when it changes the site
+        if: github.event_name == 'pull_request'
+        working-directory: tab
+        run: node scripts/check-rules.mjs --range=${{ github.event.pull_request.base.sha }}..${{ github.event.pull_request.head.sha }} --net
+      - name: Each commit on main bumps CACHE when it changes the site
+        if: github.event_name == 'push'
+        working-directory: tab
+        run: node scripts/check-rules.mjs --range=${{ github.event.before }}..${{ github.sha }}
+      - name: PRECACHE matches the files
+        if: github.event_name == 'workflow_dispatch'
+        working-directory: tab
+        run: node scripts/check-rules.mjs
+      - name: The site's scripts are ES5
+        working-directory: tab
+        run: npm run lint
+      - name: The tab worker's types
+        working-directory: tab
+        run: npm run typecheck
+      - name: The tab worker's suites
+        working-directory: tab
+        run: npm run test:workers
+      - name: The check-in worker's suite
+        run: node checkin/tests/verify-migrations.mjs
+      - name: The phone worker's suite
+        run: node phone/tests/verify-phone.mjs
+
+  browsers:
+    name: Browser suites
+    if: >-
+      (github.event_name == 'workflow_dispatch' && inputs.browsers) ||
+      (github.event_name == 'pull_request' && contains(github.event.pull_request.labels.*.name, 'browser tests'))
+    runs-on: ubuntu-latest
+    timeout-minutes: 40
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+      - name: Install the tools and Chromium
+        working-directory: tab
+        run: |
+          npm install --no-audit --no-fund
+          npx playwright install --with-deps chromium
+      - name: The site and the dashboard
+        working-directory: tab
+        run: npm run test:browsers
+      - name: The check-in board
+        env:
+          NODE_PATH: ${{ github.workspace }}/tab/node_modules
+        run: node checkin/tests/verify-board.cjs

@@ -1,0 +1,3466 @@
+/* Quest list & map — page styles.
+   Theme tokens live in ../assets/site.css (transit signage look). */
+
+:root {
+  --done: var(--accent);
+  --done-bg: var(--accent-soft);
+  --done-border: var(--accent-soft-border);
+  /* The page's one display size, used by the title on the sign and by
+     the running total in the foot — the same figure said once at each
+     end of the page, so it is one stop on the ladder rather than two.
+     34px at 390, 44px from about 1290 up. */
+  --ql-title: clamp(2.125rem, 3.4vw, 2.75rem);
+  /* the list's columns, so the heads and the rows cannot drift */
+  --ql-check: 30px;
+  --ql-check-gap: 14px;
+  --ql-cols: 88px minmax(0, 1fr) 244px 104px 76px;
+  --ql-col-gap: 24px;
+}
+
+/* ---------- The sign: the title, what is shown, and the controls ----------
+   One black object on the page, reaching the gutter, and it carries
+   everything that narrows the list. The paper below it is the map and
+   the quests and nothing else.
+
+   The control groups inside it are styled by descent, never by a class
+   of their own: the fullscreen map MOVES #ql-filter-group and
+   #ql-radius-group into the search panel, and out of the sign they have
+   to be paper-coloured again with no script doing anything about it. */
+/* The page's name on the paper: a .hero, so it sits where every other
+   page's name sits. The name is at the size every other page's name is
+   — `.themed h1` has it. It used to carry a size and a weight of its
+   own, which is how three pages ended up with three answers to how big
+   a page's name is. */
+.ql-sign h1 {
+  margin: 0;
+  overflow-wrap: break-word;
+}
+
+/* What the filters have left, between the map and the list it counts.
+   It used to be the last line of the black sign and took the sign's
+   ink with it; on paper that read as almost not there. */
+.ql-sign-count {
+  margin: 0;
+  color: var(--muted);
+  font-size: var(--t-small);
+  font-weight: 700;
+  line-height: 1.4;
+}
+.ql-more {
+  margin: 4px 0 0;
+  color: var(--muted);
+  font-size: var(--t-small);
+  line-height: 1.4;
+}
+.ql-more[hidden] { display: none; }
+.ql-more a { color: var(--accent-dark); font-weight: 700; }
+
+
+
+/* ---------- The category chips ---------- */
+/* One chip a region with All at the head, in a row that scrolls
+   sideways under the top bar. What this replaced was a select inside a
+   black panel that ran 535px down the page before the map: the whole
+   first screen was controls. A chip says which regions there are
+   without being opened, and the row stays put while the list scrolls.
+   It has one home in the DOM and travels into the fullscreen map's
+   search panel, so there is one set of buttons and one state. */
+.ql-chips {
+  /* The body is the scroller, and a sticky offset is measured from the
+     scrollport — inside the body's own padding. The app layout spaces
+     the body by the bar's height already, so there `top: 0` is
+     immediately under the bar; on the web the body has no padding and
+     the bar is fixed over it, so there the offset is the bar's height.
+     Setting the bar's height in both put the row a second bar down the
+     page in the app. */
+  position: sticky;
+  top: var(--nav-h, 64px);
+  /* Over the map's own controls, which are 1040 and scroll up past this
+     row: the fullscreen button, the locate pin and the anywhere chip
+     were all drawn over the chips on the way past. Under the top bar at
+     1100. */
+  z-index: 1050;
+  display: flex;
+  gap: 6px;
+  overflow-x: auto;
+  overscroll-behavior-x: contain;
+  scrollbar-width: none;
+  padding: 10px 0;
+  /* Full-bleed, and pulled up so the row starts where the nav's stripe
+     ends — the shell's own top padding between the two reads as a gap.
+     The side bleed is measured off the shell rather than written down:
+     --gutter is the grid's column gap (26px), not the shell's own inset
+     (16px), and using it overhung the viewport by 10px either side and
+     gave the page something to scroll sideways into. After the
+     shorthand, never before it: a later `margin` resets the top to
+     zero. */
+  margin: 0 calc(50% - 50vw);
+  padding-left: calc(50vw - 50%);
+  padding-right: calc(50vw - 50%);
+  /* The bar's ground, not the page's: stuck under the top bar the row
+     is that bar continued, and on the page's own paper the two read as
+     one surface with a line drawn across it. --bar-edge is the hairline
+     that boundary uses everywhere else on the site. */
+  background: var(--bar-bg);
+  border-bottom: 1px solid var(--bar-edge);
+  /* The bar above it slides away on the chrome's clock and this rides
+     up to meet it; without the transition the row jumped the whole
+     distance in one frame while the bar was still on its way. */
+  transition: top var(--chrome-slide);
+}
+/* On the web the row sits under the page's name, which is on the
+   paper, so the row is on the paper too — the Submit/Compress row's
+   answer to the same question. In the bar's colour, with the name no
+   longer on a black band above it to belong to, it was a strip of its
+   own floating between the name and the map. Stuck under the top bar it
+   is still opaque, with its hairline to say where it ends. The app
+   layout keeps the bar's ground: there the row is the first thing under
+   the bar and reads as the bar continued. */
+html:not(.is-pwa) .ql-chips { background: var(--page-bg); }
+/* In the app layout the title is in the bar and the sign is not drawn,
+   so the row is the first thing under the nav and takes the pull-up the
+   sign was doing — otherwise the shell's own top padding shows as a
+   strip of paper between the stripe and the chips. Where the sign IS
+   drawn the row follows it and must not ride up over its descenders. */
+html.is-pwa .ql-chips {
+  top: 0;
+  margin-top: calc(var(--shell-top, 32px) * -1);
+}
+/* the top bar slides away on a downward scroll; the row goes with it
+   rather than leaving a strip of page where the bar was */
+html.nav-up .ql-chips { top: 0; }
+/* In the app layout `top: 0` is already the bar's bottom edge, because
+   the sticky offset is measured inside the body's padding and that
+   padding IS the bar's height. So the row stayed where the bar had
+   been, with a strip of page above it. The pull-up is that same
+   padding, which lands the row under the cutout cover rather than over
+   the notch. */
+html.is-pwa.nav-up .ql-chips {
+  top: -53px;
+  /* The bar travels its own height and the safe area on the chrome's
+     clock and the row travels 53px on the same clock, so part way up
+     the bar is ahead of the row and the page showed through between
+     them. This paints the bar's ground for 96px above the row, so the
+     two read as one surface the whole way; once the row has stopped it
+     is up under the cutout cover and the screen's edge. A shadow
+     rather than a pseudo-element because the row is a sideways
+     scroller and clips anything drawn outside it — the same steps the
+     quest sheet's apron uses. */
+  box-shadow: 0 -48px 0 var(--bar-bg), 0 -96px 0 var(--bar-bg);
+}
+/* In the app layout on a phone the row is fixed to the screen under the
+   bar (.app-pin, site.css), so riding up with the bar is a top of its
+   own: the foot of the cutout, where the -53px above lands the stuck
+   row. */
+@media (max-width: 840px) {
+  html.is-pwa.nav-up main > .ql-chips { top: env(safe-area-inset-top, 0px); }
+}
+.ql-chips::-webkit-scrollbar { display: none; }
+
+.ql-chip {
+  flex: 0 0 auto;
+  padding: 8px 14px;
+  border: 1px solid var(--border-strong);
+  border-radius: 2px;
+  background: var(--surface);
+  color: var(--text);
+  font: inherit;
+  font-size: var(--t-small);
+  font-weight: 700;
+  white-space: nowrap;
+  cursor: pointer;
+}
+.ql-chip.is-on {
+  background: var(--sign-bg);
+  border-color: var(--pick-edge);
+  color: var(--sign-ink);
+}
+.ql-chip:active { transform: translate(1px, 1px); }
+
+/* Wrapped down a 330px column the row is five rows of chips above the
+   search, so it folds to two and the rest open on a button at the end
+   of it. The button is a chip in the muted voice: it is the one thing
+   in the row that is not a place to go. */
+.ql-chip-more {
+  border-color: var(--border);
+  color: var(--muted);
+}
+
+/* A list: the bookmark, its name and how many quests are on it */
+.ql-chip-list,
+.ql-list-pick {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+}
+.ql-chip-ic {
+  width: 0.95em;
+  height: 0.95em;
+  flex: 0 0 auto;
+}
+.ql-chip-n {
+  color: var(--muted);
+  font-variant-numeric: tabular-nums;
+}
+.ql-chip.is-on .ql-chip-n { color: var(--sign-muted); }
+
+/* A quest on one of the lists, before its name */
+.ql-saved-mark {
+  width: 0.75em;
+  height: 0.75em;
+  margin-right: 8px;
+  vertical-align: -0.02em;
+  color: var(--text);
+}
+.ql-item.is-done .ql-saved-mark { color: var(--muted); }
+
+/* In the fullscreen search panel the row is part of the panel's head:
+   it sits under the box and stays there while the results scroll. */
+.ql-chips-host { flex: 0 0 auto; }
+.ql-chips-host .ql-chips {
+  position: static;
+  margin: 0;
+  border-bottom: 0;
+  padding: 8px 14px 10px;
+  background: transparent;
+}
+/* The row travels, so a page rule aimed at .ql-chips follows it in
+   here — and `html.is-pwa .ql-chips` carries one type selector more
+   than the rule above, so its pull-up won. That pull-up is the shell's
+   top padding, which is right on the page and means nothing in a panel:
+   the row sat 32px high and hung half off the bottom of the screen,
+   the host measured 32px short so the collapsed bar was cut to match,
+   and what was left of the row was clipped rather than scrollable. */
+html.is-pwa .ql-chips-host .ql-chips { margin-top: 0; }
+/* the radius travels in after the chips, on their inset */
+.ql-chips-host .ql-control-group { padding: 0 14px 12px; }
+
+/* ---------- The filters button and drawer ---------- */
+/* The button sits between the search box and the submit button, which
+   is what shortened the box. */
+.ql-filters-btn {
+  flex: 0 0 auto;
+  display: grid;
+  place-items: center;
+  width: 54px;
+  height: 54px;
+  padding: 0;
+  border: 1px solid var(--border-strong);
+  border-radius: 2px;
+  background: var(--surface);
+  color: var(--text);
+  pointer-events: auto;
+  cursor: pointer;
+}
+.ql-filters-btn svg { width: 21px; height: 21px; }
+.ql-filters-btn:active { transform: translate(1px, 1px); }
+.ql-filters-btn.is-open {
+  background: var(--sign-bg);
+  border-color: var(--pick-edge);
+  color: var(--sign-ink);
+}
+/* in the search row it is a glyph on the row's own ground, sized to
+   the row rather than to the pill */
+.ql-filters-btn-inline {
+  width: 34px;
+  height: 34px;
+  border: 0;
+  background: transparent;
+  color: var(--muted);
+}
+.ql-filters-btn-inline.is-open { background: transparent; color: var(--text); }
+
+/* A box over the page, anchored to the bottom above the search row,
+   because that is where the button is and a menu that opens away from
+   its button reads as a different object.
+
+   It is a card, not a sign: paper and a hairline. It was drawn on the
+   sign black when it was the page's whole first screen and had to read
+   as one object above the map; as something a button opens over a paper
+   page, the same black was a slab dropped on top of it.
+
+   No shadow, because opening it dims the page behind it — the same veil
+   the settings menu uses, in site.css. The dimmed screen is what says
+   this is off the page, and a shadow under something already lifted
+   that way is a second answer to a settled question. */
+.ql-filters {
+  position: fixed;
+  left: calc(20px + env(safe-area-inset-left, 0px));
+  right: calc(20px + env(safe-area-inset-right, 0px));
+  bottom: calc(var(--ql-pill-rest) + 54px + 10px);
+  max-width: 420px;
+  margin-left: auto;
+  max-height: min(70vh, 560px);
+  overflow-y: auto;
+  overscroll-behavior: contain;
+  z-index: 1310;
+  padding: 6px 16px 14px;
+  background: var(--card-bg);
+  color: var(--text);
+  border: 1px solid var(--border);
+  border-radius: 2px;
+}
+
+/* The rows are the settings menu's rows, because they are the same
+   object: a name at reading size, its control beside it, a hairline
+   under it, and none under the last one in a group. Five names in the
+   uppercase label voice is what that voice is for on a chart, not in a
+   list — at 0.72rem in caps "Show quests without a fixed location"
+   wrapped to two lines and the panel read as five headings with nothing
+   underneath them. */
+.ql-filters .ql-rockers { gap: 0; }
+.ql-filters .ql-checkbox {
+  /* 44px is the row, not the row plus its padding: .ql-checkbox sets
+     that as a minimum on the content box, so the padding here was
+     adding to it and every row came out at 58. */
+  min-height: 30px;
+  padding: 7px 0;
+  border-bottom: 1px solid var(--border);
+}
+.ql-filters .ql-rockers .ql-checkbox:last-child { border-bottom: 0; }
+.ql-filters .ql-checkbox > span:first-child {
+  font-size: var(--t-body);
+  font-weight: 650;
+  text-transform: none;
+  letter-spacing: normal;
+  line-height: 1.35;
+  color: var(--text);
+}
+/* the group rule does the separating, so the second group needs no
+   space above its own first row */
+.ql-filters .ql-control-group + .ql-control-group { padding-top: 14px; }
+.ql-filters[hidden] { display: none; }
+
+@keyframes ql-drawer-in {
+  from { opacity: 0; transform: translateY(10px); }
+}
+
+.ql-app {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr);
+  gap: 20px;
+  align-items: start;
+  margin-top: 40px;
+}
+/* In the app layout the page's name is in the bar, so the chip row is
+   the first thing under it and the 40px that stood between the map and
+   a hero above it is a hole between two things that belong together. */
+html.is-pwa .ql-app { margin-top: 14px; }
+
+/* The map, the count and the list are one column whatever the width;
+   on a wide screen it is the right-hand one. */
+.ql-main {
+  display: grid;
+  gap: 20px;
+  align-items: start;
+  min-width: 0;
+}
+
+/* ---------- The desktop layout ----------
+   A wide screen is not a tall phone, and the page keeps the shape it
+   started with: the search and every option in a column down the left
+   that stays where it is as the page scrolls, the map beside it, and
+   the list under the map.
+
+   The panel is not a fourth copy of those controls. The search bar, the
+   chip row and the filters each have one home in the DOM and the script
+   moves them in here, so the switches keep their state and their
+   listeners; the fullscreen map borrows the same three through
+   travel(), which remembers wherever they happen to be. That is also
+   why these rules hang off html.ql-desk rather than off the media query
+   alone: the class is what says the pieces are actually in the panel.
+
+   Not in the app layout. A handheld at this width is a tablet holding
+   the app chrome, where the floating search beside the submit button is
+   the right shape and there is no room for a column of switches. */
+.ql-side { display: none; }
+
+@media (min-width: 931px) {
+  html:not(.is-pwa) .ql-app {
+    grid-template-columns: 330px minmax(0, 1fr);
+    column-gap: 24px;
+  }
+  html:not(.is-pwa) .ql-side {
+    display: grid;
+    gap: 16px;
+    align-content: start;
+    /* A sticky offset is measured from the scrollport, inside the
+       body's own padding. On the web the body has none and the bar is
+       fixed over it, so the offset is the bar's own height — the same
+       sum .ql-chips does, for the same reason. */
+    position: sticky;
+    top: calc(var(--nav-h, 65px) + 16px);
+    align-self: start;
+    /* A panel taller than the screen hides its own bottom, which is
+       where the radius appears once a location is on. */
+    max-height: calc(100vh - var(--nav-h, 65px) - 32px);
+    overflow-y: auto;
+    overscroll-behavior: contain;
+  }
+
+  /* the search, out of the corner and into the column */
+  html.ql-desk .ql-pill {
+    position: static;
+    display: block;
+    height: auto;
+    pointer-events: auto;
+  }
+  html.ql-desk .ql-pill-bar { height: 48px; }
+  /* every switch is in the panel, so the button that opened the drawer
+     has nothing left to open */
+  html.ql-desk #ql-filters-btn { display: none; }
+
+  /* the chips wrap down the column instead of scrolling sideways, and
+     give up the full bleed and the rule that separated them from a list
+     running underneath. These rules are held to the column: the
+     full-screen map borrows the same pieces while ql-desk stays on. */
+  html.ql-desk :where(.ql-side) .ql-chips {
+    position: static;
+    margin: 0;
+    padding: 0;
+    overflow: visible;
+    flex-wrap: wrap;
+    background: transparent;
+    border-bottom: 0;
+  }
+
+  /* the drawer becomes the panel it was before it was a drawer: in the
+     flow, with no shadow to lift it off a page it is now part of */
+  html.ql-desk :where(.ql-side) .ql-filters {
+    position: static;
+    left: auto;
+    right: auto;
+    bottom: auto;
+    max-width: none;
+    max-height: none;
+    overflow: visible;
+    margin: 0;
+    box-shadow: none;
+    animation: none;
+  }
+
+  /* The drawer has room for two columns of switches; a 330px panel does
+     not, and the labels wrapped to three lines each. */
+  html.ql-desk :where(.ql-side) .ql-rockers { grid-template-columns: minmax(0, 1fr); }
+
+  /* The list is in a column now rather than across the page, so the
+     quest and where it is share what the column has, the name taking
+     the larger part. Where was a fixed 302px: at 1024 that left the
+     name about 30px and it broke a letter to a line. */
+  html.ql-desk .ql-list-card { --ql-cols: 80px minmax(0, 3fr) minmax(0, 2fr) 92px 70px; }
+  /* With location off there is no distance to show, so its column
+     gives its width to the other two: an empty column under a head
+     reading From you looked like something that had not loaded. */
+  html.ql-desk .ql-list-card:not(.has-distance) { --ql-cols: 80px minmax(0, 3fr) minmax(0, 2fr) 0 70px; }
+}
+/* Just over the breakpoint the panel and the gutters were most of the
+   width, and the list beside them had about 280px for a name and a
+   place. The panel gives up 50px and the gutters a third. */
+@media (min-width: 931px) and (max-width: 1100px) {
+  html:not(.is-pwa) .ql-app { grid-template-columns: 280px minmax(0, 1fr); }
+  html.ql-desk .ql-list-card { --ql-col-gap: 16px; }
+}
+
+.ql-map-card {
+  background: var(--card-bg);
+  border: 1px solid var(--border);
+  border-radius: 2px;
+}
+
+/* One label voice on the page: uppercase, 0.72rem, 800, the same
+   tracking as the LIVE tag on a quest row. */
+.ql-lab,
+.ql-field > span,
+.ql-checkbox > span:first-child,
+.ql-group-title {
+  margin: 0;
+  font-size: var(--t-micro);
+  font-weight: 800;
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+  line-height: 1.3;
+  color: var(--muted);
+}
+
+.ql-r { text-align: right; }
+
+.ql-button-row {
+  display: flex;
+  gap: 10px;
+  flex-wrap: wrap;
+  align-items: center;
+}
+
+/* the site's button (.btn in site.css), in the quest page's own name */
+.ql-button {
+  border: 2px solid var(--text);
+  border-radius: 2px;
+  background: var(--surface);
+  color: var(--text);
+  padding: 10px 20px;
+  font-size: var(--t-body);
+  font-weight: 800;
+  line-height: 1.25;
+  min-height: 48px;
+  transition: transform var(--duration-quick) var(--ease-smooth-out), box-shadow var(--duration-quick) var(--ease-smooth-out);
+}
+
+.ql-button:hover {
+  transform: translateY(-1px);
+  box-shadow: var(--shadow-hover);
+}
+
+.ql-button:active { transform: translate(1px, 1px); box-shadow: none; }
+
+.ql-button-accent {
+  background: var(--accent-solid);
+  border-color: var(--accent-solid);
+  color: var(--on-accent);
+}
+
+.ql-status {
+  margin: 0;
+  color: var(--muted);
+  font-size: var(--t-small);
+  line-height: 1.5;
+}
+
+.ql-control-group {
+  display: grid;
+  gap: 14px;
+}
+
+.ql-control-group + .ql-control-group {
+  border-top: 1px solid var(--border);
+  margin-top: 16px;
+  padding-top: 16px;
+}
+
+.ql-find {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr);
+  gap: 14px;
+}
+
+.ql-rockers {
+  display: grid;
+  gap: 10px;
+}
+
+.ql-field {
+  display: grid;
+  gap: 7px;
+}
+
+/* the radius figure is a figure, at reading ink: green on this page is
+   the action and a ticked quest */
+.ql-field strong { color: var(--text); }
+
+.ql-field input[type="text"],
+.ql-field select {
+  width: 100%;
+  border: 1px solid var(--border);
+  border-radius: 2px;
+  padding: 11px;
+  background: var(--surface);
+  color: var(--text);
+  /* 16px or a phone browser zooms the page when the field takes focus */
+  font-size: var(--t-body);
+  font-weight: 600;
+}
+
+.ql-field input[type="range"] {
+  width: 100%;
+  accent-color: var(--accent);
+  min-height: 32px;
+}
+
+/* A rocker is a row of two parts, and only the second one is live. The
+   whole row used to be one <label>, so a finger put down on the words
+   to scroll the page flipped the switch on the way past — the panel is
+   four rockers deep and there is nowhere else on it to start a swipe.
+   The words are now a plain span and the switch carries its own label,
+   so the tap target is the switch and the rest of the row is page. */
+.ql-checkbox {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  min-height: 44px;
+}
+.ql-checkbox > span:first-child { overflow-wrap: break-word; min-width: 0; }
+
+.ql-rocker {
+  flex: none;
+  position: relative; /* the invisible native switch is measured on this */
+  display: flex;
+  align-items: center;
+  min-height: 44px; /* touch target */
+  cursor: pointer;
+}
+
+/* The iPhone tick (site.css, "Direct-tap haptics"): a rocker's own
+   checkbox becomes a real native switch and is grown from its corner
+   pixel to cover the control, because iOS only buzzes for a finger
+   landing on one. The shared rule grows it to cover .ql-checkbox — the
+   whole row — which is the target being narrowed here, so it is grown
+   to cover the switch instead. The tick survives; the row does not
+   take taps. */
+html.haptic-taps .ql-rocker > input[type="checkbox"] {
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  margin: 0;
+}
+
+/* ---------- The drawer's own colours ----------
+   The drawer is a black object wherever it opens from, so its contents
+   carry the sign's ink rather than the page's. Scoped to it, so nothing
+   it holds has to know which of the two buttons opened it. */
+/* What was here was the panel's ink against the sign black: muted
+   labels lifted to --sign-muted, figures to --sign-ink, the group rule
+   to white at a quarter. On paper the page's own tokens are right and
+   every one of those was a second palette to keep in step. */
+
+
+
+/* the O/I switch (shared styles in site.css) stands in for the box.
+   It sits over the drawn switch rather than under it: the switch is
+   positioned and would otherwise paint on top, putting the real control
+   out of reach of anything aiming at it. */
+.ql-checkbox input {
+  position: absolute;
+  opacity: 0;
+  width: 1px;
+  height: 1px;
+  z-index: 2;
+}
+
+/* ---------- The radius ----------
+   A bar with a square thumb, in place of the browser's own rounded
+   slider, and a key either side that steps it a kilometre at a time.
+   The thumb and the keys are the same square — paper, a strong rule
+   round it, the hard shadow — like every control on the map. The keys
+   draw their marks as bars rather than glyphs, the way the sheet's
+   stepper does, so a minus and a plus weigh the same. */
+.ql-radius-row {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.ql-radius-row input[type="range"] {
+  -webkit-appearance: none;
+  appearance: none;
+  flex: 1;
+  min-width: 0;
+  height: 32px;
+  margin: 0;
+  padding: 0;
+  background: transparent;
+  cursor: pointer;
+}
+.ql-radius-row input[type="range"]::-webkit-slider-runnable-track {
+  height: 2px;
+  border-radius: 0;
+  background: var(--border-strong);
+}
+.ql-radius-row input[type="range"]::-moz-range-track {
+  height: 2px;
+  border-radius: 0;
+  background: var(--border-strong);
+}
+.ql-radius-row input[type="range"]::-webkit-slider-thumb {
+  -webkit-appearance: none;
+  width: 18px;
+  height: 18px;
+  margin-top: -8px; /* centred on the 2px track */
+  border: 1px solid var(--border-strong);
+  border-radius: 2px;
+  background: var(--surface);
+  box-shadow: var(--shadow);
+}
+.ql-radius-row input[type="range"]::-moz-range-thumb {
+  width: 16px;
+  height: 16px;
+  border: 1px solid var(--border-strong);
+  border-radius: 2px;
+  background: var(--surface);
+  box-shadow: var(--shadow);
+}
+.ql-radius-row input[type="range"]:focus-visible {
+  outline: 2px solid var(--accent);
+  outline-offset: 2px;
+}
+
+/* The radius sits under the map, and in the full-screen map under the
+   chips, away from the drawer and its Clear button, so it carries its
+   own: this small one does what that one does. */
+.ql-radius-clear {
+  display: inline-block;
+  float: right;
+  border: 1px solid var(--border-strong);
+  border-radius: 2px;
+  background: var(--surface);
+  color: var(--text);
+  font: inherit;
+  font-size: var(--t-micro);
+  font-weight: 800;
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+  padding: 3px 8px;
+  cursor: pointer;
+}
+
+.ql-step-btn {
+  position: relative;
+  flex: none;
+  width: 32px;
+  height: 32px;
+  padding: 0;
+  border: 1px solid var(--border-strong);
+  border-radius: 2px;
+  background: var(--surface);
+  color: var(--text);
+  cursor: pointer;
+  box-shadow: var(--shadow);
+}
+/* the key is empty and named by its label; the mark is drawn */
+.ql-step-btn::before,
+.ql-step-btn-add::after {
+  content: '';
+  position: absolute;
+  left: 50%;
+  top: 50%;
+  background: currentColor;
+}
+.ql-step-btn::before { width: 14px; height: 2px; margin: -1px 0 0 -7px; }
+.ql-step-btn-add::after { width: 2px; height: 14px; margin: -7px 0 0 -1px; }
+
+.ql-step-btn:active {
+  transform: translate(1px, 1px);
+  box-shadow: none;
+}
+
+/* ---------- The foot: what is ticked so far ----------
+   The itemised tally is gone — every ticked quest is marked in the list
+   where it sits. What the tally carried that the rows do not is the
+   running total, and that is the foot of the page and the largest
+   figure on it. */
+.ql-tally { margin-top: 56px; }
+/* The search floats over the foot of the screen, so the page ends far
+   enough above it to clear it: at the end of a scroll Reset progress
+   sat under it. Its height and the gap it keeps under itself, on top of
+   the page's own 56px. Not on a desk, where the search is in the side
+   column. */
+@media (max-width: 930px) {
+  .ql-tally { padding-bottom: calc(54px + 19px); }
+}
+html.is-pwa .ql-tally { padding-bottom: calc(54px + 19px); }
+
+.ql-tally-figure {
+  margin: 14px 0 0;
+  font-size: var(--ql-title);
+  font-weight: 850;
+  letter-spacing: -0.03em;
+  line-height: 1;
+  font-variant-numeric: tabular-nums lining-nums;
+}
+
+.ql-tally-note {
+  margin: 14px 0 0;
+  max-width: 62ch;
+  font-size: var(--t-body);
+  line-height: 1.55;
+  color: var(--muted);
+}
+.ql-tally-note #ql-done-count {
+  color: var(--text);
+  font-weight: 700;
+  font-variant-numeric: tabular-nums lining-nums;
+}
+
+.ql-tally-actions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 10px;
+  margin-top: 24px;
+}
+
+/* Hide Checklist (settings menu): no tick boxes, total or done marks,
+   and the list gives the boxes' column to the quests */
+html.hide-checklist .ql-check,
+html.hide-checklist .ql-list-heads > span:first-child,
+html.hide-checklist .ql-tally,
+html.hide-checklist .ql-done-row,
+html.hide-checklist #ql-detail-done,
+html.hide-checklist #ql-detail-repeat { display: none; }
+html.hide-checklist .ql-item,
+html.hide-checklist .ql-list-heads { grid-template-columns: minmax(0, 1fr); }
+html.hide-checklist .ql-item-full { grid-column: 1; }
+/* the list is the end of the page, so it clears the floating search */
+@media (max-width: 930px) {
+  html.hide-checklist .ql-app { padding-bottom: calc(54px + 19px); }
+}
+html.is-pwa.hide-checklist .ql-app { padding-bottom: calc(54px + 19px); }
+
+.ql-map-card { overflow: hidden; position: relative; }
+/* the map as it last stood, over the live one until that has drawn */
+.ql-map-shot {
+  position: absolute;
+  z-index: 1;
+  pointer-events: none;
+  transition: opacity var(--duration-quick) var(--ease-out);
+}
+.ql-map-shot.is-leaving { opacity: 0; }
+
+/* On a phone in the app layout the map runs to both edges of the
+   screen and up to the chip row, the way the home page's pictures run
+   edge to edge: inset by the gutter it was a box inside a screen that
+   is barely wider than it. The chip row's own rule is the line along
+   the top, so the card keeps only the one along its foot. Wider than
+   a phone it stays a box in the column. Never in full screen, which
+   places the card itself. */
+@media (max-width: 560px) {
+  html.is-pwa .ql-app { margin-top: 0; }
+  html.is-pwa:not(.ql-map-full) .ql-map-card {
+    margin-inline: calc(50% - 50vw);
+    border-width: 0 0 1px;
+    border-radius: 0;
+  }
+}
+
+/* Floating buttons over the map: full screen toggle, filters (full screen only) */
+.ql-map-btn {
+  position: absolute;
+  top: 10px;
+  right: 10px;
+  z-index: 1040; /* under the top bar and the sheet dim, over the map */
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 38px;
+  height: 38px;
+  padding: 0;
+  border: 1px solid var(--border-strong);
+  border-radius: 2px;
+  background: var(--surface);
+  color: var(--text);
+  box-shadow: var(--shadow);
+  cursor: pointer;
+}
+.ql-map-btn svg { width: 19px; height: 19px; }
+.ql-map-btn:active { transform: translate(1px, 1px); box-shadow: none; }
+/* the locate pin sits directly under the fullscreen button, on the
+   page map and in full screen alike */
+.ql-map-btn-locate { top: 56px; }
+.ql-map-btn.is-hidden { display: none; }
+
+/* The map draws only the quests that have coordinates, and more than
+   half of this list has none. The chip counts what the pins leave out
+   and switches the list to exactly those; pressed, it is the way back. */
+.ql-map-anywhere {
+  position: absolute;
+  left: 10px;
+  bottom: 10px;
+  z-index: 1040; /* the map buttons' layer: over the map, under the chrome */
+  display: flex;
+  align-items: baseline;
+  gap: 7px;
+  padding: 7px 11px;
+  border: 1px solid var(--sign-edge);
+  border-radius: 2px;
+  background: var(--sign-bg);
+  color: var(--sign-ink);
+  box-shadow: var(--shadow);
+  font-family: inherit;
+  cursor: pointer;
+}
+.ql-map-anywhere-num { font-size: var(--t-body); font-weight: 800; font-variant-numeric: tabular-nums lining-nums; }
+.ql-map-anywhere-label {
+  color: var(--sign-muted);
+  font-size: var(--t-micro);
+  font-weight: 800;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+}
+.ql-map-anywhere.is-on {
+  background: var(--accent);
+  border-color: var(--accent);
+}
+/* the quests are hidden from the list altogether: the chip still says
+   how many, and is the way to bring them back */
+.ql-map-anywhere.is-off { border-color: var(--alert-ink); }
+.ql-map-anywhere.is-off .ql-map-anywhere-label { color: var(--alert-ink); }
+.ql-map-anywhere.is-on .ql-map-anywhere-label { color: rgba(255, 255, 255, 0.86); }
+.ql-map-anywhere:active { transform: translate(1px, 1px); box-shadow: none; }
+.ql-map-anywhere.is-hidden { display: none; }
+/* Full screen the chip keeps the corner it has in the page, 12px in
+   like the map's buttons and clear of the notch. On a phone it rides
+   above the search panel on the locate pin's line (further down). */
+html.ql-map-full .ql-map-anywhere {
+  bottom: calc(12px + var(--map-safe-b));
+  left: calc(12px + var(--map-safe-l));
+}
+/* a narrow phone: the count and a crossed-out pin, the words kept for
+   a screen reader */
+.ql-map-anywhere-ic { display: none; width: 15px; height: 15px; flex: none; align-self: center; }
+@media (max-width: 374px) {
+  .ql-map-anywhere { gap: 6px; padding: 7px 9px; }
+  .ql-map-anywhere-ic { display: block; }
+  .ql-map-anywhere-label {
+    position: absolute;
+    width: 1px;
+    height: 1px;
+    overflow: hidden;
+    clip-path: inset(50%);
+    white-space: nowrap;
+  }
+}
+/* the light map is a choice only the dark theme has */
+html:not([data-theme="dark"]) .ql-light-map-row { display: none; }
+
+/* the list the chip scrolls to clears the fixed top bar */
+.ql-list-card { scroll-margin-top: calc(var(--nav-h, 65px) + 10px); }
+/* The expand and shrink glyphs cross-fade in the same slot (icon
+   swap) instead of flicking between display states */
+#ql-map-full { display: inline-grid; place-items: center; }
+#ql-map-full svg {
+  grid-area: 1 / 1;
+  transition:
+    opacity   var(--icon-swap-dur) var(--icon-swap-ease),
+    filter    var(--icon-swap-dur) var(--icon-swap-ease),
+    transform var(--icon-swap-dur) var(--icon-swap-ease);
+  will-change: opacity, filter, transform;
+}
+#ql-map-full .icon-map-shrink,
+html.ql-map-full #ql-map-full .icon-map-expand {
+  opacity: 0;
+  filter: blur(var(--icon-swap-blur));
+  transform: scale(var(--icon-swap-start-scale));
+}
+#ql-map-full .icon-map-expand,
+html.ql-map-full #ql-map-full .icon-map-shrink {
+  opacity: 1;
+  filter: blur(0);
+  transform: scale(1);
+}
+@media (prefers-reduced-motion: reduce) {
+  #ql-map-full svg { transition: none !important; }
+}
+
+/* ---------- Full screen map mode ---------- */
+/* Full screen means edge to edge, and a phone's screen is not a
+   rectangle. Turned sideways it loses a strip to the notch on one
+   side and a curve at every corner, and the home indicator takes the
+   bottom. The map itself should still bleed into all of that — it is
+   a map — but nothing pinned to an edge may, or the reader gets a
+   button under the curve they cannot see or reach. The rest of the
+   site is spaced by its fixed bars, which carry the insets already;
+   full screen has no bars, so it reads them here and every pinned
+   thing below comes in by them. Set at all times rather than with
+   .ql-map-full: a custom property changed on the root restyles every
+   element on the page. */
+html {
+  --map-safe-l: env(safe-area-inset-left, 0px);
+  --map-safe-r: env(safe-area-inset-right, 0px);
+  --map-safe-t: env(safe-area-inset-top, 0px);
+  --map-safe-b: env(safe-area-inset-bottom, 0px);
+}
+html.ql-map-full body { overflow: hidden; }
+html.ql-map-full .ql-map-card {
+  position: fixed;
+  inset: 0;
+  z-index: 1300;
+  border: 0;
+  border-radius: 0;
+  box-shadow: none;
+}
+
+/* Full screen as the quest list's home (the settings menu's Full screen
+   map): the chrome stays, so the fullscreen layer stops where the bar
+   starts rather than running under it — the map card, the sheet's
+   overlay and the search panel all live in the space between. The bar
+   carries the safe-area inset on that edge already, so the map's own
+   --map-safe-* on it goes to zero and every pinned thing measured off
+   it lands the same as before. */
+html.ql-map-home.is-pwa {
+  --map-safe-b: 0px;
+}
+html.ql-map-full.ql-map-home.is-pwa .ql-map-card,
+html.ql-map-full.ql-map-home.is-pwa .ql-detail-overlay,
+html.ql-map-full.ql-map-home.is-pwa .ql-search { bottom: var(--tabbar-h, 57px); }
+
+html.ql-map-home:not(.is-pwa) {
+  --map-safe-t: 0px;
+}
+html.ql-map-full.ql-map-home:not(.is-pwa) .ql-map-card,
+html.ql-map-full.ql-map-home:not(.is-pwa) .ql-detail-overlay { top: var(--nav-h, 65px); }
+html.ql-map-full .ql-map { height: 100% !important; }
+html.ql-map-full .ql-map-btn { top: calc(12px + var(--map-safe-t)); right: calc(12px + var(--map-safe-r)); }
+html.ql-map-full .ql-map-btn-locate { top: calc(60px + var(--map-safe-t)); }
+
+/* In full screen the drawer opens inside the search panel, at the head
+   of its list and under the button that opened it, rather than across
+   the map: on a phone the panel rises to show it, and on a desktop it
+   opens at the top of the sidebar. Laid over the map it ran the width
+   of the screen on a desktop and covered the map's own buttons on a
+   phone. */
+html.ql-map-full .ql-filters {
+  position: static;
+  left: auto;
+  right: auto;
+  bottom: auto;
+  top: auto;
+  max-width: none;
+  max-height: none;
+  overflow: visible;
+  margin: 12px 0 0;
+  box-shadow: none;
+}
+/* and so it is part of the panel, not something over the page: the
+   page's veil (site.css) would only dim the map beside it */
+html.ql-map-full.ql-filters-open body::before { content: none; }
+
+/* The quest dim lives UNDER the fixed bars: the top bar (and the iPhone
+   status strip it merges with) stays bright while everything beneath it
+   dims, and the sheet itself still covers whatever it slides over. The
+   full screen map keeps its clear background instead. */
+body::after {
+  content: '';
+  position: fixed;
+  inset: 0;
+  background: rgba(12, 15, 20, 0.45);
+  opacity: 0;
+  pointer-events: none;
+  transition: opacity 220ms ease;
+  z-index: 1050;
+  will-change: opacity; /* the drag sets it every move: no full-screen repaint */
+}
+html.ql-sheet-open:not(.ql-map-full) body::after { opacity: var(--sheet-dim, 1); }
+/* at the card the page and the map stay live and undimmed */
+html.ql-sheet-open.ql-sheet-card:not(.ql-map-full) body::after { opacity: 0; }
+html.ql-sheet-card .ql-detail-overlay { pointer-events: none; }
+html.ql-sheet-card .ql-detail { pointer-events: auto; }
+/* while the sheet is being dragged the dim tracks the finger live */
+html.ql-sheet-dragging body::after { transition: none; }
+
+/* ---------- Sheet handle, snap states and animations ---------- */
+/* (entering/leaving full screen is a measured morph driven by site
+   script: the card's rectangle animates between its two homes) */
+
+/* The filters drawer drops in like the settings menu */
+html.ql-filters-open .ql-filters { animation: ql-drawer-in 200ms ease; }
+@keyframes ql-drawer-in {
+  from { opacity: 0; transform: translateY(-10px); }
+}
+
+/* Grab bar on phones: swipe up for full screen, down for half, down
+   again to dismiss. Hidden on large screens. */
+.ql-sheet-handle { display: none; }
+@media (max-width: 930px) {
+  :where(html:not(.ql-pop)) .ql-sheet-handle {
+    display: block;
+    /* pinned at the sheet's top with the head under it, in the head's
+       ink: the two are one black bar, and the whole of it drags */
+    position: sticky;
+    top: 0; /* the sheet has no top padding to cancel */
+    z-index: 5;
+    background: var(--sign-bg);
+    margin-top: 0;
+    padding: 6px 0 5px; /* the bar's own height: the head pins below it */
+    /* one pixel over the head, so no seam of the sheet's white shows
+       between the two blacks where iOS rounds a moving sheet's edges */
+    margin-bottom: -1px;
+    touch-action: none;
+    cursor: grab;
+  }
+  /* two halves of the grab bar, hinged in the middle: they fold into a
+     shallow v while the sheet is dragged downwards and lie flat again
+     the moment the finger moves up */
+  :where(html:not(.ql-pop)) .ql-sheet-handle::before,
+  :where(html:not(.ql-pop)) .ql-sheet-handle::after {
+    content: '';
+    position: absolute;
+    top: 6px;
+    width: 23px;
+    height: 5px;
+    /* Opaque, not translucent. The two halves meet in the middle and
+       overlapped by a pixel, and two translucent greys over each other
+       are a brighter grey — so the join, which the flat bar exists to
+       hide, was the one part of it you could see. A flat grey off the
+       head's black is the same colour the translucent one resolved to. */
+    background: #6d6d6d;
+    border-radius: 2px;
+    transition: transform 160ms ease;
+  }
+  :where(html:not(.ql-pop)) .ql-sheet-handle::before { left: calc(50% - 22px); }
+  :where(html:not(.ql-pop)) .ql-sheet-handle::after { right: calc(50% - 22px); }
+  /* Both halves pivot about their own centres, so switching direction
+     always animates through flat: rotate +15, through 0, to -15. The
+     3px drop keeps the pinned end exactly in place for each shape. */
+  /* dragging down: the touching edges dip into a v, outer ends held */
+  :where(html:not(.ql-pop)) .ql-sheet-handle.is-vee::before { transform: translateY(3px) rotate(15deg); }
+  :where(html:not(.ql-pop)) .ql-sheet-handle.is-vee::after { transform: translateY(3px) rotate(-15deg); }
+  /* dragging up: the touching edges hold still, the outer tips dip; at
+     full extension the bar lies flat again, only the band is left */
+  :where(html:not(.ql-pop)) .ql-sheet-handle.is-up::before { transform: translateY(3px) rotate(-15deg); }
+  :where(html:not(.ql-pop)) .ql-sheet-handle.is-up::after { transform: translateY(3px) rotate(15deg); }
+  /* while the band is engaged the flat bar stretches with the pull,
+     proportional to how deep the rubber is (script drives --stretch) */
+  :where(html:not(.ql-pop)) .ql-sheet-handle { --stretch: 1; }
+  :where(html:not(.ql-pop)) .ql-sheet-handle:not(.is-vee):not(.is-up)::before,
+  :where(html:not(.ql-pop)) .ql-sheet-handle:not(.is-vee):not(.is-up)::after {
+    transform: scaleX(var(--stretch));
+  }
+  :where(html:not(.ql-pop)) .ql-sheet-handle.is-stretching::before,
+  :where(html:not(.ql-pop)) .ql-sheet-handle.is-stretching::after { transition: none; }
+  :where(html:not(.ql-pop)) .ql-detail {
+    /* springy settle on release: a touch of overshoot on position, a
+       smooth ease on the height */
+    /* a thrown sheet overshoots a touch and settles back */
+    transition: transform 300ms cubic-bezier(0.22, 1.25, 0.36, 1), max-height 300ms cubic-bezier(0.24, 1.12, 0.3, 1),
+      opacity var(--chrome-fade);
+    /* the apron reaches the bottom of the screen from wherever the
+       sheet is lifted to, so nothing ever shows under it */
+    box-shadow: var(--sheet-apron);
+    /* its own layer: the content scrolls and the sheet moves without
+       the page behind it being repainted */
+    will-change: transform;
+  }
+  /* No border but the red one along the top. The bottom one showed as a
+     stray line across the apron when the sheet lifted; the side ones
+     run the full height of the screen with nothing beside them, and
+     since the head reaches the padding edge but not past the border,
+     what they actually draw is a pale hairline down each side of the
+     black head. (The base rule sets the border shorthand, so this needs
+     the heavier selector.) */
+  :where(html:not(.ql-pop)) .ql-detail-overlay .ql-detail {
+    border-bottom: 0;
+    border-left: 0;
+    border-right: 0;
+  }
+  :where(html:not(.ql-pop)) .ql-detail.is-full { max-height: calc(100% - 14px); }
+  /* the card: the half sheet pushed down until only its head and the
+     line under it show (--ql-card-drop, measured by the script) */
+  :where(html:not(.ql-pop)) .ql-detail.is-card {
+    transform: translateY(var(--ql-card-drop, 0px));
+    overflow-y: hidden;
+  }
+  /* the whole top of the sheet is a drag surface, not just the bar */
+  :where(html:not(.ql-pop)) .ql-detail-top { touch-action: none; }
+
+  /* closing slides the sheet away (the dim layer fades on its own) */
+  :where(html:not(.ql-pop)) .ql-detail-overlay.is-leaving .ql-detail {
+    transform: translateY(115%);
+    transition: transform 240ms cubic-bezier(0.3, 0, 0.7, 0.4);
+  }
+  /* opening pops up from the bottom */
+  :where(html:not(.ql-pop)) .ql-detail-overlay:not(.is-hidden) .ql-detail {
+    animation: ql-sheet-up 260ms cubic-bezier(0.2, 0.7, 0.3, 1);
+  }
+  @keyframes ql-sheet-up {
+    from { transform: translateY(48px); opacity: 0.4; }
+  }
+  /* Container transform (test): when a card morphs into the sheet the
+     script drives the whole entrance, so the stock pop-up stands down */
+  :where(html:not(.ql-pop)) .ql-detail-overlay.is-morphing .ql-detail { animation: none; }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .ql-map-card,
+  .ql-filters,
+  .ql-detail { animation: none !important; transition: none; }
+  .ql-code-row::after { transition: none; }
+}
+
+/* Quest details over the full screen map: Google Maps style. A left side
+   panel on large screens, a half-height slide-up sheet on phones with
+   the map still visible and tappable above it. */
+html.ql-map-full .ql-detail-overlay { z-index: 1350; }
+@media (min-width: 931px) {
+  html.ql-map-full .ql-detail-overlay {
+    justify-content: flex-start;
+    align-items: stretch;
+    padding: 0;
+    background: transparent;
+    pointer-events: none;
+  }
+  html.ql-map-full .ql-detail {
+    pointer-events: auto;
+    width: 420px;
+    max-width: 85vw;
+    max-height: none;
+    height: 100%;
+    border-radius: 0;
+    border-left: 0;
+    border-bottom: 0;
+  }
+  /* the side panel slides in from the map's edge */
+  html.ql-map-full .ql-detail-overlay:not(.is-hidden) .ql-detail {
+    animation: ql-panel-in 220ms ease;
+  }
+  @keyframes ql-panel-in {
+    from { transform: translateX(-26px); opacity: 0; }
+  }
+}
+@media (max-width: 930px) {
+  html.ql-map-full .ql-detail-overlay {
+    background: transparent;
+    pointer-events: none;
+  }
+  html.ql-map-full .ql-detail {
+    pointer-events: auto;
+    max-height: 52vh;
+    box-shadow: var(--sheet-apron);
+  }
+  /* the swipe-up snap beats the half height over the full map too */
+  html.ql-map-full .ql-detail.is-full { max-height: calc(100% - 14px); }
+}
+
+.ql-map {
+  height: 320px;
+  /* the ground under the map: the script paints it the basemap's own
+     land colour before the map has loaded, so this is what shows before
+     the script runs */
+  background: var(--tint);
+}
+
+/* ---------- MapLibre's own furniture, in the site's hand ----------
+   MapLibre's stylesheet is fetched at run time and lands after this
+   one, so every rule here hangs off the map's id to outrank it. Its
+   white ground, 4px corners and soft shadows go. The zoom keys become
+   the same 38px paper square as the page's two map buttons, so the map
+   carries one family of controls; a label on the map is a black sign,
+   the way a code chip is; the attribution is set in the page's small
+   muted type. */
+#ql-map.maplibregl-map {
+  font-family: inherit;
+  -webkit-tap-highlight-color: transparent;
+}
+#ql-map .maplibregl-ctrl-group {
+  border: 1px solid var(--border-strong);
+  border-radius: 2px;
+  background: var(--surface);
+  box-shadow: var(--shadow);
+}
+#ql-map .maplibregl-ctrl-group button,
+#ql-map .maplibregl-ctrl-group button:not(:disabled):hover {
+  display: grid;
+  place-items: center;
+  width: 38px;
+  height: 38px;
+  border: 0;
+  border-radius: 0;
+  background: var(--surface);
+  color: var(--text);
+  font: 800 22px/1 "Helvetica Neue", "SCS Heros", Helvetica, Arial, sans-serif;
+}
+#ql-map .maplibregl-ctrl-group button + button { border-top: 1px solid var(--border); }
+#ql-map .maplibregl-ctrl-group button .maplibregl-ctrl-icon { display: none; }
+#ql-map .maplibregl-ctrl-zoom-in::before { content: "+"; }
+#ql-map .maplibregl-ctrl-zoom-out::before { content: "\2212"; }
+#ql-map .maplibregl-ctrl-group button:disabled { color: var(--muted); }
+#ql-map .maplibregl-ctrl-group button:focus { box-shadow: none; }
+#ql-map .maplibregl-ctrl-group button:focus-visible { outline: 2px solid var(--accent); outline-offset: -2px; }
+#ql-map .maplibregl-ctrl-bottom-right .maplibregl-ctrl-attrib {
+  margin: 0;
+  padding: 3px 8px;
+  border: 1px solid var(--border);
+  border-right: 0;
+  border-bottom: 0;
+  border-radius: 2px 0 0 0;
+  background: var(--surface);
+  color: var(--muted);
+  font-family: inherit;
+  font-size: var(--t-micro);
+  line-height: 1.4;
+}
+#ql-map .maplibregl-ctrl-attrib a {
+  color: var(--text);
+  font-weight: 700;
+  text-decoration: none;
+}
+#ql-map .ql-map-tip .maplibregl-popup-content {
+  padding: 5px 9px;
+  border-radius: 2px;
+  background: var(--sign-bg);
+  color: var(--sign-ink);
+  box-shadow: none;
+  font-family: inherit;
+  font-size: var(--t-small);
+  font-weight: 700;
+  line-height: 1.3;
+  /* a label never takes a tap meant for the pin beside it */
+  pointer-events: none;
+}
+#ql-map .ql-map-tip.maplibregl-popup-anchor-bottom .maplibregl-popup-tip { border-top-color: var(--sign-bg); }
+#ql-map .ql-map-tip.maplibregl-popup-anchor-top .maplibregl-popup-tip { border-bottom-color: var(--sign-bg); }
+/* full screen: the zoom keys come in by the safe area like everything
+   else pinned to an edge (MapLibre's own 10px margin sits inside this) */
+html.ql-map-full #ql-map .maplibregl-ctrl-top-left {
+  top: calc(2px + var(--map-safe-t));
+  left: calc(2px + var(--map-safe-l));
+}
+
+/* ---------- The list ----------
+   Rows on a hairline, not cards. The list opens on the page's heavy
+   rule; the columns are set once in --ql-cols so the heads over them
+   and the rows under them cannot drift apart. */
+.ql-list-card { border-top: var(--rule-w) solid var(--rule-ink); }
+.ql-list-card:not(.has-distance) { --ql-cols: 88px minmax(0, 1fr) 348px 0 76px; }
+.ql-list-card:not(.has-distance) .ql-lab-dist { visibility: hidden; } /* held in its zero-width track, so Points keeps its own */
+
+.ql-list-heads {
+  display: grid;
+  grid-template-columns: var(--ql-check) minmax(0, 1fr);
+  gap: var(--ql-check-gap);
+  padding: 12px 0 14px;
+}
+
+.ql-heads-row {
+  display: grid;
+  grid-template-columns: var(--ql-cols);
+  column-gap: var(--ql-col-gap);
+  align-items: baseline;
+}
+
+.ql-list { display: block; }
+
+#ql-list { border-bottom: 1px solid var(--border); }
+
+/* A region opens with its name. Space does the work — the page already
+   has two rule weights and does not need a third. The name is a heading
+   over its quests, in the page's ink and its own case: in the column
+   heads' small capitals it read as a sixth column head on a desktop,
+   and on a phone as a footnote under rows set at twice its size. */
+.ql-group-title {
+  margin: 34px 0 12px;
+  color: var(--text);
+  font-size: var(--t-lede);
+  letter-spacing: -0.01em;
+  text-transform: none;
+  overflow-wrap: break-word;
+}
+.ql-group-title:first-child { margin-top: 10px; }
+
+/* Quest rows: the tick button, then the row's five cells */
+.ql-item {
+  display: grid;
+  grid-template-columns: var(--ql-check) minmax(0, 1fr);
+  gap: var(--ql-check-gap);
+  align-items: start;
+  border-top: 1px solid var(--border);
+  padding: 14px 0;
+  transition: border-color var(--duration-quick) var(--ease-smooth-out),
+    background var(--duration-fast) var(--ease-smooth-out);
+}
+
+/* a rebuilt list (filter, search, location) rises in from the top;
+   the rows below the first screen just appear */
+
+/* the row the pointer is on lifts off the page's ground a shade —
+   neutral, because green on this page means a quest is done */
+.ql-item:hover,
+.ql-item:focus-within { background: var(--card-bg); }
+
+/* A ticked quest is still a quest, so nothing in the row moves or
+   changes ground: the mark is the line drawn across its name and its
+   code chip fading back. */
+
+.ql-check {
+  width: 30px;
+  height: 30px;
+  margin-top: 1px;
+  padding: 0;
+  border-radius: 2px;
+  /* the text boxes' edge: in --border it was a pale square that read as
+     a box that could not be ticked */
+  border: 2px solid var(--border-strong);
+  background: var(--surface);
+  color: transparent;
+  font-size: 15px;
+  font-weight: 900;
+  line-height: 1;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  position: relative; /* the dot is laid over the tick, not beside it */
+  transition: border-color var(--duration-quick) var(--ease-smooth-out), background var(--duration-quick) var(--ease-smooth-out),
+    color var(--duration-quick) var(--ease-smooth-out), transform var(--duration-quick) var(--ease-smooth-out);
+}
+
+/* the tick is a stroke that draws itself once the box has filled
+   (checkbox check); a hover previews it faintly, an un-tick wipes it
+   on the quick clock */
+.ql-check svg {
+  width: 16px;
+  height: 16px;
+  overflow: visible;
+  transition: opacity var(--duration-quick) var(--ease-smooth-out);
+}
+.ql-check svg path {
+  fill: none;
+  stroke: currentColor;
+  stroke-width: 2;
+  stroke-linecap: round;
+  stroke-linejoin: round;
+  stroke-dasharray: 15;
+  stroke-dashoffset: 15;
+  transition: stroke-dashoffset var(--duration-quick) var(--ease-smooth-out);
+}
+.ql-check:hover { border-color: var(--done); color: #b5d4c4; }
+.ql-check:hover svg path { stroke-dashoffset: 0; }
+
+.ql-item.is-done .ql-check {
+  background: var(--done);
+  border-color: var(--done);
+  color: var(--on-accent);
+}
+.ql-item.is-done .ql-check svg path {
+  stroke-dashoffset: 0;
+  transition: stroke-dashoffset var(--duration-medium) var(--ease-smooth-out) var(--duration-micro);
+}
+/* the box just ticked pops once */
+.ql-item.is-just-done .ql-check { animation: ql-check-pop var(--duration-slow) var(--ease-bounce); }
+@keyframes ql-check-pop {
+  0% { transform: scale(0.92); }
+  60% { transform: scale(1.12); }
+  100% { transform: none; }
+}
+@media (prefers-reduced-motion: reduce) {
+  .ql-check svg path,
+  .ql-check svg,
+  .ql-check::after { transition: none !important; }
+  .ql-item.is-just-done .ql-check { animation: none !important; }
+}
+
+.ql-check:focus-visible,
+.ql-item-body:focus-visible {
+  outline: 2px solid var(--accent);
+  outline-offset: 2px;
+}
+
+/* The row's five cells, in the order the heads name them. Each cell is
+   placed by hand so a quest with no distance leaves that cell empty
+   rather than sliding the points a column left. */
+.ql-item-body {
+  text-align: left;
+  display: grid;
+  grid-template-columns: var(--ql-cols);
+  column-gap: var(--ql-col-gap);
+  row-gap: 0;
+  align-items: baseline;
+  border: none;
+  background: none;
+  padding: 0;
+  color: inherit;
+  min-width: 0;
+}
+
+.ql-item-body > .ql-code { grid-column: 1; grid-row: 1; justify-self: start; }
+.ql-item-name { grid-column: 2; grid-row: 1; }
+.ql-item-meta { grid-column: 3; grid-row: 1; }
+.ql-item-distance { grid-column: 4; grid-row: 1; }
+.ql-item-points { grid-column: 5; grid-row: 1; }
+
+.ql-item-name {
+  font-weight: 800;
+  letter-spacing: -0.02em;
+  font-size: 1.25rem;
+  line-height: 1.2;
+  /* at the top of the text-size ladder a single long quest name is
+     wider than the column it sits in, so it breaks rather than running
+     off the side of the page */
+  overflow-wrap: break-word;
+}
+
+/* the line itself is drawn on (see .ql-item-label further down), so
+   the name only fades back here */
+.ql-item.is-done .ql-item-name { color: var(--muted); }
+
+/* A tiered quest with some, not all, of its codes ticked: a yellow box
+   with a dot, the name left alone, more still to do. The yellow washes
+   in on the quick clock the way the green does, and the dot lands on
+   it the way the tick draws itself — the same wait for the box to take
+   its colour first, the same length, and a little spring at the end
+   since a dot has no stroke to draw. Going the other way it goes on
+   the quick clock, the way an un-tick wipes the tick off.
+
+   The dot is always there, scaled to nothing: a pseudo-element that
+   only exists in one state has nothing to animate from. */
+.ql-item.is-partial { border-top-color: #e0b400; }
+.ql-item.is-partial .ql-check {
+  background: #fccc0a;
+  border-color: #e0b400;
+  color: #111111;
+}
+.ql-item.is-partial .ql-check svg { opacity: 0; }
+.ql-check::after {
+  content: '';
+  position: absolute;
+  inset: 0;
+  margin: auto; /* centred in the box, whatever else is in it */
+  width: 10px;
+  height: 10px;
+  border-radius: 50%;
+  background: #111111;
+  transform: scale(0);
+  opacity: 0;
+  transition: transform var(--duration-quick) var(--ease-smooth-out),
+    opacity var(--duration-quick) var(--ease-smooth-out);
+}
+.ql-item.is-partial .ql-check::after {
+  transform: scale(1);
+  opacity: 1;
+  transition: transform var(--duration-medium) var(--ease-bounce) var(--duration-micro),
+    opacity var(--duration-quick) var(--ease-smooth-out) var(--duration-micro);
+}
+
+/* what the quest pays: the row's largest figure, in its own column,
+   tabular so the column reads down */
+.ql-item-points {
+  text-align: right;
+  font-size: 1.5rem;
+  font-weight: 850;
+  letter-spacing: -0.03em;
+  line-height: 1;
+  font-variant-numeric: tabular-nums lining-nums;
+  overflow-wrap: anywhere;
+}
+
+/* where it is: the fact a team chooses by, so it is at reading ink */
+.ql-item-meta {
+  font-size: var(--t-body);
+  line-height: 1.45;
+  overflow-wrap: break-word;
+}
+/* "No fixed location" is the absence of a place, not a place */
+.ql-item-meta.is-anywhere { color: var(--muted); }
+
+.ql-item-distance {
+  text-align: right;
+  color: var(--muted);
+  font-size: var(--t-small);
+  line-height: 1.5;
+  font-variant-numeric: tabular-nums lining-nums;
+}
+
+/* A phone is not a narrow desktop. Five cells across a 390px screen is
+   either a sideways scroll with two columns behind an edge or a stack,
+   so it stacks: the code and the points on one line at opposite edges,
+   then the name, where it is, and how far away. A head over a stack is
+   an orphan, so the heads go and the figure stands on its own. */
+@media (max-width: 930px) {
+  .ql-list-heads { display: none; }
+
+  .ql-item-body {
+    grid-template-columns: minmax(0, 1fr) auto;
+    column-gap: 16px;
+    align-items: baseline;
+  }
+  .ql-item-body > .ql-code { grid-column: 1; grid-row: 1; }
+  /* the quest's name and what it pays at one size: larger, the figure
+     out-shouted the name and every heading on the page */
+  .ql-item-points { grid-column: 2; grid-row: 1; font-size: 1.25rem; }
+  .ql-item-name { grid-column: 1 / -1; grid-row: 2; margin-top: 10px; }
+  .ql-item-meta { grid-column: 1 / -1; grid-row: 3; margin-top: 6px; }
+  .ql-item-distance {
+    grid-column: 1 / -1;
+    grid-row: 4;
+    margin-top: 6px;
+    text-align: left;
+  }
+
+}
+
+/* ---------- The search, floating above the bottom bar ----------
+   Tapping it puts the top of the quest list at the top of the screen
+   before the box opens over it. --ql-pill-rest is where the bar sits;
+   the drawer that opens above it reads the same property. On the web
+   --ql-pill-lift (the script) raises it off the footer. */
+html { --ql-pill-rest: calc(var(--ql-pill-lift, 0px) + 18px + env(safe-area-inset-bottom, 0px)); }
+html.is-pwa { --ql-pill-rest: calc(var(--tabbar-h, 57px) + 19px); }
+.ql-pill {
+  position: fixed;
+  left: calc(20px + env(safe-area-inset-left, 0px));
+  right: calc(20px + env(safe-area-inset-right, 0px));
+  bottom: var(--ql-pill-rest);
+  height: 54px;
+  z-index: 1140;
+  pointer-events: none; /* only the things inside it take taps */
+  /* the box and the filters button are one row: the button is what
+     shortened the box */
+  display: flex;
+  gap: 10px;
+}
+/* The keyboard is up and the box is what is being typed into, so it
+   goes to the bottom of what is left of the screen rather than to the
+   sum the submit button was measured at before the keyboard arrived.
+   The button follows the same sum (site.css), so the two are still one
+   row. */
+html.kb-up .ql-pill { bottom: calc(var(--kb-inset, 0px) + 12px); }
+/* below 840px the page is one centred column, and the bar keeps to it */
+@media (max-width: 840px) {
+  .ql-pill {
+    left: max(calc(20px + env(safe-area-inset-left, 0px)), calc((100% - var(--col, 36rem)) / 2));
+    right: max(calc(20px + env(safe-area-inset-right, 0px)), calc((100% - var(--col, 36rem)) / 2));
+  }
+}
+/* Narrow desktop window: the chips wrap in the column and scroll with
+   the page; the search sits on a strip of the page's ground. */
+@media (max-width: 930px) and (hover: hover) and (pointer: fine) {
+  html:not(.is-pwa):not(.ql-map-full) .ql-chips {
+    position: static;
+    flex-wrap: wrap;
+    overflow-x: visible;
+    margin-left: 0;
+    margin-right: 0;
+    padding-left: 0;
+    padding-right: 0;
+    border-bottom: 0;
+  }
+  html:not(.is-pwa) .ql-pill::before {
+    content: '';
+    position: absolute;
+    z-index: -1;
+    left: -50vw;
+    right: -50vw;
+    top: -12px;
+    bottom: calc(-1 * var(--ql-pill-rest));
+    background: var(--page-bg);
+    border-top: 1px solid var(--border);
+  }
+  /* the chips' one-row copy, down from under the top bar once the
+     wrapped chips have scrolled off */
+  html:not(.is-pwa):not(.ql-map-full):not(.ql-desk) .ql-chip-bar {
+    position: fixed;
+    top: var(--nav-h, 64px);
+    left: 0;
+    right: var(--sbw, 0px);
+    z-index: 1050;
+    display: flex;
+    gap: 6px;
+    overflow-x: auto;
+    overscroll-behavior-x: contain;
+    scrollbar-width: none;
+    padding-top: 10px;
+    padding-bottom: 10px;
+    background: var(--page-bg);
+    border-bottom: 1px solid var(--bar-edge);
+    translate: 0 -100%;
+    visibility: hidden;
+    transition: translate var(--duration-quick) var(--ease-smooth-out),
+      visibility 0s linear var(--duration-quick), top var(--chrome-slide);
+  }
+  html:not(.is-pwa):not(.ql-map-full):not(.ql-desk) .ql-chip-bar.is-in {
+    translate: 0 0;
+    visibility: visible;
+    transition: translate var(--duration-fast) var(--ease-smooth-out), visibility 0s, top var(--chrome-slide);
+  }
+  html.nav-up:not(.is-pwa):not(.ql-map-full):not(.ql-desk) .ql-chip-bar { top: 0; }
+}
+.ql-chip-bar { display: none; }
+.ql-chip-bar::-webkit-scrollbar { display: none; }
+@media (prefers-reduced-motion: reduce) {
+  .ql-chip-bar { transition: none !important; }
+}
+/* the fullscreen map has a search panel of its own */
+html.ql-map-full .ql-pill { display: none; }
+/* Steps back with the rest of the chrome when the top bar is away — but
+   not while it is open, because then it is the thing being read. The
+   boxes stay solid and only what is in them fades: the whole row at
+   0.4 let the list run through it, so a quest's location printed over
+   the words Search quests. */
+.ql-pill { transition: opacity var(--chrome-fade); }
+.ql-pill-bar > *,
+.ql-filters-btn > * { transition: opacity var(--chrome-fade); }
+/* Under the settings menu it steps back and takes no taps: a tap on it
+   closes the menu, the way a tap anywhere else on the dimmed page does,
+   rather than opening a search behind it. */
+html.settings-open .ql-pill {
+  opacity: 0.4;
+  transition: opacity var(--dropdown-open-dur) var(--ease-smooth-out);
+}
+html.settings-closing .ql-pill { transition: opacity var(--dropdown-close-dur) var(--ease-smooth-out); }
+html.settings-open .ql-pill *,
+html.settings-closing .ql-pill * { pointer-events: none !important; }
+/* the drawer opens off the button in this bar, so while it is up the
+   bar is what is being operated rather than chrome on its way out */
+html.nav-up:not(.ql-desk):not(.ql-filters-open) .ql-pill:not(.is-open) .ql-pill-bar > *,
+html.nav-up:not(.ql-desk):not(.ql-filters-open) .ql-pill:not(.is-open) .ql-filters-btn > * { opacity: 0.4; }
+
+/* The box runs the whole way from the gutter to the submit button and
+   stays there. It used to sit at 184px and grow to the gutter when it
+   was tapped, which put a third of a second between asking for the
+   search and being able to type into it — and the growing box was the
+   only thing on the page that moved when nothing had happened yet. The
+   width is the resting width now, so a tap only moves the list. No
+   shadow: it sits on the page rather than over it. */
+.ql-pill-bar {
+  pointer-events: auto;
+  flex: 1 1 auto;
+  min-width: 0;
+  box-sizing: border-box;
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  width: 100%;
+  height: 100%;
+  padding: 0 8px 0 12px;
+  border: 1px solid var(--border-strong);
+  border-radius: 2px;
+  background: var(--surface);
+  transition: border-color var(--duration-quick) var(--ease-smooth-out);
+}
+@media (prefers-reduced-motion: reduce) {
+  .ql-pill-bar { transition: none; }
+}
+
+.ql-pill-icon {
+  flex: none;
+  width: 20px;
+  height: 20px;
+  color: var(--muted);
+}
+
+/* the field carries no edge of its own: the bar is the control */
+.ql-pill-bar input {
+  flex: 1;
+  min-width: 0;
+  -webkit-appearance: none;
+  appearance: none;
+  border: 0;
+  background: none;
+  color: var(--text);
+  font: inherit;
+  /* 16px or a phone browser zooms the page when the field takes focus */
+  font-size: var(--t-body);
+  font-weight: 600;
+  padding: 0;
+}
+.ql-pill-bar input::placeholder { color: var(--muted); opacity: 1; }
+.ql-pill-bar input:focus { outline: none; }
+.ql-pill-bar:focus-within { border-color: var(--accent); }
+
+.ql-pill-clear {
+  flex: none;
+  width: 34px;
+  height: 34px;
+  padding: 0;
+  border: 1px solid var(--border);
+  border-radius: 2px;
+  background: var(--surface);
+  color: var(--text);
+  font: inherit;
+  font-weight: 800;
+  cursor: pointer;
+}
+.ql-pill-clear.is-hidden { display: none; }
+
+/* ---------- /submit: a tap on a quest opens its proof form ----------
+   The box takes one command. While it is on, the bar wears the accent
+   and a tag saying which mode it is in, and the list says in words what
+   a tap will do and offers the way back — a mode that only shows in one
+   place is a mode people fall into. */
+.ql-pill-mode {
+  flex: none;
+  padding: 4px 7px;
+  border-radius: 2px;
+  background: var(--accent);
+  color: var(--on-accent);
+  font-size: var(--t-micro);
+  font-weight: 800;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  line-height: 1;
+}
+.ql-pill-mode.is-hidden { display: none; }
+.ql-pill.is-submit .ql-pill-bar { border-color: var(--accent); }
+.ql-pill.is-submit .ql-pill-icon { color: var(--accent); }
+
+.ql-mode-line {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: baseline;
+  gap: 6px 14px;
+  margin: 0;
+  padding: 12px 0;
+  border-bottom: 1px solid var(--border);
+  font-size: var(--t-body);
+  line-height: 1.5;
+}
+.ql-mode-line.is-hidden { display: none; }
+.ql-mode-off {
+  padding: 0;
+  border: 0;
+  background: none;
+  color: var(--accent-dark);
+  font: inherit;
+  font-weight: 700;
+  text-decoration: underline;
+  cursor: pointer;
+}
+.ql-mode-off.is-alert { color: var(--alert-ink); }
+
+/* Naming a list: a box and its buttons on one line */
+.ql-list-form {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+  width: 100%;
+}
+.ql-list-form input {
+  flex: 1 1 8em;
+  min-width: 0;
+  min-height: 48px;
+  border: 1px solid var(--border-strong);
+  border-radius: 2px;
+  padding: 0 11px;
+  background: var(--surface);
+  color: var(--text);
+  font: inherit;
+}
+.ql-list-form input:focus-visible { outline: 2px solid var(--accent); outline-offset: 1px; }
+.ql-list-form .ql-button { flex: 0 0 auto; }
+.ql-list-form .ql-list-cancel {
+  width: 48px;
+  padding: 0;
+  justify-content: center;
+}
+.ql-list-line .ql-list-form { align-items: center; }
+
+/* ---------- Full quest information, under the row ----------
+   The same block the page at full/ draws, folded under the row it
+   belongs to rather than living on a page of its own. It sits in the
+   row's second column, under what the row already says, so the quest's
+   name and the reading below it share one left edge. */
+.ql-item-full {
+  grid-column: 2;
+  min-width: 0;
+  margin-top: 12px;
+  padding-top: 12px;
+  border-top: 1px solid var(--border);
+}
+.ql-item-full > :first-child { margin-top: 0; }
+.ql-item-full .fl-body { max-width: 62ch; }
+.ql-item-full .fl-flavour { max-width: 62ch; }
+.ql-item-full .fl-links { margin-top: 12px; }
+/* green on this page is the one action and a ticked quest. Ninety of
+   these down the list would be neither, so the link is reading ink
+   with the underline carrying it. */
+.ql-item-full .fl-links a {
+  color: var(--text);
+  text-decoration: underline;
+  text-underline-offset: 3px;
+}
+.ql-item-full .fl-file a { color: var(--text); }
+
+/* ---------- Fullscreen-map search ---------- */
+/* A search panel over the fullscreen map. Phones: a bottom bar that
+   grows to half or full height with sheet-style drags. Desktop: a
+   fixed panel in the bottom-left corner that grows upward (focus
+   expands it, clicking the grab bar toggles half/full). The script
+   drags it 1:1 and snaps; these classes hold the resting states. */
+.ql-search { display: none; }
+
+.ql-search-grab {
+  flex: none;
+  position: relative;
+  height: 13px;
+  touch-action: none;
+  cursor: grab;
+  --stretch: 1;
+}
+/* Two halves hinged in the middle, the same chevron the quest sheet
+   uses: a shallow v while the panel heads down, an up arrow while it
+   still has room to grow, flat at full extension where only the
+   rubber band is left. Both pivot about their own centres so a change
+   of direction always animates through flat. */
+.ql-search-grab::before,
+.ql-search-grab::after {
+  content: '';
+  position: absolute;
+  top: 6px;
+  width: 23px;
+  height: 5px;
+  background: var(--border-strong);
+  border-radius: 2px;
+  transition: transform 160ms ease;
+}
+.ql-search-grab::before { left: calc(50% - 22px); }
+.ql-search-grab::after { right: calc(50% - 22px); }
+.ql-search-grab.is-vee::before { transform: translateY(3px) rotate(15deg); }
+.ql-search-grab.is-vee::after { transform: translateY(3px) rotate(-15deg); }
+.ql-search-grab.is-up::before { transform: translateY(3px) rotate(-15deg); }
+.ql-search-grab.is-up::after { transform: translateY(3px) rotate(15deg); }
+/* the flat bar stretches in step with the depth of the pull */
+.ql-search-grab:not(.is-vee):not(.is-up)::before,
+.ql-search-grab:not(.is-vee):not(.is-up)::after {
+  transform: scaleX(var(--stretch));
+}
+.ql-search-grab.is-stretching::before,
+.ql-search-grab.is-stretching::after { transition: none; }
+
+/* The search row: the page's own field, 16px so a phone does not zoom
+   the page when it takes focus, with the browser's own clear cross put
+   away since the row carries one of its own. */
+.ql-search-row {
+  flex: none;
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 8px 14px 12px;
+}
+.ql-search-row svg {
+  flex: none;
+  width: 20px;
+  height: 20px;
+  color: var(--muted);
+}
+.ql-search-row input {
+  flex: 1;
+  min-width: 0;
+  -webkit-appearance: none;
+  appearance: none;
+  border: 1px solid var(--border-strong);
+  border-radius: 2px;
+  background: var(--surface);
+  color: var(--text);
+  font: inherit;
+  font-size: var(--t-body);
+  font-weight: 600;
+  padding: 10px 12px;
+}
+.ql-search-row input::placeholder { color: var(--muted); opacity: 1; }
+.ql-search-row input::-webkit-search-cancel-button,
+.ql-search-row input::-webkit-search-decoration {
+  -webkit-appearance: none;
+  display: none;
+}
+.ql-search-row input:focus-visible {
+  outline: 2px solid var(--accent);
+  outline-offset: 1px;
+}
+.ql-search-clear {
+  flex: none;
+  width: 38px;
+  height: 38px;
+  padding: 0;
+  border: 1px solid var(--border-strong);
+  border-radius: 2px;
+  background: var(--surface);
+  color: var(--text);
+  font: inherit;
+  font-weight: 800;
+  cursor: pointer;
+}
+
+/* one scroller for the moved-in filters and the results below them */
+.ql-search-body {
+  flex: 1;
+  overflow-y: auto;
+  overscroll-behavior: contain;
+  padding-bottom: calc(12px + env(safe-area-inset-bottom, 0px));
+}
+.ql-search-filters {
+  display: grid;
+  gap: 12px;
+  padding: 0 14px;
+}
+.ql-search-filters:empty { display: none; }
+.ql-search-filters .ql-control-group {
+  margin-top: 0;
+  padding-top: 12px;
+}
+/* this panel is about the pins; how the list behind it reads is not */
+.ql-search-filters .ql-full-row { display: none; }
+
+/* ---------- The results: the list again, not a third way to draw a quest ----------
+   Rows on a hairline, the way the list behind the map draws them on a
+   phone: the code chip and what the quest pays on one line at opposite
+   edges, then the name, where it is and how far away it is. The same
+   chip, the same name, the same strike through a ticked one. The panel
+   is never wider than a phone's list, so it takes that stack at every
+   width. The count over the rows is in the page's label voice. */
+.ql-search-results { padding: 16px 14px 0; }
+.ql-sr-count {
+  margin: 0 0 4px;
+  color: var(--muted);
+  font-size: var(--t-micro);
+  font-weight: 800;
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+  line-height: 1.3;
+}
+.ql-sr-item {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) auto;
+  column-gap: 16px;
+  row-gap: 0;
+  align-items: baseline;
+  width: 100%;
+  margin: 0;
+  padding: 14px 0;
+  border: 0;
+  border-top: 1px solid var(--border);
+  border-radius: 0;
+  background: none;
+  color: var(--text);
+  font: inherit;
+  text-align: left;
+  cursor: pointer;
+  transition: background var(--duration-fast) var(--ease-smooth-out);
+}
+.ql-sr-item:last-child { border-bottom: 1px solid var(--border); }
+/* the row under the pointer lifts a shade — the page's paper, since the
+   panel is already the card white; green here means a quest is done */
+.ql-sr-item:hover { background: var(--tint); }
+.ql-sr-item:focus-visible { background: var(--tint); }
+.ql-sr-item:focus-visible { outline: 2px solid var(--accent); outline-offset: -2px; }
+.ql-sr-item > .ql-code { grid-column: 1; grid-row: 1; justify-self: start; vertical-align: 1px; }
+.ql-sr-pts {
+  grid-column: 2;
+  grid-row: 1;
+  text-align: right;
+  font-size: 1.5rem;
+  font-weight: 850;
+  letter-spacing: -0.03em;
+  line-height: 1;
+  font-variant-numeric: tabular-nums lining-nums;
+  overflow-wrap: anywhere;
+}
+.ql-sr-name {
+  grid-column: 1 / -1;
+  grid-row: 2;
+  min-width: 0;
+  margin-top: 10px;
+  font-size: 1.25rem;
+  font-weight: 800;
+  letter-spacing: -0.02em;
+  line-height: 1.2;
+  overflow-wrap: break-word;
+}
+.ql-sr-meta {
+  grid-column: 1 / -1;
+  grid-row: 3;
+  margin-top: 6px;
+  font-size: var(--t-body);
+  line-height: 1.45;
+  overflow-wrap: break-word;
+}
+.ql-sr-distance {
+  grid-column: 1 / -1;
+  grid-row: 4;
+  margin-top: 6px;
+  color: var(--muted);
+  font-size: var(--t-small);
+  line-height: 1.5;
+  font-variant-numeric: tabular-nums lining-nums;
+}
+/* ticked: the name fades back and is struck through, and the chip dims
+   — the list's own rules, written for these rows too further down */
+.ql-sr-item.is-done .ql-sr-name { color: var(--muted); }
+
+@media (max-width: 930px) {
+  html.ql-map-full .ql-search {
+    display: flex;
+    flex-direction: column;
+    position: fixed;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    /* collapsed it is the box alone; the chips come into view under it
+       as it is pulled up, and the box names a region that is picked */
+    height: calc(74px + var(--map-safe-b));
+    padding-left: var(--map-safe-l);
+    padding-right: var(--map-safe-r);
+    box-sizing: border-box;
+    background: var(--surface);
+    border-top: 1px solid var(--border-strong);
+    border-radius: 2px 2px 0 0; /* the system's corner; round is for route discs */
+    z-index: 1320; /* over the map buttons, under the quest sheet */
+    overflow: hidden;
+    transition: height 280ms cubic-bezier(0.26, 1.12, 0.3, 1), transform var(--duration-fast) var(--ease-smooth-out),
+      opacity var(--chrome-fade);
+  }
+  /* once the map is dragged or pinched it fades toward transparent,
+     until a finger lands on a control or a pin (the app's bottom bar
+     does the same on a scroll) */
+  html.ql-map-full .ql-search.is-faded,
+  html.ql-map-full .ql-detail.is-faded { opacity: 0.5; }
+  html.ql-map-full .ql-search.is-half { height: 52vh; }
+  html.ql-map-full .ql-search.is-full { height: calc(100% - 14px); }
+  /* the panel is fixed, so 100% is the viewport: with the bar kept it
+     has that much less to fill */
+  html.ql-map-full.ql-map-home.is-pwa .ql-search.is-full {
+    height: calc(100% - 14px - var(--tabbar-h, 57px));
+  }
+  html.ql-map-full .ql-search.is-dragging { transition: none; }
+
+  /* pinch does the zooming on a phone */
+  html.ql-map-full #ql-map .maplibregl-ctrl-top-left { display: none; }
+
+  /* the sheet backdrop is a gesture surface, not a scroll surface */
+  .ql-detail-overlay:not(.is-hidden) { touch-action: none; }
+}
+
+/* Full screen on phones: the map's buttons ride above the tallest
+   panel instead of the top corner, and follow it as it moves. */
+@media (max-width: 930px) {
+  html.ql-map-full .ql-map-btn {
+    top: auto;
+    /* position is measured and set every frame by the script, so it
+       carries no easing of its own — it is already following the real
+       panel. Only the fade in and out is animated here. */
+    bottom: calc(var(--map-btn-lift, 0px) + 60px);
+    right: calc(12px + var(--map-safe-r));
+    transition: opacity 180ms ease, transform 180ms ease;
+  }
+  html.ql-map-full .ql-map-btn-locate { bottom: calc(var(--map-btn-lift, 0px) + 12px); }
+  /* the chip rides with them, level with the locate pin on the other side */
+  html.ql-map-full .ql-map-anywhere {
+    bottom: calc(var(--map-btn-lift, 0px) + 12px);
+    transition: opacity 180ms ease, transform 180ms ease;
+  }
+  /* a panel filling the screen leaves nowhere to sit: fade out of the
+     way, and fade back as soon as it comes down far enough */
+  html.ql-controls-tucked .ql-map-anywhere,
+  html.ql-controls-tucked .ql-map-btn {
+    opacity: 0;
+    pointer-events: none;
+    transform: translateY(10px);
+  }
+}
+
+/* ---------- The desktop full-screen sidebar ----------
+   On a desktop the full-screen map keeps the quest list beside it, the
+   way transportseek's desktop keeps its panel: the search, the chips,
+   the filters and every quest in a column down the left, and the map in
+   the rest. It used to be a box in the bottom-left corner that had to
+   be opened before a quest could be picked. A quest opens over the
+   column. The column slides away to give the map the whole width (the
+   strip along its edge, or [) and the button at the map's top left
+   brings it back; which of the two is kept on the device. */
+.ql-side-edge,
+.ql-side-show { display: none; }
+
+@media (min-width: 931px) {
+  html.ql-map-full { --ql-side-w: 380px; }
+  html.ql-map-full .ql-search {
+    display: flex;
+    flex-direction: column;
+    position: fixed;
+    top: 0;
+    bottom: 0;
+    left: 0;
+    width: var(--ql-side-w);
+    height: auto;
+    padding-top: var(--map-safe-t);
+    background: var(--surface);
+    border: 0;
+    border-right: 1px solid var(--bar-edge);
+    border-radius: 0;
+    z-index: 1320;
+    /* the edge strip sits just outside the column */
+    overflow: visible;
+    transition: transform var(--duration-fast) var(--ease-smooth-out);
+  }
+  html.ql-map-full .ql-search.is-half,
+  html.ql-map-full .ql-search.is-full { height: auto; }
+  html.ql-map-full.ql-map-home:not(.is-pwa) .ql-search { top: var(--nav-h, 65px); padding-top: 0; }
+  html.ql-map-full .ql-search-grab { display: none; }
+  html.ql-map-full .ql-search-row { padding: 16px 14px 12px; }
+  /* the chips on the box's inset */
+  html.ql-map-full .ql-chips-host .ql-chips { padding: 0 14px 12px; }
+  /* on the web they wrap and fold on the column's own ground, and the
+     switches take one column, as they do in the page's own column */
+  html:not(.is-pwa).ql-map-full .ql-chips-host .ql-chips {
+    overflow: visible;
+    flex-wrap: wrap;
+    background: transparent;
+  }
+  html:not(.is-pwa).ql-map-full .ql-search-filters .ql-rockers { grid-template-columns: minmax(0, 1fr); }
+  html.ql-map-full .ql-search-body {
+    min-height: 0;
+    border-top: 1px solid var(--border);
+  }
+  html.ql-map-full .ql-search-results { padding-top: 12px; }
+
+  /* the map takes the rest */
+  html.ql-map-full .ql-map-card { left: var(--ql-side-w); }
+  /* a quest opens over the column, at its width */
+  html.ql-map-full .ql-detail { width: var(--ql-side-w); max-width: none; }
+
+  /* Away: the column slides off over the map. Going, the map takes the
+     width first and the column leaves over it; coming back, the column
+     slides in over the whole map and the map gives the room back once
+     it has landed, so the map is resized once, at its larger size, and
+     never shows a gap. */
+  html.ql-map-full.ql-side-away .ql-search { transform: translateX(-100%); }
+  html.ql-map-full.ql-side-away .ql-map-card,
+  html.ql-map-full.ql-side-opening .ql-map-card { left: 0; }
+
+  /* The strip along the column's edge lights up on hover and shows a
+     tab beside the pointer; a click puts the column away. */
+  html.ql-map-full .ql-side-edge {
+    --edge-y: 50%;
+    display: block;
+    position: absolute;
+    top: 0;
+    bottom: 0;
+    left: calc(100% - 1px);
+    width: 11px;
+    padding: 0;
+    border: 0;
+    border-radius: 0;
+    background: transparent;
+    color: var(--text);
+    cursor: pointer;
+  }
+  html.ql-map-full.ql-side-away .ql-side-edge { display: none; }
+  .ql-side-edge::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    bottom: 0;
+    left: 0;
+    width: 3px;
+    background: var(--border-strong);
+    opacity: 0;
+    transition: opacity var(--duration-quick) var(--ease-smooth-out);
+  }
+  .ql-side-tab {
+    position: absolute;
+    left: 2px;
+    top: clamp(8px, calc(var(--edge-y) - 20px), calc(100% - 48px));
+    display: grid;
+    place-items: center;
+    width: 24px;
+    height: 40px;
+    border: 1px solid var(--border-strong);
+    border-left: 0;
+    border-radius: 0 2px 2px 0;
+    background: var(--surface);
+    box-shadow: var(--shadow);
+    opacity: 0;
+    visibility: hidden;
+    pointer-events: none;
+    transform: translateX(-6px);
+    /* leaving waits a moment, so a pointer resting on the line does not
+       flicker it */
+    transition:
+      opacity var(--duration-quick) var(--ease-smooth-out) 180ms,
+      transform var(--duration-quick) var(--ease-smooth-out) 180ms,
+      visibility 0s linear calc(var(--duration-quick) + 180ms);
+  }
+  .ql-side-tab svg { width: 16px; height: 16px; }
+  .ql-side-edge:focus-visible { outline: none; }
+  .ql-side-edge:focus-visible .ql-side-tab { outline: 2px solid var(--accent); outline-offset: 2px; }
+  @media (hover: hover) {
+    .ql-side-edge:hover::before { opacity: 1; }
+    /* once lit, the target covers the tab, so the pointer cannot fall
+       between the line and the tab */
+    .ql-side-edge:hover { width: 30px; }
+    .ql-side-edge:hover .ql-side-tab {
+      opacity: 1;
+      visibility: visible;
+      pointer-events: auto;
+      transform: none;
+      transition-delay: 0s;
+    }
+  }
+  .ql-side-edge:focus-visible::before { opacity: 1; }
+  .ql-side-edge:focus-visible .ql-side-tab {
+    opacity: 1;
+    visibility: visible;
+    transform: none;
+    transition-delay: 0s;
+  }
+
+  /* the way back: a map button in the map's top left corner */
+  html.ql-map-full .ql-side-show {
+    display: flex;
+    top: calc(12px + var(--map-safe-t));
+    left: calc(12px + var(--map-safe-l));
+    right: auto;
+    opacity: 0;
+    visibility: hidden;
+    transform: translateX(-8px);
+    transition:
+      opacity var(--duration-quick) var(--ease-smooth-out),
+      transform var(--duration-quick) var(--ease-smooth-out);
+  }
+  html.ql-map-full.ql-side-away .ql-side-show {
+    opacity: 1;
+    visibility: visible;
+    transform: none;
+  }
+  /* the zoom keys step down out of its way */
+  html.ql-map-full.ql-side-away #ql-map .maplibregl-ctrl-top-left { top: calc(50px + var(--map-safe-t)); }
+
+  /* the tooltip: the black sign, the name and the key */
+  .ql-side-tip {
+    position: absolute;
+    top: 50%;
+    left: calc(100% + 10px);
+    z-index: 1;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    padding: 6px 8px 6px 10px;
+    border-radius: 2px;
+    background: var(--sign-bg);
+    color: var(--sign-ink);
+    box-shadow: var(--shadow), inset 0 0 0 1px var(--sign-edge, transparent);
+    font-size: var(--t-small);
+    font-weight: 700;
+    line-height: 1.2;
+    white-space: nowrap;
+    pointer-events: none;
+    opacity: 0;
+    visibility: hidden;
+    transform: translate(-4px, -50%);
+    transition:
+      opacity var(--duration-quick) var(--ease-smooth-out),
+      transform var(--duration-quick) var(--ease-smooth-out),
+      visibility 0s linear var(--duration-quick);
+  }
+  .ql-side-edge .ql-side-tip { top: var(--edge-y); left: 34px; }
+  .ql-side-tip kbd {
+    display: inline-grid;
+    place-items: center;
+    min-width: 20px;
+    height: 20px;
+    padding: 0 4px;
+    border: 1px solid var(--sign-muted);
+    border-radius: 2px;
+    font: inherit;
+    font-size: var(--t-micro);
+    font-weight: 800;
+    color: var(--sign-ink);
+  }
+  @media (hover: hover) {
+    .ql-side-edge:hover .ql-side-tip,
+    .ql-side-show:hover .ql-side-tip {
+      opacity: 1;
+      visibility: visible;
+      transform: translate(0, -50%);
+      transition-delay: 350ms;
+    }
+  }
+  .ql-side-edge:focus-visible .ql-side-tip,
+  .ql-side-show:focus-visible .ql-side-tip {
+    opacity: 1;
+    visibility: visible;
+    transform: translate(0, -50%);
+    transition-delay: 0s;
+  }
+}
+@media (min-width: 931px) and (max-width: 1100px) {
+  html.ql-map-full { --ql-side-w: 340px; }
+}
+@media (min-width: 931px) and (prefers-reduced-motion: reduce) {
+  html.ql-map-full .ql-search,
+  .ql-side-tab,
+  .ql-side-tip { transition: none; }
+}
+
+/* Container transform (test): a visual copy of the tapped quest card
+   that rides between the list and the sheet while the two crossfade
+   (the script sizes, moves and fades it) */
+.ql-item.ql-morph-ghost {
+  position: fixed;
+  margin: 0;
+  z-index: 1210; /* over the sheet, under the settings drawer */
+  pointer-events: none;
+  transform-origin: 0 0;
+  box-sizing: border-box;
+  box-shadow: none;
+  /* a row on the page is transparent; lifted out of the list the copy
+     needs the page's own ground under it, or the sheet shows through */
+  background: var(--page-bg);
+  will-change: transform, opacity;
+}
+
+.ql-empty {
+  margin: 0;
+  color: var(--muted);
+  font-size: var(--t-body);
+  line-height: 1.55;
+  padding: 18px 0;
+}
+
+/* The apron: the sheet's own colour continuing below it, so a sheet
+   lifted off the bottom edge (the rubber band, a swipe up before it
+   snaps to full, the settle after a size change) still reads as
+   reaching the bottom of the screen. Each band is the sheet's box
+   painted lower down, which covers from the sheet's bottom edge to
+   `offset` below it — so the bands step down in hundreds and, since
+   the sheet is never shorter than one step, they meet edge to edge.
+   Spread would do it in one go but would paint out either side of a
+   sheet narrower than the screen. */
+:root {
+  --sheet-apron:
+    0 100px 0 var(--surface), 0 200px 0 var(--surface), 0 300px 0 var(--surface),
+    0 400px 0 var(--surface), 0 500px 0 var(--surface), 0 600px 0 var(--surface),
+    0 700px 0 var(--surface), 0 800px 0 var(--surface), 0 900px 0 var(--surface);
+}
+
+/* the code sits in its own column, so it needs no margin of its own;
+   the LIVE tag still runs inline before the name */
+.ql-item-body > .ql-code { vertical-align: 1px; }
+
+/* A quest with a question open right now: the word beside the code,
+   red as words rather than as a route. It sits outside the name span,
+   so a ticked quest's strike still runs across the name alone. */
+.ql-live {
+  margin-right: 8px;
+  color: var(--alert-ink);
+  font-size: 0.72rem;
+  font-weight: 800;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  vertical-align: 1px;
+}
+
+/* ---------- The quest sheet ----------
+   A panel on a desktop, a sheet on a phone, the same composition in
+   both. Order: the black head, the question the quest is asking right
+   now (it expires, so it goes first), what the quest pays, what the
+   quest is, then the actions.
+
+   Four type sizes and nothing between them — the name, the section
+   heads and figures, everything that is read, and the labels. Three
+   rule weights: 3px under a heading, 2px on a control's edge, 1px
+   between rows. Green appears once, on the action at the foot; red is
+   the route mark on the top edge and the disc, and the same red as
+   words in the strike through a code that is done.
+
+   The gutter is the sheet's own padding and the head and the amber band
+   pull back out of it, so every rule between rows is inset while those
+   two reach both edges. The children stay flat — the codes box and the
+   grab bar are direct children that the cue's dim reads by name. */
+.ql-detail-overlay {
+  position: fixed;
+  inset: 0;
+  display: flex;
+  align-items: flex-end;
+  justify-content: center;
+  z-index: 1200;
+}
+
+.ql-detail {
+  --ql-t1: 1.375rem;   /* the quest's name */
+  --ql-t2: 1.125rem;   /* section heads and the question */
+  --ql-fig: 1.375rem;  /* figures: the largest numerals on the sheet */
+  --ql-t3: 1rem;       /* everything that is read */
+  --ql-t4: 0.72rem;    /* labels */
+  --ql-line: 1.5rem;   /* one line box, so the strike knows where to go */
+  --ql-pad: 20px;      /* the gutter */
+  --ql-lab: 6.25rem;   /* one column set for both tables, wide enough for a label and its icon */
+  --ql-gap: 12px;
+  --ql-disc: 1.75rem;  /* the route disc in the head */
+  --ql-icon: var(--ql-t1); /* the share and close glyphs */
+  --ql-head-y: 16px;   /* above and below the head's row */
+  /* the tick column is the disc less the code chip's own padding, so a
+     chip's lettering starts on the same edge as the quest's name */
+  --ql-tick: calc(var(--ql-disc) - 6px);
+  --ql-block: 24px;    /* between blocks */
+  --ql-in: 12px;       /* inside a block */
+  --ql-row: 8px;       /* inside a row */
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-top: 3px solid var(--ql-route, var(--line-red));
+  border-radius: 2px 2px 0 0;
+  width: 100%;
+  max-width: 640px;
+  max-height: 82vh;
+  overflow-y: auto;
+  overscroll-behavior: contain;
+  /* The gutter is the sheet's own padding, so every rule under a
+     heading and between rows is inset by it: a border-bottom is drawn
+     across an element's padding as well as its content, so a block that
+     carried the gutter itself drew its rule edge to edge. */
+  padding: 0 var(--ql-pad) var(--ql-pad);
+  padding-bottom: calc(var(--ql-pad) + env(safe-area-inset-bottom, 0px));
+}
+
+/* the head, the grab bar above it and the amber band reach both edges */
+.ql-sheet-handle,
+.ql-detail-top,
+.ql-detail-ask {
+  margin-left: calc(-1 * var(--ql-pad));
+  margin-right: calc(-1 * var(--ql-pad));
+}
+.ql-detail-top,
+.ql-detail-ask {
+  padding-left: var(--ql-pad);
+  padding-right: var(--ql-pad);
+}
+
+/* a narrow phone keeps the tables' measure by giving up 4px of gutter.
+   The label column does not move with it: 80px is what "Scored by"
+   needs on one line, and a label that wraps is worse than a narrower
+   value. */
+@media (max-width: 380px) {
+  .ql-detail { --ql-pad: 16px; }
+}
+
+/* ---------- The head: the one black object on the sheet ---------- */
+/* Pinned, so the content scrolls under its bottom edge. The disc, the
+   name's first line and both glyphs share one centre line, the disc's. */
+.ql-detail-top {
+  position: sticky;
+  top: 0;
+  z-index: 4;
+  background: var(--sign-bg);
+  color: var(--sign-ink);
+  display: grid;
+  grid-template-columns: var(--ql-disc) minmax(0, 1fr);
+  column-gap: var(--ql-gap);
+  align-items: start;
+  padding-top: var(--ql-head-y);
+  padding-bottom: var(--ql-head-y);
+}
+/* on a phone it pins under the grab bar, less the pixel the bar laps over it */
+@media (max-width: 930px) {
+  :where(html:not(.ql-pop)) .ql-detail-top { top: 10px; }
+}
+
+/* the line under the head: the points and how far, where, the way there */
+.ql-detail-glance {
+  display: grid;
+  gap: 2px;
+  padding-top: var(--ql-in);
+}
+.ql-glance-meta {
+  margin: 0;
+  font-size: var(--ql-t3);
+  font-weight: 800;
+  font-variant-numeric: tabular-nums lining-nums;
+}
+.ql-glance-meta:empty { display: none; }
+.ql-glance-where {
+  margin: 0;
+  color: var(--muted);
+  font-size: var(--ql-t3);
+  line-height: 1.4;
+}
+.ql-glance-dir {
+  justify-self: start;
+  margin-top: var(--ql-in);
+  text-decoration: none;
+}
+.ql-glance-dir.is-hidden { display: none; }
+
+/* the route disc: the region's initial in the region's colour */
+.ql-detail-bullet {
+  width: var(--ql-disc);
+  height: var(--ql-disc);
+  background: var(--ql-route, var(--line-red));
+  color: var(--ql-route-ink, #ffffff);
+  font-size: var(--ql-t3);
+  font-weight: 800;
+}
+
+.ql-detail-name { min-width: 0; }
+
+/* The share button: the glyph on the first line's right. Its box is
+   the glyph's width so the name's first line gives up as little as it
+   can; the 44px it answers to is ::before. */
+.ql-detail-share {
+  position: relative;
+  float: right;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: var(--ql-icon);
+  height: var(--ql-icon);
+  margin: calc((var(--ql-disc) - var(--ql-icon)) / 2) 0 0 12px;
+  padding: 0;
+  border: 0;
+  border-radius: 0;
+  background: transparent;
+  color: var(--sign-ink);
+  cursor: pointer;
+}
+.ql-detail-share::before {
+  content: "";
+  position: absolute;
+  left: 50%;
+  top: 50%;
+  width: 44px;
+  height: 44px;
+  transform: translate(-50%, -50%);
+}
+.ql-detail-share svg,
+.ql-detail-close svg {
+  width: var(--ql-icon);
+  height: var(--ql-icon);
+  flex: none;
+}
+
+.ql-detail h3 {
+  margin: 0;
+  font-size: var(--ql-t1);
+  font-weight: 800;
+  letter-spacing: -0.02em;
+  line-height: 1.2;
+  overflow-wrap: break-word;
+}
+/* one line of the name is the disc's height, centred on it */
+.ql-detail-name h3 { margin: calc((var(--ql-disc) - 1.2em) / 2) 0; }
+/* where the line can be cut to its capitals, the capitals are centred */
+@supports (text-box: trim-both cap alphabetic) {
+  .ql-detail-name h3 {
+    text-box: trim-both cap alphabetic;
+    margin: calc((var(--ql-disc) - 1cap) / 2) 0;
+  }
+}
+
+/* the share glyph's twin, with a 44px hit area and no box. It takes no
+   more height than the disc, so the row stays the disc's height. Phones
+   have no close button at all: the grab bar, a downward swipe or a tap
+   outside does the job. */
+.ql-detail-close {
+  display: none;
+  width: 44px;
+  height: 44px;
+  margin: calc((var(--ql-disc) - 44px) / 2) calc((var(--ql-icon) - 44px) / 2);
+  padding: 0;
+  border: 0;
+  border-radius: 0;
+  background: transparent;
+  color: var(--sign-ink);
+  font-size: var(--ql-t1);
+  cursor: pointer;
+  align-items: center;
+  justify-content: center;
+}
+
+/* With a mouse the sheet is dragged by its head, and closed by the cross
+   as well as by dragging it away */
+@media (hover: hover) and (pointer: fine) {
+  .ql-detail-top { grid-template-columns: var(--ql-disc) minmax(0, 1fr) var(--ql-icon); }
+  .ql-detail-close { display: flex; }
+}
+@media (hover: hover) and (pointer: fine) and (max-width: 930px) {
+  :where(html:not(.ql-pop)) .ql-sheet-handle, :where(html:not(.ql-pop)) .ql-detail-top { cursor: grab; }
+  :where(html:not(.ql-pop)) .ql-detail-close { cursor: pointer; }
+}
+
+/* ---------- One label voice ---------- */
+.ql-points-label,
+.ql-fact-k,
+.ql-ask-until,
+.ql-ask-total,
+.ql-ask-mark,
+.ql-file-size {
+  color: var(--muted);
+  font-size: var(--ql-t4);
+  font-weight: 800;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+}
+
+/* ---------- A block opens on a rule with its heading under it ----------
+   The way every page's section headings do. It was the heading with the
+   rule under it, which on the one sheet in the site read as the only
+   heading anywhere that was underlined. */
+.ql-detail-head {
+  margin: 0;
+  font-size: var(--ql-t2);
+  font-weight: 800;
+  letter-spacing: -0.02em;
+  line-height: 1.2;
+  padding-top: 10px;
+  padding-bottom: 4px;
+  border-top: var(--rule-w) solid var(--rule-ink);
+}
+.ql-points-label.ql-detail-head {
+  display: block;
+  color: var(--text);
+  font-size: var(--ql-t2);
+  letter-spacing: -0.02em;
+  text-transform: none;
+}
+
+/* ---------- The question a quest is asking right now ----------
+   Amber is the thing asking something of you and nothing else: one
+   field reaching both edges, with no heading over it. */
+.ql-detail-ask {
+  margin-top: 0;
+  margin-bottom: 0;
+  border: 0;
+  border-radius: 0;
+  background: var(--glow-fill);
+  display: grid;
+  gap: var(--ql-row);
+  padding-top: var(--ql-in);
+  padding-bottom: var(--ql-pad);
+}
+
+/* what the field is on the left, when it shuts on the right */
+.ql-ask-head {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: space-between;
+  align-items: baseline;
+  column-gap: var(--ql-gap);
+  row-gap: 4px;
+}
+
+.ql-ask-until { margin: 0; }
+.ql-ask-until b {
+  color: var(--text);
+  font-weight: 800;
+  font-variant-numeric: tabular-nums lining-nums;
+}
+
+.ql-ask-prompt {
+  margin: 0;
+  font-size: var(--ql-t2);
+  font-weight: 800;
+  letter-spacing: -0.02em;
+  line-height: 1.25;
+  color: var(--text);
+  overflow-wrap: break-word;
+}
+
+.ql-ask-options {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--ql-row);
+}
+
+.ql-ask-option {
+  flex: 1 1 auto;
+  min-width: 96px;
+  min-height: 48px;
+  padding: 0 var(--ql-gap);
+  border: 2px solid var(--text);
+  border-radius: 0;
+  background: var(--card-bg);
+  color: var(--text);
+  font: inherit;
+  font-size: var(--ql-t3);
+  font-weight: 700;
+  cursor: pointer;
+}
+
+/* the answer on record is filled in the band's own ink, and says so to
+   a screen reader through the same attribute that draws it */
+.ql-ask-option[aria-pressed="true"] {
+  background: var(--text);
+  border-color: var(--text);
+  color: var(--card-bg);
+}
+
+/* the field and its Send are one bordered control */
+.ql-ask-entry {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) auto;
+  align-items: stretch;
+  border: 2px solid var(--text);
+  background: var(--card-bg);
+}
+
+.ql-ask-input {
+  min-width: 0;
+  width: 100%;
+  min-height: 48px;
+  padding: 0 var(--ql-gap);
+  border: 0;
+  border-radius: 0;
+  background: transparent;
+  color: var(--text);
+  font: inherit;
+  font-size: var(--ql-t3);
+  -webkit-appearance: none;
+}
+.ql-ask-input::placeholder { color: var(--muted); opacity: 1; }
+
+/* Send is ink inside the field's own edge, not a filled block: the one
+   green on the sheet belongs to the action at the foot */
+.ql-ask-send {
+  min-height: 48px;
+  padding: 0 var(--ql-gap);
+  border: 0;
+  border-left: 2px solid var(--text);
+  border-radius: 0;
+  background: transparent;
+  color: var(--text);
+  font: inherit;
+  font-size: var(--ql-t3);
+  font-weight: 800;
+  cursor: pointer;
+}
+
+.ql-ask-option:disabled,
+.ql-ask-send:disabled,
+.ql-ask-input:disabled { opacity: 0.55; cursor: default; }
+
+/* the line under it keeps its place, so an answer landing never
+   resizes the sheet mid-gesture */
+.ql-ask-status {
+  margin: 0;
+  min-height: 1.4em;
+  line-height: 1.4;
+  color: var(--muted);
+  font-size: var(--ql-t3);
+}
+
+.ql-ask-status.is-error { color: var(--alert-ink); }
+.ql-ask-status a {
+  color: inherit;
+  font-weight: 700;
+  text-decoration: none;
+  border-bottom: 2px solid currentColor;
+}
+
+/* ---------- What the other teams answered ----------
+   A hairline under the field, how many answered in the label voice,
+   then a bar per option and every team's answer. This team's own answer
+   is the bar in ink; the rest are grey. */
+.ql-ask-results {
+  display: grid;
+  gap: var(--ql-gap);
+  padding-top: var(--ql-gap);
+  border-top: 1px solid var(--border-strong);
+}
+.ql-ask-total { margin: 0; }
+
+.ql-ask-tally,
+.ql-ask-answers {
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+.ql-ask-tally {
+  display: grid;
+  gap: var(--ql-gap);
+}
+
+.ql-ask-bar {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) auto;
+  align-items: baseline;
+  column-gap: var(--ql-gap);
+  row-gap: 6px;
+  font-size: var(--ql-t3);
+}
+/* a name and its marks: a mark that does not fit wraps under the name */
+.ql-ask-bar-name,
+.ql-ask-team {
+  min-width: 0;
+  display: flex;
+  flex-wrap: wrap;
+  align-items: baseline;
+  column-gap: var(--ql-row);
+  color: var(--text);
+}
+.ql-ask-bar-name > span:first-child,
+.ql-ask-team > span:first-child { min-width: 0; overflow-wrap: anywhere; }
+.ql-ask-bar-name { font-weight: 700; }
+.ql-ask-mark { white-space: nowrap; }
+.ql-ask-bar-figure {
+  color: var(--text);
+  font-variant-numeric: tabular-nums lining-nums;
+  white-space: nowrap;
+}
+.ql-ask-bar-track {
+  grid-column: 1 / -1;
+  height: 10px;
+  border: 1px solid var(--border-strong);
+  background: var(--card-bg);
+}
+.ql-ask-bar-fill {
+  display: block;
+  height: 100%;
+  background: var(--border-strong);
+}
+.ql-ask-bar.is-mine .ql-ask-bar-fill { background: var(--text); }
+
+.ql-ask-answers li {
+  display: grid;
+  grid-template-columns: minmax(0, 2fr) minmax(0, 3fr);
+  column-gap: var(--ql-gap);
+  padding: var(--ql-row) 0;
+  border-top: 1px solid var(--border-strong);
+  font-size: var(--ql-t3);
+  line-height: 1.4;
+  color: var(--text);
+}
+.ql-ask-answers li:first-child { border-top: 0; padding-top: 0; }
+.ql-ask-answer { min-width: 0; overflow-wrap: anywhere; }
+.ql-ask-answers li.is-mine .ql-ask-team { font-weight: 800; }
+
+/* ---------- What the quest pays, first under the question ---------- */
+.ql-detail-points {
+  margin-top: var(--ql-block);
+  border: 0;
+  border-radius: 0;
+  background: transparent;
+  /* the warm light the cue pools inside the block lives on ::before,
+     so isolate it and let the wash sit above the sheet's own paper but
+     under everything in the block */
+  position: relative;
+  isolation: isolate;
+}
+/* the band's own padding is part of the gap under it */
+.ql-detail-ask:not(.is-hidden) + .ql-detail-points { margin-top: calc(var(--ql-block) - 8px); }
+
+/* the heading's own rule opens the table */
+.ql-detail-codes { display: block; }
+
+/* one column set for both tables: what identifies the row, what is
+   read, and the figure on the right */
+.ql-code-row {
+  display: grid;
+  /* the column holds its width until the text in it needs more — at the
+     largest text sizes the setting offers, a fixed column would have the
+     code running into the words beside it */
+  grid-template-columns: minmax(max-content, var(--ql-lab)) minmax(0, 1fr);
+  column-gap: var(--ql-gap);
+  align-items: baseline;
+  padding: var(--ql-row) 0;
+  border-bottom: 1px solid var(--border-strong);
+  font-size: var(--ql-t3);
+}
+/* a quest with parts ticks each one: the box hangs to the left of the
+   column set, so the codes and the labels keep their edges */
+.ql-code-row.is-tickable {
+  grid-template-columns: var(--ql-tick) minmax(max-content, var(--ql-lab)) minmax(0, 1fr);
+  cursor: pointer;
+}
+/* the box sits on the first line by itself: on the baseline it would
+   push the row's top up by its own height and carry the strike above
+   the text */
+.ql-code-row input {
+  margin: 3px 0 0;
+  width: 18px;
+  height: 18px;
+  accent-color: var(--text);
+  align-self: start;
+}
+.ql-code-row .code { justify-self: start; font-size: var(--ql-t4); }
+
+/* the label and the figure share a box, and that box is what the strike
+   runs across: the line starts at the words, and the code chip beside
+   it dims instead of being crossed out */
+.ql-code-text {
+  position: relative;
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) auto;
+  column-gap: var(--ql-gap);
+  align-items: start;
+  min-width: 0;
+}
+.ql-code-text::after {
+  content: '';
+  position: absolute;
+  left: 0;
+  right: 0;
+  top: calc(var(--ql-line) / 2 - 1px); /* through the middle of the first line */
+  height: 2px;
+  background: var(--line-red);
+  opacity: 0.85;
+  transform: scaleX(0);
+  transform-origin: 0 50%;
+  transition: transform var(--duration-slow) var(--ease-smooth-out);
+  pointer-events: none;
+}
+.ql-code-row.is-ticked .ql-code-text::after { transform: scaleX(1); }
+.ql-code-label {
+  color: var(--text);
+  font-size: var(--ql-t3);
+  line-height: var(--ql-line);
+  overflow-wrap: break-word;
+}
+.ql-code-pts {
+  color: var(--text);
+  font-size: var(--ql-fig);
+  font-weight: 800;
+  letter-spacing: -0.02em;
+  line-height: var(--ql-line);
+  white-space: nowrap;
+  text-align: right;
+  font-variant-numeric: tabular-nums lining-nums;
+}
+.ql-code-row.is-ticked .ql-code-label { font-weight: 700; }
+/* a tiered or counted part's bands and places, under it */
+.ql-band-row.has-tick { grid-template-columns: var(--ql-tick) minmax(max-content, var(--ql-lab)) minmax(0, 1fr); }
+.ql-band-row .ql-code-label { color: var(--muted); }
+.ql-band-row .ql-code-pts { font-size: var(--ql-t3); font-weight: 700; }
+
+/* the tally is one control the width of the block: two keys either side
+   of a count, both marks drawn as bars so they weigh the same. It counts
+   and nothing else — what the quest pays is in the table above it. */
+.ql-detail-repeat {
+  margin-top: var(--ql-in);
+  display: grid;
+  grid-template-columns: 72px minmax(0, 1fr) 72px;
+  align-items: stretch;
+  border: 2px solid var(--text);
+}
+.ql-step {
+  position: relative;
+  min-height: 60px;
+  padding: 0;
+  border: 0;
+  border-radius: 0;
+  background: transparent;
+  color: var(--text);
+  cursor: pointer;
+}
+.ql-step::before,
+.ql-step-add::after {
+  content: '';
+  position: absolute;
+  left: 50%;
+  top: 50%;
+  background: currentColor;
+}
+.ql-step::before { width: 18px; height: 3px; margin: -1.5px 0 0 -9px; }
+.ql-step-add::after { width: 3px; height: 18px; margin: -9px 0 0 -1.5px; }
+.ql-detail-repeat .ql-step:first-child { border-right: 2px solid var(--text); }
+.ql-detail-repeat .ql-step:last-child { border-left: 2px solid var(--text); }
+.ql-step:disabled { opacity: 0.35; cursor: default; }
+/* a block, centred: an inline box ignores text-align on itself */
+.ql-repeat-count {
+  display: block;
+  align-self: center;
+  min-width: 0;
+  text-align: center;
+  font-size: var(--ql-t3);
+  line-height: 1.2;
+}
+.ql-repeat-count b {
+  font-size: var(--ql-fig);
+  font-weight: 800;
+  letter-spacing: -0.02em;
+  font-variant-numeric: tabular-nums lining-nums;
+}
+
+/* ---------- A challenge's standings ----------
+   On the codes table's columns: the place where a code sits, the team
+   where a label sits and its count at the right. */
+.ql-detail-standings { margin-top: var(--ql-block); }
+.ql-standing {
+  display: grid;
+  grid-template-columns: minmax(max-content, var(--ql-lab)) minmax(0, 1fr) auto;
+  column-gap: var(--ql-gap);
+  align-items: baseline;
+  padding: var(--ql-row) 0;
+  border-bottom: 1px solid var(--border-strong);
+  font-size: var(--ql-t3);
+}
+.ql-standing-place {
+  justify-self: start;
+  font-size: var(--ql-t4);
+  font-variant-numeric: tabular-nums lining-nums;
+  background: var(--ql-route, var(--line-red));
+  color: var(--ql-route-ink, #ffffff);
+}
+.ql-standing-team {
+  color: var(--text);
+  line-height: var(--ql-line);
+  overflow-wrap: break-word;
+  min-width: 0;
+}
+.ql-standing-count {
+  color: var(--text);
+  font-weight: 800;
+  line-height: var(--ql-line);
+  text-align: right;
+  font-variant-numeric: tabular-nums lining-nums;
+}
+/* a quest scored by calls from payphones: the standings' rows */
+.ql-detail-phone { margin-top: var(--ql-block); }
+.ql-phone-call {
+  margin: var(--ql-row) 0;
+  font-size: var(--ql-t3);
+  line-height: 1.5;
+}
+.ql-phone-call a { color: inherit; font-weight: 800; white-space: nowrap; }
+.ql-phone-wide { grid-column: 1 / 3; }
+.ql-phone-pin { letter-spacing: 0.08em; }
+
+.ql-standings-note {
+  margin: var(--ql-row) 0 0;
+  color: var(--muted);
+  font-size: var(--ql-t3);
+  line-height: 1.5;
+}
+
+/* ---------- What the quest is ---------- */
+/* The first block under the head, so it opens a block rather than
+   continuing one: the heading that used to stand over it carried this
+   gap and has gone. */
+.ql-detail-body {
+  margin-top: var(--ql-block);
+  font-size: var(--ql-t3);
+  line-height: 1.55;
+  overflow-wrap: break-word;
+}
+
+.ql-detail-flavour {
+  margin: var(--ql-in) 0 0;
+  font-size: var(--ql-t3);
+  line-height: 1.5;
+  font-style: italic;
+  color: var(--muted);
+  overflow-wrap: break-word;
+}
+
+/* a quest's tags: each one searches the list for itself */
+.ql-detail-tags {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px;
+  margin-top: var(--ql-in);
+}
+.ql-detail-tags .ql-chip { padding: 5px 10px; }
+
+/* a table that follows prose opens with a rule */
+.ql-detail-facts {
+  margin-top: var(--ql-in);
+  border-top: 1px solid var(--border-strong);
+}
+.ql-fact {
+  display: grid;
+  grid-template-columns: minmax(max-content, var(--ql-lab)) minmax(0, 1fr);
+  column-gap: var(--ql-gap);
+  align-items: start;
+  padding: var(--ql-row) 0;
+  border-bottom: 1px solid var(--border-strong);
+}
+.ql-fact-v {
+  min-width: 0;
+  font-size: var(--ql-t3);
+  line-height: 1.5;
+  overflow-wrap: break-word;
+}
+/* the label and its picture centre on the value's first line */
+.ql-fact > .ql-fact-k {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  min-height: calc(var(--ql-t3) * 1.5);
+}
+.ql-fact-k .ic { width: 1.4em; height: 1.4em; }
+/* the teams cell holds its place while the tab answers, so the sheet
+   never grows under a finger; with nothing to put in it, it stays an
+   empty cell and the rules still cross it */
+.ql-detail-teams { min-height: 1.5em; }
+.ql-detail-teams.is-loading::before {
+  content: '';
+  display: inline-block;
+  width: 62%;
+  height: 0.8em;
+  vertical-align: middle;
+  background: var(--border);
+  border-radius: 2px;
+  animation: ql-teams-pulse 1.2s ease-in-out infinite;
+}
+@keyframes ql-teams-pulse { 0%, 100% { opacity: 1; } 50% { opacity: 0.45; } }
+@media (prefers-reduced-motion: reduce) { .ql-detail-teams.is-loading::before { animation: none; } }
+
+/* ---------- Files hung on a quest ----------
+   The last row of the quest's table: the label in the same voice, and
+   the pictures and documents beside it. Each picture cell is the same
+   size whether or not the picture has arrived, so a slow load never
+   grows the sheet under a finger. */
+.ql-detail-files {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr);
+  gap: var(--ql-row);
+  padding-top: var(--ql-row);
+  padding-bottom: var(--ql-row);
+  border-bottom: 1px solid var(--border-strong);
+}
+.ql-files-label { align-self: start; display: flex; align-items: center; gap: 8px; min-height: calc(var(--ql-t3) * 1.5); }
+.ql-files-body { display: grid; gap: var(--ql-row); min-width: 0; }
+
+.ql-file-shots {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(104px, 1fr));
+  gap: 4px;
+}
+
+.ql-file-shot {
+  display: block;
+  width: 100%;
+  padding: 0;
+  border: 0;
+  background: transparent;
+  cursor: pointer;
+}
+
+.ql-file-shot img {
+  display: block;
+  width: 100%;
+  height: 108px;
+  object-fit: cover;
+  background: var(--tint);
+  border: 1px solid var(--border-strong);
+  border-radius: 2px;
+}
+
+.ql-file-list {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+}
+
+.ql-file-list li {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) auto;
+  column-gap: var(--ql-gap);
+  align-items: baseline;
+  padding: var(--ql-row) 0;
+  border-bottom: 1px solid var(--border-strong);
+  font-size: var(--ql-t3);
+}
+
+.ql-file-list li:first-child { padding-top: 0; }
+.ql-file-list li:last-child { border-bottom: 0; padding-bottom: 0; }
+/* the link carries the underline and nothing else */
+.ql-file-list a {
+  justify-self: start;
+  color: inherit;
+  font-weight: 700;
+  text-decoration: none;
+  border-bottom: 2px solid var(--text);
+  word-break: break-word;
+}
+.ql-file-size { white-space: nowrap; }
+
+/* ---------- The lists this quest is on ---------- */
+.ql-detail-lists { margin-top: var(--ql-block); }
+.ql-list-picks {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+  padding-top: 10px;
+}
+/* the sheet's reading size, as the code rows above are */
+.ql-list-picks .ql-chip {
+  min-height: 44px;
+  padding: 0 16px;
+  font-size: inherit;
+}
+
+/* ---------- The action, where green appears once ---------- */
+.ql-detail-actions {
+  margin-top: var(--ql-block);
+  display: flex;
+  flex-direction: column;
+  gap: var(--ql-row);
+}
+.ql-detail-actions .ql-button {
+  flex: 1 1 auto;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 10px;
+  text-align: center;
+}
+.ql-detail-actions .ic { width: 1.25em; height: 1.25em; }
+
+/* the submit action is a link wearing the button style */
+a.ql-button {
+  display: inline-flex;
+  align-items: center;
+  text-decoration: none;
+}
+
+.ql-detail-actions .is-done-btn {
+  background: var(--done);
+  border-color: var(--done);
+  color: var(--on-accent);
+}
+
+/* Larger screens: the controls sit in one row across the sign, a taller
+   map, and a centred dialog */
+@media (min-width: 931px) {
+  /* The drawer has room for two columns of switches on a wide screen. */
+  .ql-rockers { grid-template-columns: repeat(2, minmax(0, 1fr)); column-gap: 28px; }
+  .ql-map { height: 420px; }
+}
+
+/* A desktop keeps the box, at any width: a wide window, or a mouse in
+   a narrow one outside the full-screen map (`ql-pop`, set by the
+   script). Nothing drags here and the pointer is precise, so the sheet
+   is a centred panel with the close glyph back on the name's line — the same composition, the same four sizes cut
+   one stop larger, and a measure that stops at about 65 characters
+   rather than running the width of a 640px slab. */
+:where(html.ql-pop) .ql-detail-overlay { align-items: center; padding: 20px; }
+:where(html.ql-pop) .ql-detail {
+  --ql-t1: 1.625rem;
+  --ql-t2: 1.25rem;
+  --ql-fig: 1.25rem;
+  --ql-lab: 6.75rem;
+  --ql-gap: 16px;
+  --ql-disc: 1.875rem;
+  --ql-head-y: 20px;
+  --ql-block: 32px;
+  --ql-row: 12px;
+  max-width: 520px;
+  border-radius: 2px;
+}
+:where(html.ql-pop) .ql-detail-top { grid-template-columns: var(--ql-disc) minmax(0, 1fr) var(--ql-icon); }
+:where(html.ql-pop) .ql-detail-close { display: flex; }
+:where(html.ql-pop) .ql-detail-files {
+  grid-template-columns: minmax(max-content, var(--ql-lab)) minmax(0, 1fr);
+  column-gap: var(--ql-gap);
+  row-gap: 0;
+}
+:where(html.ql-pop) .ql-detail-repeat { grid-template-columns: 56px minmax(0, 1fr) 56px; }
+:where(html.ql-pop) .ql-step { min-height: 52px; }
+:where(html.ql-pop) .ql-detail-actions { flex-direction: row; }
+/* a window too narrow to hold the box with room round it: the box takes
+   the whole window */
+@media (max-width: 560px) {
+  :where(html.ql-pop) .ql-detail-overlay { padding: 0; align-items: stretch; }
+  :where(html.ql-pop) .ql-detail {
+    max-width: none;
+    max-height: none;
+    height: 100%;
+    border-width: 3px 0 0;
+    border-radius: 0;
+  }
+}
+
+
+/* ---------- Done: the code chip dims, the words are struck ----------
+   A ticked code is not crossed out at its chip — the chip's white
+   lettering fades back to a grey instead, so it reads as spent rather
+   than deleted, and the red line runs across the words beside it. The
+   same dimming marks a ticked quest's chip in the list. */
+.code.ql-code,
+.ql-code-row .code {
+  transition: color var(--duration-slow) var(--ease-smooth-out),
+    opacity var(--duration-slow) var(--ease-smooth-out);
+}
+.ql-code-row.is-ticked .code,
+.ql-item.is-done .ql-code,
+.ql-sr-item.is-done .ql-code {
+  color: var(--sign-muted);
+  opacity: 0.7;
+}
+
+/* the list: the quest's name is struck through, drawn on the same way
+   the sheet's rows are, and the chip beside it dims. The map's results
+   draw theirs the same way under a name of their own. */
+.ql-item-label,
+.ql-sr-label {
+  position: relative;
+  display: inline;
+  background-image: linear-gradient(var(--line-red), var(--line-red));
+  background-repeat: no-repeat;
+  background-position: 0 0.58em;
+  background-size: 0% 2px;
+  transition: background-size var(--duration-slow) var(--ease-smooth-out);
+}
+.ql-item.is-done .ql-item-label,
+.ql-sr-item.is-done .ql-sr-label { background-size: 100% 2px; }
+
+@media (prefers-reduced-motion: reduce) {
+  .ql-item-label,
+  .ql-sr-label,
+  .ql-code-text::after,
+  .code.ql-code,
+  .ql-code-row .code { transition: none; }
+}
+
+/* ---------- The codes box breathes when the sheet opens for a choice ----------
+   Tapping the tick on a tiered or per-unit quest opens the sheet
+   instead of ticking it, which on its own looks like nothing happened.
+   So the sheet points at the box: warm light breathes inside it, the
+   line about ticking goes red with it, and everything else on the
+   sheet holds back until it is over.
+
+   Four breaths over 2.7 seconds, settling three ways at once:
+
+     · each one is shallower than the last (1, 0.8, 0.6, 0.42)
+     · the first three lengthen (470, 550, 660ms) — but the last is
+       the quickest (360ms), so the run ends instead of trailing off
+     · each rest is about twice the one before it (90, 180, 390ms)
+
+   And a breath is not a blink: in on roughly a third of it, out over
+   the other two thirds, both halves on an even ease so the light
+   swells and empties instead of switching on.
+
+     in       peak            out                 rest
+     0        170             470                 560
+     560      760             1110                1290
+     1290     1530            1950                2340
+     2340     2460            2700
+
+   One class on the sheet drives the lot, so the three parts cannot
+   drift apart. Nothing is painted outside the box — the light is a
+   flat fill on ::before, laid over the box's own border so the warm
+   edge fades with it, and its opacity is the only thing that moves.
+   The fill is one colour across the whole box: a breath changes how
+   strong the light is, never where it is. */
+.ql-detail-points::before {
+  content: "";
+  position: absolute;
+  inset: -1px; /* over the box's own border, so the edge warms too */
+  z-index: -1;
+  border: 1px solid var(--glow-edge);
+  border-radius: 2px;
+  background: var(--glow-fill);
+  opacity: 0;
+  pointer-events: none;
+}
+.ql-detail.is-cueing .ql-detail-points::before {
+  animation: ql-codes-breathe 2700ms var(--ease-in-out) both;
+}
+
+/* Everything that is not the box steps back while this is happening,
+   and comes up again when the run ends — except the grab bar, which
+   is the way out of the sheet and stays at full strength throughout.
+   The way IN is a WAAPI animation driven by flashCodes in the page
+   script — a script animation outranks everything in the stylesheet,
+   so no rule or engine quirk can mask the fade into a snap; the way
+   OUT is the plain transition below, the only thing that also eases
+   back when the run is cut short. */
+.ql-detail > *:not(.ql-detail-points):not(.ql-sheet-handle) {
+  transition: opacity var(--duration-medium) var(--ease-in-out);
+}
+.ql-detail.is-cueing > *:not(.ql-detail-points):not(.ql-sheet-handle) {
+  opacity: 0.42;
+}
+
+/* Cutting the run short: a browser hands an element straight back to
+   its resting style when an animation is taken away, with no
+   transition out of it, so the light would snap. The page writes down
+   where it had got to (--cue-from-light) and this carries it home from
+   there. */
+.ql-detail.is-cue-out .ql-detail-points::before {
+  animation: ql-cue-release-light 340ms var(--ease-in-out) both;
+}
+@keyframes ql-cue-release-light {
+  from { opacity: var(--cue-from-light, 0); }
+  to { opacity: 0; }
+}
+
+@keyframes ql-codes-breathe {
+  0%, 17.41%,
+  20.74%, 41.11%,
+  47.78%, 72.22%,
+  86.67%, 100% { opacity: 0; }
+  6.3% { opacity: 1; }
+  28.15% { opacity: 0.8; }
+  56.67% { opacity: 0.6; }
+  91.11% { opacity: 0.42; }
+}
+@media (prefers-reduced-motion: reduce) {
+  .ql-detail > *:not(.ql-detail-points):not(.ql-sheet-handle) { transition: none; }
+  .ql-detail.is-cueing .ql-detail-points::before,
+  .ql-detail.is-cue-out .ql-detail-points::before { animation: none; }
+  .ql-detail.is-cueing > *:not(.ql-detail-points):not(.ql-sheet-handle) { opacity: 1; }
+}

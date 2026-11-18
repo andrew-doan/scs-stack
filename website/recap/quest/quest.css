@@ -1,0 +1,104 @@
+/* One quest's page: its figures, the team's own submissions and the
+   accepted ones in order. The lists and figures are the recap's. */
+
+#qs-body > .section:first-child { margin-top: 0; }
+
+/* the lists keep to the reading measure, so a time is not a screen
+   away from its name */
+#qs-order,
+.qs-visits,
+.qs-mine { max-width: 720px; }
+
+/* a team's places: the row opens to them, set in under the name, each
+   with the time on the clock it was visited */
+.qs-visits li.qs-vt { flex-wrap: wrap; row-gap: 8px; }
+.qs-vt-toggle {
+  display: flex;
+  flex: 1;
+  gap: 12px;
+  align-items: center;
+  min-width: 0;
+  min-height: 26px;
+  margin: 0;
+  padding: 0;
+  border: 0;
+  background: none;
+  color: inherit;
+  font: inherit;
+  text-align: left;
+  cursor: pointer;
+}
+.qs-vt-toggle:focus-visible { outline: 2px solid var(--accent); outline-offset: 2px; }
+.qs-vt-go {
+  width: 0.8em;
+  height: 0.8em;
+  margin-left: 6px;
+  vertical-align: -0.05em;
+  color: var(--muted);
+  transition: rotate var(--duration-fast) var(--ease-smooth-out);
+}
+.qs-vt.is-open .qs-vt-go { rotate: 180deg; }
+.qs-vt-list { flex-basis: 100%; padding-left: 38px; }
+.qs-vt-list[hidden] { display: none; }
+.qs-vt-row { display: flex; gap: 12px; padding: 4px 0; }
+.qs-vt-time { flex: none; min-width: 5.5em; color: var(--muted); font-variant-numeric: tabular-nums; }
+.qs-vt-name { min-width: 0; overflow-wrap: break-word; }
+@media (prefers-reduced-motion: reduce) {
+  .qs-vt-go { transition: none; }
+}
+.qs-code { text-decoration: none; }
+.qs-team { color: inherit; text-decoration: none; }
+@media (hover: hover) and (pointer: fine) {
+  .qs-team:hover { text-decoration: underline; text-underline-offset: 2px; }
+}
+
+.qs-mine { margin: 0; padding: 0; list-style: none; }
+.qs-sub { padding: 12px 0; border-bottom: 1px solid var(--border); }
+.qs-sub:first-child { padding-top: 0; }
+.qs-sub:last-child { border-bottom: 0; }
+.qs-sub-head { display: flex; gap: 12px; align-items: baseline; }
+.qs-status { font-weight: 800; }
+.qs-status.is-rejected { color: var(--alert-ink); }
+.qs-status.is-deleted,
+.qs-when,
+.qs-none { color: var(--muted); }
+.rc-list li.qs-none::before { content: none; }
+/* the code chip and the region on one line, centred on each other */
+#qs-lead.has-code { display: flex; flex-wrap: wrap; align-items: center; gap: 8px; }
+/* a submission with no time: a dash where its place would be */
+.rc-list li.qs-untimed { counter-increment: none; }
+.rc-list li.qs-untimed::before {
+  content: '';
+  background: linear-gradient(var(--muted), var(--muted)) center / 10px 2px no-repeat;
+  box-shadow: none;
+}
+.qs-reason { margin: 4px 0 0; }
+.qs-thumbs { display: flex; flex-wrap: wrap; gap: 8px; margin-top: 10px; }
+.qs-thumb {
+  position: relative;
+  width: 72px;
+  height: 72px;
+  padding: 0;
+  border: 1px solid var(--border);
+  border-radius: 2px;
+  background: var(--tint);
+  overflow: hidden;
+  cursor: zoom-in;
+}
+.qs-thumb img { display: block; width: 100%; height: 100%; object-fit: cover; }
+.qs-thumb img.is-missing { visibility: hidden; }
+/* a video's mark, a small sign in the corner */
+.qs-play {
+  position: absolute;
+  right: 4px;
+  bottom: 4px;
+  display: grid;
+  place-items: center;
+  width: 22px;
+  height: 22px;
+  border-radius: 2px;
+  background: var(--sign-bg);
+  color: var(--sign-ink);
+  font-size: 0.7rem;
+  pointer-events: none;
+}

@@ -1,0 +1,5 @@
+{
+  "R2_ACCOUNT_ID": "PASTE your Cloudflare account id (the dashboard's URL and R2 overview show it)",
+  "R2_ACCESS_KEY_ID": "PASTE the Access Key ID of an R2 API token (R2 > Manage API tokens, Object Read only)",
+  "R2_SECRET_ACCESS_KEY": "PASTE that token's Secret Access Key"
+}

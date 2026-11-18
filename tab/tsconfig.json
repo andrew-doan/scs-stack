@@ -1,0 +1,30 @@
+{
+  // npm run typecheck, the worker's half (tsconfig.site.json,
+  // tsconfig.sw.json and tsconfig.dash.json are the browser's). Nothing
+  // is emitted: wrangler bundles the .ts files itself and Node strips the
+  // types when the suites import them, so the syntax has to be what Node
+  // can strip (erasableSyntaxOnly) and a type-only import has to say so
+  // (verbatimModuleSyntax).
+  "compilerOptions": {
+    "noEmit": true,
+    "target": "es2024",
+    "lib": ["es2024"],
+    "types": ["@cloudflare/workers-types"],
+    "module": "esnext",
+    "moduleResolution": "bundler",
+    "allowImportingTsExtensions": true,
+    "verbatimModuleSyntax": true,
+    "erasableSyntaxOnly": true,
+    "isolatedModules": true,
+    "strict": true,
+    "noFallthroughCasesInSwitch": true,
+    "noImplicitReturns": false,
+    // console-page.js and the dashboard's files stay JavaScript and are
+    // read here for their exports only (tsconfig.dash.json checks the
+    // dashboard's script).
+    "allowJs": true,
+    "checkJs": false,
+    "skipLibCheck": true
+  },
+  "include": ["src/**/*.ts"]
+}

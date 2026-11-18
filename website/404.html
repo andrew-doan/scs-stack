@@ -1,0 +1,278 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
+  <script>try{if(localStorage.getItem('scs2-submit-session')){document.documentElement.classList.add('team-signed-in')}var t=localStorage.getItem('scs2-theme');if(t==='dark'||(!t&&matchMedia('(prefers-color-scheme: dark)').matches)){document.documentElement.setAttribute('data-theme','dark')}var f=parseInt(localStorage.getItem('scs2-font-scale'),10);if(f&&f>=33&&f<=200&&f!==100){document.documentElement.style.fontSize=f+'%'}}catch(e){}</script>
+  <title>Not Found | SCS.2</title>
+  <meta name="robots" content="noindex" />
+  <link rel="icon" href="assets/icons/favicon-32.png" type="image/png" />
+  <meta name="theme-color" content="#ffffff" />
+  <!-- Absolute URLs: Netlify serves this file at any missing path, so
+       relative ones would break. -->
+  <link rel="preconnect" href="https://files.scs.andyrew.space" crossorigin />
+  <link rel="stylesheet" href="/assets/site.css" />
+  <style>
+    /* ---------------- Not found ----------------
+       One column: the site name, a black sign with the missing address,
+       links to every page, then a rotating pun. No nav, tab bar or footer. */
+
+    .nf {
+      width: min(100%, 792px);   /* 760px of column inside the gutters */
+      margin: 0 auto;
+      padding: 40px 16px 72px;
+      padding-left: max(16px, env(safe-area-inset-left, 0px));
+      padding-right: max(16px, env(safe-area-inset-right, 0px));
+    }
+
+    /* ---- Site name ---- */
+    .nf-mark {
+      margin: 0 0 20px;
+      font-size: var(--t-micro);
+      font-weight: 800;
+      letter-spacing: 0.08em;
+      text-transform: uppercase;
+      line-height: 1.4;
+      color: var(--muted);
+    }
+    .nf-mark b { color: var(--text); font-weight: 800; }
+
+    /* ---- Sign: 404 and the missing address ----
+       A black plate, unlike other pages' titles. The gap below it comes
+       from .section. */
+    .nf-hero {
+      padding: 0;
+      margin: 0;
+      background: var(--sign-bg);
+      color: var(--sign-ink);
+      border: 1px solid var(--sign-edge);
+    }
+    .nf-hero h1.sign-bar { color: var(--sign-ink); }
+
+    /* smaller than the usual title, since it is a sentence and shares the bar with the code */
+    .nf-hero h1.sign-bar {
+      gap: 8px 18px;
+      padding: 20px 22px 22px;
+      font-size: clamp(2rem, 5vw, 2.9rem);
+      font-weight: 800;
+      letter-spacing: -0.035em;
+      line-height: 1.08;
+    }
+
+    /* "404" chip */
+    .nf-code {
+      font-family: var(--mono);
+      font-size: var(--t-body);
+      font-weight: 700;
+      font-variant-numeric: tabular-nums lining-nums;
+      letter-spacing: 0.06em;
+      line-height: 1;
+      background: var(--sign-ink);
+      color: var(--sign-bg);
+      border-radius: 2px;
+      padding: 6px 10px;
+    }
+
+    .nf-hero .nf-where.sign-bar {
+      display: grid;
+      grid-template-columns: auto minmax(0, 1fr);
+      column-gap: 14px;
+      align-items: baseline;
+      padding: 13px 22px 14px;
+    }
+    .nf-where-lab {
+      font-size: var(--t-micro);
+      font-weight: 800;
+      letter-spacing: 0.08em;
+      text-transform: uppercase;
+      line-height: 1.4;
+      white-space: nowrap;
+      color: var(--sign-muted);
+    }
+    /* overflow-wrap: anywhere, since a path has no spaces to break at */
+    .nf-path {
+      font-family: var(--mono);
+      font-size: var(--t-small);
+      line-height: 1.45;
+      color: var(--sign-ink);
+      overflow-wrap: anywhere;
+    }
+
+    /* ---- Page links ---- */
+    .nf-stops { list-style: none; margin: 14px 0 0; padding: 0; }
+    .nf-stops li + li { border-top: 1px solid var(--border); }
+
+    /* the whole row is the link */
+    .nf-stop {
+      display: grid;
+      grid-template-columns: minmax(0, 1fr) auto;
+      column-gap: 16px;
+      align-items: center;
+      padding: 15px 0;
+      color: var(--text);
+      text-decoration: none;
+    }
+    .nf-stop-name { display: flex; align-items: flex-start; gap: 10px; font-size: var(--t-body); font-weight: 800; line-height: 1.4; }
+    /* the note starts under the name, clear of its icon */
+    .nf-stop-note { display: block; margin-top: 3px; padding-left: calc(1.2em + 10px); font-size: var(--t-body); line-height: 1.5; color: var(--muted); }
+    .nf-go {
+      display: block;
+      color: var(--muted);
+      transition: transform var(--duration-quick) var(--ease-smooth-out),
+        color var(--duration-quick) var(--ease-smooth-out);
+    }
+    .nf-stop:hover .nf-stop-name,
+    .nf-stop:hover .nf-go { color: var(--accent); }
+    .nf-stop:hover .nf-go { transform: translateX(3px); }
+    .nf-stop:focus-visible { outline: 2px solid var(--accent); outline-offset: 3px; }
+
+    /* ---- Pun ---- */
+    .nf-notice {
+      margin-top: 44px;
+      padding-top: 18px;
+      border-top: 1px solid var(--border);
+    }
+    .nf-lab {
+      display: block;
+      font-size: var(--t-micro);
+      font-weight: 800;
+      letter-spacing: 0.08em;
+      text-transform: uppercase;
+      line-height: 1.4;
+      color: var(--muted);
+    }
+    .nf-pun {
+      margin: 10px 0 0;
+      max-width: 24em;
+      font-size: var(--t-lede);
+      font-weight: 800;
+      letter-spacing: -0.015em;
+      line-height: 1.35;
+      text-wrap: balance;
+    }
+    .nf-again { margin-top: 18px; }
+
+    @media (max-width: 560px) {
+      .nf { padding-top: 28px; }
+      .nf-hero h1.sign-bar { padding: 16px 16px 18px; }
+      .nf-hero .nf-where.sign-bar {
+        grid-template-columns: minmax(0, 1fr);
+        row-gap: 3px;
+        padding: 12px 16px 13px;
+      }
+    }
+  </style>
+</head>
+<body class="themed">
+  <main class="nf">
+    <p class="nf-mark"><b>SCS.2</b> Sydney Challenge Scramble</p>
+
+    <section class="hero nf-hero">
+      <div class="hero-board">
+        <h1 class="sign-bar">
+          <span class="nf-code">404</span>
+          <span>That Page Is Not Here.</span>
+        </h1>
+        <p class="hero-copy sign-bar nf-where is-hidden" id="nf-where">
+          <span class="nf-where-lab">Address</span>
+          <span class="nf-path" id="nf-path"></span>
+        </p>
+      </div>
+    </section>
+
+    <section class="section">
+      <h2 class="section-heading">Where to go</h2>
+      <ul class="nf-stops">
+        <li><a class="nf-stop" href="/">
+          <span>
+            <span class="nf-stop-name"><svg class="ic" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M3.63 10.61 12 3.63l8.37 6.98"/><path d="M5.49 9.68V20.37h4.65v-5.58h3.72v5.58h4.65V9.68"/></svg>Home</span>
+            <span class="nf-stop-note">Discover SCS.2</span>
+          </span>
+          <svg class="nf-go" width="18" height="18" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><path d="M5.5 2.5 11 8l-5.5 5.5"/></svg>
+        </a></li>
+        <li><a class="nf-stop" href="/questlist/">
+          <span>
+            <span class="nf-stop-name"><svg class="ic" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 21s-7-5.1-7-11a7 7 0 1 1 14 0c0 5.9-7 11-7 11z"/><circle cx="12" cy="10" r="2.5"/></svg>Quest List</span>
+            <span class="nf-stop-note">Take a look at the quests in store.</span>
+          </span>
+          <svg class="nf-go" width="18" height="18" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><path d="M5.5 2.5 11 8l-5.5 5.5"/></svg>
+        </a></li>
+        <li><a class="nf-stop" href="/tab/">
+          <span>
+            <span class="nf-stop-name"><svg class="ic" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M7.76 21.01h8.48"/><path d="M12 13.59v7.42"/><path d="M6.7 2.99h10.6v5.3a5.3 5.3 0 0 1-10.6 0V2.99z"/><path d="M6.7 5.11H3.52v1.06a4.24 4.24 0 0 0 3.18 4.13"/><path d="M17.3 5.11h3.18v1.06a4.24 4.24 0 0 1-3.18 4.13"/></svg>Tab</span>
+            <span class="nf-stop-note">View the live leaderboard.</span>
+          </span>
+          <svg class="nf-go" width="18" height="18" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><path d="M5.5 2.5 11 8l-5.5 5.5"/></svg>
+        </a></li>
+        <li><a class="nf-stop" href="/submit/">
+          <span>
+            <span class="nf-stop-name"><svg class="ic" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M3 8A1.5 1.5 0 0 1 4.5 6.5h2.6l1.7-2.2h6.4l1.7 2.2h2.6A1.5 1.5 0 0 1 21 8v10a1.5 1.5 0 0 1-1.5 1.5h-15A1.5 1.5 0 0 1 3 18V8z"/><circle cx="12" cy="12.5" r="3.75"/></svg>Submit a Quest</span>
+            <span class="nf-stop-note">Submit side quests here!</span>
+          </span>
+          <svg class="nf-go" width="18" height="18" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><path d="M5.5 2.5 11 8l-5.5 5.5"/></svg>
+        </a></li>
+        <li><a class="nf-stop" href="/info/">
+          <span>
+            <span class="nf-stop-name"><svg class="ic" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="12" r="9"/><path d="M12 11v6"/><path d="M11.95 7.5h.1"/></svg>Event Info</span>
+            <span class="nf-stop-note">Learn about SCS.2</span>
+          </span>
+          <svg class="nf-go" width="18" height="18" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><path d="M5.5 2.5 11 8l-5.5 5.5"/></svg>
+        </a></li>
+        <li><a class="nf-stop" href="/welfare/">
+          <span>
+            <span class="nf-stop-name"><svg class="ic" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 20.3 10.7 19C6 14.9 3 12.2 3 8.9 3 6.2 5.1 4 7.8 4c1.6 0 3.1.8 4.2 2 1.1-1.2 2.6-2 4.2-2 2.7 0 4.8 2.2 4.8 4.9 0 3.3-3 6-7.7 10.2L12 20.3z"/></svg>Welfare &amp; Safety</span>
+            <span class="nf-stop-note">Need help? Visit this page for the contact details.</span>
+          </span>
+          <svg class="nf-go" width="18" height="18" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><path d="M5.5 2.5 11 8l-5.5 5.5"/></svg>
+        </a></li>
+      </ul>
+    </section>
+
+    <section class="nf-notice">
+      <span class="nf-lab">Service notice</span>
+      <p class="nf-pun" id="nf-pun" aria-live="polite">This stop is not on the route map.</p>
+      <button class="btn nf-again" type="button" id="nf-again">Another one</button>
+    </section>
+  </main>
+  <script>
+    (function () {
+      var puns = [
+        'Chief, you’ve side-quested too far.',
+        'This stop is not on the route map.',
+        'Wrong platform. Your train leaves from base.',
+        'The tab has no record of this page.',
+        'You have scrambled past the edge of Sydney.',
+        'Request stop. Nobody told the guard.',
+        'Lost? Even Wondabyne has a platform.',
+        'Zero points for this one, and no partial credit.',
+        'This is not the Macquarie you were looking for.',
+        'Mind the gap. There is nothing on the other side of it.',
+        'Replacement buses are not running to this page.',
+        'Trackwork. This page is closed all weekend.',
+        'Opal error. Tap on somewhere else.',
+        'This link stopped running before the event did.',
+        'The light rail does not come out this far.'
+      ];
+      var el = document.getElementById('nf-pun');
+      var last = el.textContent;
+      function pick() {
+        var choice;
+        do { choice = puns[Math.floor(Math.random() * puns.length)]; } while (choice === last && puns.length > 1);
+        last = choice;
+        el.textContent = choice;
+      }
+      pick();
+      document.getElementById('nf-again').addEventListener('click', pick);
+
+      // Show the missing address as text, truncated to 76 characters
+      var path = '';
+      try { path = location.pathname + location.search; } catch (e) {}
+      if (path && path !== '/') {
+        if (path.length > 76) path = path.slice(0, 75) + '…';
+        document.getElementById('nf-path').textContent = path;
+        document.getElementById('nf-where').classList.remove('is-hidden');
+      }
+    })();
+  </script>
+</body>
+</html>

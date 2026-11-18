@@ -1,0 +1,1537 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
+  <script>try{if(localStorage.getItem('scs2-submit-session')){document.documentElement.classList.add('team-signed-in')}}catch(e){}</script>
+  <script>try{if(localStorage.getItem('scs2-submit-session')){document.documentElement.classList.add('team-signed-in')}var t=localStorage.getItem('scs2-theme');if(t==='dark'||(!t&&matchMedia('(prefers-color-scheme: dark)').matches)){document.documentElement.setAttribute('data-theme','dark')}var st=matchMedia('(display-mode: standalone)').matches||navigator.standalone===true;if(st){if(matchMedia('(max-width: 840px)').matches)document.documentElement.classList.add('is-pwa');document.documentElement.classList.add('is-installed');if(!sessionStorage.getItem('scs2-launched')){sessionStorage.setItem('scs2-launched','1');document.documentElement.classList.add('show-splash');setTimeout(function(){document.documentElement.classList.remove('show-splash')},4000)}if(sessionStorage.getItem('scs2-chrome-hidden')==='1'){sessionStorage.removeItem('scs2-chrome-hidden');document.documentElement.classList.add('nav-enter')}if(parseInt(sessionStorage.getItem('scs2-scroll:'+location.pathname),10)>0&&!location.hash){document.documentElement.classList.add('scroll-restoring');setTimeout(function(){document.documentElement.classList.remove('scroll-restoring')},900)}}else if((matchMedia('(pointer: coarse)').matches||matchMedia('(hover: none)').matches)&&matchMedia('(max-width: 840px)').matches&&localStorage.getItem('scs2-app-layout')!=='0'){document.documentElement.classList.add('is-pwa');if(parseInt(sessionStorage.getItem('scs2-scroll:'+location.pathname),10)>0&&!location.hash){document.documentElement.classList.add('scroll-restoring');setTimeout(function(){document.documentElement.classList.remove('scroll-restoring')},900)}}var f=parseInt(localStorage.getItem('scs2-font-scale'),10);if(f&&f>=33&&f<=200&&f!==100){document.documentElement.style.fontSize=f+'%'}if(localStorage.getItem('scs2-justify')==='1'){document.documentElement.classList.add('justify-text')}}catch(e){}</script>
+  <title>SCS.2 - Legends of the City</title>
+  <meta name="description" content="The Sydney Challenge Scramble is back for Season 2. Teams of three to five race around Sydney completing quests for points on Tuesday 20 October 2026. Free entry, with prizes, merch and food at the end." />
+  <!-- Link preview. Discord shows the card from tab/src/embed.js; other apps read the tags below. -->
+  <link rel="discord:component-embed" type="application/json" href="https://files.scs.andyrew.space/api/embed/home" />
+  <meta property="og:site_name" content="SCS.2 Legends of the City" />
+  <meta property="og:type" content="website" />
+  <meta property="og:title" content="One Day to Become a Legend of the City." />
+  <meta property="og:description" content="A free, student-run scavenger hunt, challenge filled race all across Sydney, with free food and a $700 prize pool, organised by UNSW societies." />
+  <meta property="og:url" content="https://scs.andyrew.space/" />
+  <meta property="og:image" content="https://files.scs.andyrew.space/api/slides/cover" />
+  <meta name="twitter:card" content="summary_large_image" />
+  <link rel="icon" href="assets/icons/favicon-32.png" type="image/png" />
+  <link rel="manifest" href="manifest.webmanifest" />
+  <link rel="apple-touch-icon" href="assets/icons/apple-touch-icon.png" />
+  <meta name="theme-color" content="#ffffff" />
+  <meta name="mobile-web-app-capable" content="yes" />
+  <meta name="apple-mobile-web-app-capable" content="yes" />
+  <meta name="apple-mobile-web-app-status-bar-style" content="default" />
+  <meta name="apple-mobile-web-app-title" content="SCS.2" />
+  <link rel="preconnect" href="https://files.scs.andyrew.space" crossorigin />
+  <link rel="stylesheet" href="assets/site.css" />
+  <style>
+  /* ---------------- Home page ----------------
+     The board is the first screen: what, when, where, cost, who can
+     enter and the countdown. Below 840px, where the nav is a burger
+     menu, the page adds an index of the other pages and a second
+     Sign up at the foot. */
+  .home {
+    --h-date: min(4rem, calc(2.4rem + 2.6vw));
+    --h-sec: 1.375rem;   /* 22px: headings, times, board values, clock */
+    --h-read: 1rem;      /* 16px: body text */
+    --h-lab: 0.72rem;    /* 11.5px: labels */
+    /* Hairline on the board, the same in both themes */
+    --board-hair: rgba(255, 255, 255, 0.2);
+  }
+
+  .home p, .home dl, .home dd, .home dt, .home ol, .home ul, .home li { margin: 0; }
+  .home ol, .home ul { padding: 0; list-style: none; }
+  .home p { font-size: var(--h-read); line-height: 1.5; }
+  .home p + p { margin-top: 12px; }
+
+  /* Links */
+  .home a {
+    color: inherit;
+    font-weight: 800;
+    text-decoration: underline;
+    text-decoration-thickness: 2px;
+    text-underline-offset: 3px;
+  }
+
+  /* ---- Board ----
+     Twelve columns: the photos edge to edge at the top, the headline
+     across all twelve under them, the four facts in a row, the clock
+     across the foot. */
+  .home .board {
+    display: flex;
+    flex-direction: column;
+  }
+
+  /* One gap between everything on the board: 40px, 32px on a phone */
+  .home .board { --board-gap: 40px; padding-top: var(--board-gap); padding-bottom: var(--board-gap); }
+  /* the photos meet the top bar: pulled up over the board's own gap,
+     so no :has() is needed */
+  .home .board-type > .home-slides:not([hidden]) { margin-top: calc(-1 * var(--board-gap)); }
+  .home .board-type { row-gap: var(--board-gap); }
+  /* Under 560px site.css drops the shell's top padding to 18px but
+     leaves --shell-top at 32px. The board offsets by --shell-top, so
+     match it here. */
+  @media (max-width: 560px) {
+    .home.page-shell { --shell-top: 18px; }
+  }
+
+  .home .board-type {
+    display: grid;
+    grid-template-columns: repeat(12, minmax(0, 1fr));
+    column-gap: var(--gutter);
+    row-gap: 32px;
+    align-items: end;
+    padding: 0;
+  }
+
+  .home .board-type h1.board-name {
+    grid-column: 1 / -1;
+    /* Pulled left to cancel the first letter's side bearing, so it
+       lines up with the labels below */
+    margin: 0 0 0 -0.04em;
+    color: var(--sign-ink);
+    font-size: var(--h-date);
+    font-weight: 850;
+    letter-spacing: -0.03em;
+    line-height: 1.02;
+  }
+
+  /* Four facts in equal columns, the clock across the foot */
+  .home .board-facts {
+    grid-column: 1 / -1;
+    display: grid;
+    grid-template-columns: repeat(4, minmax(0, 1fr));
+    column-gap: var(--gutter);
+    row-gap: var(--board-gap);
+    align-items: end;
+  }
+  /* Undo site.css's placement of the board cells on twelve columns */
+  .home .board-facts > div:nth-child(n) { grid-column: auto; }
+  .home .board-facts > div:nth-child(5) { grid-column: 1 / -1; }
+
+  .home .board-facts dt {
+    color: var(--sign-muted);
+    font-size: var(--h-lab);
+    font-weight: 800;
+    letter-spacing: 0.08em;
+    line-height: 1.3;
+    text-transform: uppercase;
+  }
+
+  .home .board-facts dt { display: flex; align-items: center; gap: 0.7em; }
+  .home .board-facts dt .ic { width: 1.4em; height: 1.4em; }
+
+  .home .board-facts dd {
+    margin-top: 4px;
+    font-size: var(--h-sec);
+    font-weight: 800;
+    letter-spacing: -0.02em;
+    line-height: 1.2;
+  }
+
+  /* Countdown, centred: the heading, then each figure with its unit
+     under it. The hairline is set here so it sits in the same place in
+     both layouts. */
+  .home .board-clock {
+    border-top: 1px solid var(--board-hair);
+    padding-top: 22px;
+    text-align: center;
+  }
+  .home .board-facts .board-clock dt { justify-content: center; }
+
+  .home .board-clock-figs {
+    display: flex;
+    justify-content: center;
+    flex-wrap: wrap;
+    gap: 4px 44px;
+    margin-top: 14px;
+  }
+
+  .home .board-clock-fig {
+    display: inline-flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 4px;
+    color: var(--sign-muted);
+    font-size: var(--h-lab);
+    font-weight: 800;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+  }
+
+  /* Two digits wide, so a count dropping from 10 to 9 does not move
+     the row */
+  .home .board-clock-fig b {
+    display: block;
+    min-width: 2ch;
+    text-align: center;
+    color: var(--sign-ink);
+    font-size: calc(var(--h-sec) * 2);
+    font-weight: 800;
+    letter-spacing: -0.025em;
+    line-height: 1.05;
+    font-variant-numeric: tabular-nums lining-nums;
+  }
+  @media (max-width: 420px) {
+    .home .board-clock-figs { gap: 4px 28px; }
+  }
+
+  /* After the last stop site-app.js hides the figures and shows this
+     message. The heading is hidden while it shows, since site-app.js
+     leaves the last stop's name in it. */
+  .home .board-facts dd.board-clock-msg {
+    margin-top: 4px;
+    font-size: var(--h-read);
+    font-weight: 800;
+    letter-spacing: 0;
+    line-height: 1.4;
+  }
+  .home .board-clock.is-over dt { display: none; }
+
+  /* ---- Slideshow ----
+     Photos at the top of the board, edge to edge, with dots and a
+     caption. The section is `hidden` when there are none. */
+  .home .board-type > .home-slides { grid-column: 1 / -1; margin: 0; }
+  .home .home-slides[hidden] { display: none; }
+
+  /* Full viewport width, outside the shell's gutter */
+  .home .hs-frame {
+    margin-inline: calc(50% - 50vw);
+    width: 100vw;
+  }
+
+  /* Most of the first screen, leaving the headline in view under it,
+     and never taller than 16:9 on a wide screen */
+  .home .hs-stage {
+    position: relative;
+    height: min(calc(100vh - var(--nav-h, 64px) - 160px), 56.25vw);
+    height: min(calc(100svh - var(--nav-h, 64px) - 160px), 56.25vw);
+    min-height: 300px;
+    margin: 0 auto;
+    overflow: hidden;
+    background: var(--sign-bg);
+  }
+  @media (max-width: 700px) {
+    .home .hs-stage { height: min(calc(100vh - var(--nav-h, 56px) - 220px), 125vw); height: min(calc(100svh - var(--nav-h, 56px) - 220px), 125vw); min-height: 260px; }
+  }
+  /* A tablet held upright: taller, up to square. On its side: no wider
+     than 3:2, on the board's black. */
+  @media (min-width: 701px) and (orientation: portrait) and (pointer: coarse),
+         (min-width: 701px) and (orientation: portrait) and (hover: none) {
+    .home .hs-stage { height: min(calc(100vh - var(--nav-h, 56px) - 220px), 100vw); height: min(calc(100svh - var(--nav-h, 56px) - 220px), 100vw); }
+  }
+  @media (min-width: 701px) and (min-height: 600px) and (orientation: landscape) and (pointer: coarse),
+         (min-width: 701px) and (min-height: 600px) and (orientation: landscape) and (hover: none) {
+    .home .hs-stage { max-width: calc((100vh - var(--nav-h, 64px) - 160px) * 1.5); max-width: calc((100svh - var(--nav-h, 64px) - 160px) * 1.5); }
+  }
+
+  .home .hs-slide {
+    position: absolute;
+    inset: 0;
+    opacity: 0;
+    pointer-events: none;
+    transition: opacity var(--duration-fast) var(--ease-smooth-out);
+  }
+  .home .hs-slide.is-on { opacity: 1; pointer-events: auto; }
+
+  /* ---- Dragging between pictures ----
+     During a drag the current slide and its two neighbours sit a
+     stage-width apart and move together by script. .is-near shows a
+     neighbour without making it current; only .is-on is tabbable or
+     clickable. */
+  /* Vertical scroll stays with the page. Set up front so the browser
+     does not start its own pan before the drag is detected. */
+  .home .hs-well {
+    position: absolute;
+    inset: 0;
+    touch-action: pan-y;
+    -webkit-user-select: none;
+    user-select: none;
+  }
+  /* Images are draggable by default, and the browser's own drag
+     cancels the pointer events */
+  .home .hs-img {
+    -webkit-user-drag: none;
+    -webkit-user-select: none;
+    user-select: none;
+  }
+  .home .hs-slide.is-near { opacity: 1; }
+  .home .hs-well.is-dragging .hs-slide { transition: none; }
+  /* On release: slides animate back, or across to the next one */
+  .home .hs-well.is-settling .hs-slide {
+    transition: transform var(--duration-fast) var(--ease-smooth-out);
+  }
+
+  /* The picture covers the stage, cropping a 3:2 shot top and bottom */
+  .home .hs-img {
+    display: block;
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    /* Hidden until fully loaded, then faded in. Firefox paints the part
+       not yet downloaded white. */
+    opacity: 0;
+    transition: opacity var(--duration-slow) var(--ease-smooth-out);
+  }
+  .home .hs-slide.is-loaded .hs-img { opacity: 1; }
+
+  /* Loading bar along the foot of the stage, only while the current
+     picture loads */
+  .home .hs-stage::after {
+    content: '';
+    position: absolute;
+    left: 0;
+    bottom: 0;
+    width: 22%;
+    height: 3px;
+    background: var(--sign-ink);
+    opacity: 0;
+    pointer-events: none;
+    transition: opacity var(--duration-quick) var(--ease-smooth-out);
+  }
+  .home .hs-stage.is-waiting::after {
+    opacity: 0.6;
+    animation: hs-wait 1.1s var(--ease-in-out) infinite alternate;
+  }
+  @keyframes hs-wait { from { transform: translateX(0); } to { transform: translateX(355%); } }
+
+  /* Caption, centred under the picture at a readable width */
+  .home .hs-cap {
+    margin: 12px auto 0;
+    max-width: 42em;
+    padding: 0 16px;
+    color: var(--sign-muted);
+    text-align: center;
+  }
+  .home .hs-cap[hidden] { display: none; }
+
+  /* Controls over the picture. The dots always show; the arrows only
+     on hover. */
+  .home .hs-bar {
+    position: absolute;
+    inset: 0;
+    pointer-events: none;
+  }
+  .home .hs-bar[hidden] { display: none; }
+
+  .home .hs-btn {
+    position: absolute;
+    top: 50%;
+    display: inline-grid;
+    place-items: center;
+    width: 44px;
+    height: 44px;
+    padding: 0;
+    border: 0;
+    background: none;
+    color: var(--sign-ink);
+    cursor: pointer;
+    opacity: 0;
+    pointer-events: none;
+    transform: translateY(-50%);
+    transition: opacity var(--duration-quick) var(--ease-smooth-out);
+  }
+  .home .hs-prev { left: 8px; }
+  .home .hs-next { right: 8px; }
+  @media (hover: hover) {
+    .home .hs-stage:hover .hs-btn { opacity: 1; pointer-events: auto; }
+  }
+  .home .hs-btn:focus-visible {
+    opacity: 1;
+    pointer-events: auto;
+    outline: 2px solid var(--accent);
+    outline-offset: 2px;
+  }
+  .home .hs-btn:active { opacity: 0.7; }
+  .home .hs-btn svg { display: block; width: 26px; height: 26px; }
+
+  /* Position dots. Square, since round is reserved for route discs. */
+  .home .hs-dots {
+    position: absolute;
+    left: 50%;
+    bottom: 12px;
+    transform: translateX(-50%);
+    pointer-events: auto;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    max-width: calc(100% - 24px);
+    overflow-x: auto;
+    scrollbar-width: none;
+  }
+  .home .hs-dots::-webkit-scrollbar { display: none; }
+  .home .hs-dot {
+    flex: none;
+    width: 9px;
+    height: 9px;
+    padding: 0;
+    border: 2px solid var(--sign-ink);
+    border-radius: 2px;
+    background: transparent;
+    opacity: 0.55;
+    cursor: pointer;
+    transition:
+      background-color var(--duration-quick) var(--ease-smooth-out),
+      opacity var(--duration-quick) var(--ease-smooth-out);
+  }
+  .home .hs-dot.is-on { background: var(--sign-ink); opacity: 1; }
+  .home .hs-dot:focus-visible { outline: 2px solid var(--accent); outline-offset: 2px; }
+  /* Past ten pictures: a window of seven dots that slides along */
+  .home .hs-dots.is-many { overflow: hidden; }
+  .home .hs-dots.is-many .hs-dot {
+    transform: translateX(var(--dots-shift, 0px)) scale(var(--dot-size, 1));
+    transition:
+      background-color var(--duration-quick) var(--ease-smooth-out),
+      opacity var(--duration-quick) var(--ease-smooth-out),
+      transform var(--duration-fast) var(--ease-smooth-out);
+  }
+
+  /* a tap opens the photo viewer */
+  .home .hs-well { cursor: zoom-in; }
+  .home .hs-well.is-dragging { cursor: grabbing; }
+
+  @media (prefers-reduced-motion: reduce) {
+    .home .hs-slide { transition: none; }
+    .home .hs-btn { transition: none; }
+    .home .hs-well.is-settling .hs-slide { transition: none; }
+    .home .hs-img { transition: none; }
+    .home .hs-dots.is-many .hs-dot { transition: none; }
+    .home .hs-stage.is-waiting::after { animation: none; }
+  }
+
+  /* ---- Sign up ---- */
+  .home-signup { margin-top: 40px; }
+  /* as far from the rule under it as from the board: the heading's rule
+     is otherwise pulled up into the gap */
+  .home .home-signup + .home-row { margin-top: 40px; }
+  .home .home-signup + .home-row .section-heading { margin-top: 0; }
+  /* In the app, a team that is signed in has signed up */
+  html.is-pwa.team-signed-in .home-signup,
+  html.is-pwa.team-signed-in .home-again { display: none; }
+
+  /* The site's button size, with wider side padding */
+  .home .board-cta {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    min-height: 48px;
+    background: var(--accent-solid);
+    color: var(--on-accent);
+    border-radius: 2px;
+    padding: 10px 32px;
+    font-size: var(--t-body);
+    font-weight: 800;
+    line-height: 1.25;
+    text-decoration: none;
+    transition: background var(--duration-quick) var(--ease-smooth-out);
+  }
+  .home .board-cta:hover { background: var(--accent-dark); }
+
+  /* ---- Content ----
+     Two-column rows from the first heading to the foot. */
+  .home-row {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    /* Wider than the 26px page gutter so two text columns read as two.
+       About 68 characters a column at 1180px. */
+    column-gap: min(100px, 8vw);
+    align-items: start;
+    margin-top: 56px;
+  }
+
+  /* Headings come from site.css. The page zeroes margins above, so set
+     the gap after a heading here. */
+  .home .section-heading + * { margin-top: 16px; }
+
+  .home .muted { color: var(--muted); }
+
+  /* ---- Schedule ----
+     Time and event centred on each other, the note under them, a
+     hairline per row. */
+  .home .day li {
+    display: grid;
+    grid-template-columns: 80px minmax(0, 1fr);
+    column-gap: 16px;
+    align-items: center;
+    padding: 12px 0;
+    border-bottom: 1px solid var(--border);
+  }
+  .home .day li:first-child { padding-top: 0; }
+  .home .day li:last-child { border-bottom: 0; }
+  .home .day time {
+    grid-column: 1;
+    grid-row: 1;
+    font-size: var(--h-sec);
+    font-weight: 800;
+    letter-spacing: -0.02em;
+    line-height: 1.2;
+    font-variant-numeric: tabular-nums lining-nums;
+  }
+  .home .day b { grid-column: 2; grid-row: 1; font-weight: 800; line-height: 1.5; }
+  .home .day span { grid-column: 2; grid-row: 2; color: var(--muted); line-height: 1.5; }
+
+  /* ---- Quests ----
+     Quest kinds and examples as rows on hairlines */
+  .home .kinds { margin-top: 16px; }
+  .home .kinds > div,
+  .home .eg li {
+    padding: 12px 0;
+    border-bottom: 1px solid var(--border);
+    line-height: 1.5;
+  }
+  .home .kinds > div:first-child, .home .eg li:first-child { padding-top: 0; }
+  .home .kinds > div:last-child, .home .eg li:last-child { border-bottom: 0; }
+  /* Route disc in its own column; name and description share the edge
+     to its right */
+  .home .kinds > div {
+    display: grid;
+    grid-template-columns: auto minmax(0, 1fr);
+    column-gap: 10px;
+    align-items: center;
+  }
+  .home .kinds dt { display: contents; font-weight: 800; }
+  .home .kinds dt .bullet { font-size: 0.86em; }
+  .home .kinds dd { grid-column: 2; margin-top: 2px; }
+  .home .eg b { display: block; font-weight: 800; }
+  /* Ink, not muted, to match the quest kinds beside it */
+  .home .eg span { display: block; }
+  .home .eg i {
+    display: block;
+    margin-top: 6px;
+    color: var(--muted);
+    font-size: var(--h-lab);
+    font-style: normal;
+    font-weight: 800;
+    letter-spacing: 0.08em;
+    line-height: 1.3;
+    text-transform: uppercase;
+  }
+  /* Quest code */
+  .home .eg i b { display: inline; font-family: var(--mono); letter-spacing: 0.04em; }
+
+  /* ---- Page index and second Sign up (below 840px) ----
+     Each row is a link with an arrow, as on the event info page. */
+  .home-index, .home-again { display: none; }
+
+  .home .index-rows { margin-top: 16px; }
+  .home .index-rows li { border-bottom: 1px solid var(--border); }
+  .home .index-rows li:last-child { border-bottom: 0; }
+  .home .index-rows a {
+    display: grid;
+    grid-template-columns: 1fr auto;
+    align-items: center;
+    column-gap: 16px;
+    min-height: 52px;
+    font-size: var(--h-read);
+    line-height: 1.5;
+    text-decoration: none;
+  }
+  .home .index-rows svg { display: block; color: var(--muted); }
+  .home .index-rows a > span { display: flex; align-items: flex-start; gap: 14px; }
+  .home .index-rows .ic { width: 1.375em; }
+
+  .home-again .board-cta { display: flex; }
+
+  /* Below 1120px the longest value does not fit a quarter, so the
+     facts go two by two */
+  @media (min-width: 841px) and (max-width: 1120px) {
+    .home .board-facts { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+  }
+
+  @media (max-width: 840px) {
+    /* One column. Content below the board is capped at the column
+       (site.css); the board is not, so its values reach the edge. */
+    .home-row, .home-index, .home-again,
+    .home-signup { max-width: var(--col, 36rem); margin-inline: auto; }
+    .home .board-type {
+      grid-template-columns: minmax(0, 1fr);
+      row-gap: 0;
+      align-items: stretch;
+    }
+    .home .board-type h1.board-name {
+      grid-column: 1 / -1; margin: 0; text-align: center; text-wrap: balance;
+      font-size: clamp(2rem, 11vw, 3rem); line-height: 1.14;
+    }
+    .home .board-facts { grid-template-columns: minmax(0, 1fr); row-gap: 0; align-items: stretch; }
+    /* Label left, value right, one row each. Flex so the value wraps
+       to its own line at large text sizes. Centred rather than
+       baseline-aligned, since the label is half the value's size. */
+    .home .board-facts > div:nth-child(-n+4) {
+      display: flex;
+      flex-wrap: wrap;
+      justify-content: space-between;
+      align-items: center;
+      gap: 2px 16px;
+      padding: 11px 0;
+      border-bottom: 1px solid var(--board-hair);
+    }
+    /* Rows have 11px padding inside their rules, so take it off the gap */
+    .home .board { --board-gap: 32px; }
+    .home .board-facts > div:nth-child(1) { margin-top: calc(var(--board-gap) - 11px); }
+    /* The clock's top rule stands in for the last row's rule */
+    .home .board-facts > div:nth-child(4) { border-bottom: 0; }
+    .home .board-facts > div:nth-child(-n+4) dd { margin: 0 0 0 auto; text-align: right; }
+    .home .board-clock { padding-top: calc(var(--board-gap) - 11px); }
+
+    .home .board-cta { display: flex; }
+
+    .home-row { display: block; margin-top: 40px; }
+    .home-row > * + * { margin-top: 40px; }
+    .home-index, .home-again { display: block; }
+    .home-again, .home-index { margin-top: 40px; }
+    /* The app layout's bottom bar already has these links */
+    html.is-pwa .home-index { display: none; }
+    .home-signup { margin-top: 40px; }
+    /* The column has no row gap, so space the headline off the photos */
+    .home .board-type > .home-slides:not([hidden]) + h1.board-name { margin-top: var(--board-gap); }
+  }
+  </style>
+</head>
+<body class="themed">
+<div id="app-splash" class="app-splash" aria-hidden="true"><img src="assets/icons/logo-128.png" srcset="assets/icons/logo-256.png 2x" width="155" height="128" alt="" /></div>
+  <header class="site-nav">
+    <div class="site-nav-inner">
+      <a class="site-brand" href="./">
+        <span class="site-brand-badge"><img src="assets/icons/logo-64.png" srcset="assets/icons/logo-128.png 2x" width="39" height="32" alt="SCS" /></span>
+        <span class="site-brand-name">Legends of the City</span>
+      </a>
+      <button class="site-nav-toggle" type="button" aria-label="Menu" aria-expanded="false" aria-controls="site-menu">
+        <span class="nav-burger" aria-hidden="true"><span></span><span></span><span></span></span>
+      </button>
+      <nav id="site-menu" class="site-menu" aria-label="Site">
+        <a href="./" class="route-home is-active">Home</a>
+        <a class="route-quests" href="questlist/">Quest List</a>
+        <a class="route-info" href="info/">Event Info</a>
+        <a class="route-welfare" href="welfare/">Welfare &amp; Safety</a>
+        <a class="route-tab" href="tab/">Tab</a>
+        <a class="route-submit" href="submit/"><span class="menu-signed">Submit a Quest</span><span class="menu-signin">Sign In</span></a>
+      </nav>
+      <a class="bell-toggle" href="messages/" aria-label="Messages">
+        <svg class="icon-bell-outline" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M18 8a6 6 0 0 0-12 0c0 7-3 9-3 9h18s-3-2-3-9"/><path d="M13.73 21a2 2 0 0 1-3.46 0"/></svg>
+        <svg class="icon-bell-fill" viewBox="0 0 24 24" fill="currentColor" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M18 8a6 6 0 0 0-12 0c0 7-3 9-3 9h18s-3-2-3-9z"/><path d="M13.73 21a2 2 0 0 1-3.46 0"/></svg>
+        <span class="bell-dot" hidden></span>
+      </a>
+      <a class="welfare-toggle" href="welfare/" aria-label="Welfare &amp; Safety">
+        <svg class="icon-heart-outline" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M19 14c1.49-1.46 3-3.21 3-5.5A5.5 5.5 0 0 0 16.5 3c-1.76 0-3 .5-4.5 2-1.5-1.5-2.74-2-4.5-2A5.5 5.5 0 0 0 2 8.5c0 2.3 1.5 4.05 3 5.5l7 7Z"/></svg>
+        <svg class="icon-heart-fill" viewBox="0 0 24 24" fill="currentColor" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M19 14c1.49-1.46 3-3.21 3-5.5A5.5 5.5 0 0 0 16.5 3c-1.76 0-3 .5-4.5 2-1.5-1.5-2.74-2-4.5-2A5.5 5.5 0 0 0 2 8.5c0 2.3 1.5 4.05 3 5.5l7 7Z"/></svg>
+      </a>
+      <button class="settings-toggle" type="button" aria-label="Settings" aria-expanded="false" aria-controls="site-settings">
+        <svg class="icon-gear-outline" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12.22 2h-.44a2 2 0 0 0-2 2v.18a2 2 0 0 1-1 1.73l-.43.25a2 2 0 0 1-2 0l-.15-.08a2 2 0 0 0-2.73.73l-.22.38a2 2 0 0 0 .73 2.73l.15.1a2 2 0 0 1 1 1.72v.51a2 2 0 0 1-1 1.74l-.15.09a2 2 0 0 0-.73 2.73l.22.38a2 2 0 0 0 2.73.73l.15-.08a2 2 0 0 1 2 0l.43.25a2 2 0 0 1 1 1.73V20a2 2 0 0 0 2 2h.44a2 2 0 0 0 2-2v-.18a2 2 0 0 1 1-1.73l.43-.25a2 2 0 0 1 2 0l.15.08a2 2 0 0 0 2.73-.73l.22-.39a2 2 0 0 0-.73-2.73l-.15-.08a2 2 0 0 1-1-1.74v-.5a2 2 0 0 1 1-1.74l.15-.09a2 2 0 0 0 .73-2.73l-.22-.38a2 2 0 0 0-2.73-.73l-.15.08a2 2 0 0 1-2 0l-.43-.25a2 2 0 0 1-1-1.73V4a2 2 0 0 0-2-2z"/><circle cx="12" cy="12" r="3"/></svg>
+        <svg class="icon-gear-fill" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path fill-rule="evenodd" clip-rule="evenodd" d="M12.22 2h-.44a2 2 0 0 0-2 2v.18a2 2 0 0 1-1 1.73l-.43.25a2 2 0 0 1-2 0l-.15-.08a2 2 0 0 0-2.73.73l-.22.38a2 2 0 0 0 .73 2.73l.15.1a2 2 0 0 1 1 1.72v.51a2 2 0 0 1-1 1.74l-.15.09a2 2 0 0 0-.73 2.73l.22.38a2 2 0 0 0 2.73.73l.15-.08a2 2 0 0 1 2 0l.43.25a2 2 0 0 1 1 1.73V20a2 2 0 0 0 2 2h.44a2 2 0 0 0 2-2v-.18a2 2 0 0 1 1-1.73l.43-.25a2 2 0 0 1 2 0l.15.08a2 2 0 0 0 2.73-.73l.22-.39a2 2 0 0 0-.73-2.73l-.15-.08a2 2 0 0 1-1-1.74v-.5a2 2 0 0 1 1-1.74l.15-.09a2 2 0 0 0 .73-2.73l-.22-.38a2 2 0 0 0-2.73-.73l-.15.08a2 2 0 0 1-2 0l-.43-.25a2 2 0 0 1-1-1.73V4a2 2 0 0 0-2-2zM12 15a3 3 0 1 0 0-6 3 3 0 0 0 0 6z"/></svg>
+      </button>
+      <div id="site-settings" class="settings-panel is-hidden" role="dialog" aria-label="Settings">
+        <div class="settings-page" id="set-page-main">
+        <div class="settings-group" role="group" aria-labelledby="set-group-display">
+          <p class="settings-group-title" id="set-group-display">Display</p>
+          <div class="settings-row">
+            <span class="settings-name" id="set-theme-name"><svg class="ic" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="12" r="9"/><path d="M12 3v18a9 9 0 0 0 0-18z" fill="currentColor"/></svg>Appearance</span>
+            <button class="theme-toggle" type="button" aria-label="Switch to dark mode" aria-pressed="false">
+              <svg class="icon-moon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M21 12.8A9 9 0 1 1 11.2 3a7 7 0 0 0 9.8 9.8z"/></svg>
+              <svg class="icon-sun" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="12" r="4"/><path d="M12 2v2"/><path d="M12 20v2"/><path d="m4.9 4.9 1.4 1.4"/><path d="m17.7 17.7 1.4 1.4"/><path d="M2 12h2"/><path d="M20 12h2"/><path d="m4.9 19.1 1.4-1.4"/><path d="m17.7 6.3 1.4-1.4"/></svg>
+            </button>
+          </div>
+          <div class="settings-row">
+            <span class="settings-name" id="set-font-name"><svg class="ic" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M4 7V5h16v2"/><path d="M12 5v14"/><path d="M9 19h6"/></svg>Text Size</span>
+            <span class="settings-desc" id="set-font-val" aria-live="polite">100%</span>
+            <span class="settings-size" role="group" aria-labelledby="set-font-name">
+              <button id="set-font-dec" class="settings-size-btn" type="button" aria-label="Decrease text size">A&minus;</button>
+              <button id="set-font-inc" class="settings-size-btn" type="button" aria-label="Increase text size">A+</button>
+            </span>
+          </div>
+          <div class="settings-row settings-more">
+            <span class="settings-name" id="set-visual-name"><svg class="ic" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M2 12s3.5-7 10-7 10 7 10 7-3.5 7-10 7S2 12 2 12z"/><circle cx="12" cy="12" r="3"/></svg>Optional Visual Settings</span>
+            <button id="set-visual-open" class="settings-more-btn" type="button" aria-labelledby="set-visual-name" aria-expanded="false" aria-controls="set-page-visual">
+              <svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5.5 2.5 11 8l-5.5 5.5"/></svg>
+            </button>
+          </div>
+        </div>
+        <div class="settings-group" role="group" aria-labelledby="set-group-day">
+          <p class="settings-group-title" id="set-group-day">On the day</p>
+          <div class="settings-row settings-check">
+            <span class="settings-name" id="set-push-name"><svg class="ic" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M18 8a6 6 0 0 0-12 0c0 7-3 9-3 9h18s-3-2-3-9"/><path d="M13.73 21a2 2 0 0 1-3.46 0"/></svg>Push Notifications</span>
+            <span class="settings-desc" id="set-push-hint">Enable to receive announcements and submission rejections as a push notification.</span>
+            <label class="settings-knob">
+              <input id="set-push" type="checkbox" aria-labelledby="set-push-name" aria-describedby="set-push-hint" />
+              <span class="settings-switch" aria-hidden="true"><span class="switch-o">O</span><span class="switch-i">I</span></span>
+            </label>
+          </div>
+          <div class="settings-row settings-check">
+            <span class="settings-name" id="set-tile-cache-name"><svg class="ic" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M3 6.5 9 4l6 2.5L21 4v13.5L15 20l-6-2.5L3 20z"/><path d="M9 4v13.5"/><path d="M15 6.5V20"/></svg>Offline Map</span>
+            <span class="settings-desc" id="set-tile-cache-desc">Save previously loaded map data to reduce mobile data usage; may use up to a few hundred megabytes of storage.</span>
+            <label class="settings-knob">
+              <input id="set-tile-cache" type="checkbox" checked aria-labelledby="set-tile-cache-name" aria-describedby="set-tile-cache-desc" />
+              <span class="settings-switch" aria-hidden="true"><span class="switch-o">O</span><span class="switch-i">I</span></span>
+            </label>
+          </div>
+        </div>
+        <div class="settings-group settings-phone-group" role="group" aria-labelledby="set-group-phone">
+          <p class="settings-group-title" id="set-group-phone">Phone</p>
+          <div class="settings-row settings-check settings-app-row">
+            <span class="settings-name" id="set-app-layout-name"><svg class="ic" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="6.5" y="2.5" width="11" height="19" rx="2"/><path d="M6.5 17h11"/></svg>App Layout</span>
+            <span class="settings-desc" id="set-app-layout-desc">Use the App Layout mode instead.</span>
+            <label class="settings-knob">
+              <input id="set-app-layout" type="checkbox" checked aria-labelledby="set-app-layout-name" aria-describedby="set-app-layout-desc" />
+              <span class="settings-switch" aria-hidden="true"><span class="switch-o">O</span><span class="switch-i">I</span></span>
+            </label>
+          </div>
+          <div class="settings-row settings-check settings-haptics-row">
+            <span class="settings-name" id="set-haptics-name"><svg class="ic" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="8" y="4" width="8" height="16" rx="1.5"/><path d="m3 9 1.5 1.5L3 12l1.5 1.5L3 15"/><path d="m21 9-1.5 1.5L21 12l-1.5 1.5L21 15"/></svg>Haptic Feedback</span>
+            <label class="settings-knob">
+              <input id="set-haptics" type="checkbox" checked aria-labelledby="set-haptics-name" />
+              <span class="settings-switch" aria-hidden="true"><span class="switch-o">O</span><span class="switch-i">I</span></span>
+            </label>
+          </div>
+        </div>
+        </div>
+
+        <!-- Settings, second page: display options -->
+        <div class="settings-page" id="set-page-visual" hidden>
+          <div class="settings-group" role="group" aria-labelledby="set-group-visual">
+            <button id="set-visual-back" class="settings-back" type="button">
+              <svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M10.5 2.5 5 8l5.5 5.5"/></svg>
+              <span>Settings</span>
+            </button>
+            <p class="settings-group-title" id="set-group-visual">Visual</p>
+            <div class="settings-row settings-check">
+              <span class="settings-name" id="set-map-full-name"><svg class="ic" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M8 3.5H5A1.5 1.5 0 0 0 3.5 5v3"/><path d="M20.5 8V5A1.5 1.5 0 0 0 19 3.5h-3"/><path d="M3.5 16v3A1.5 1.5 0 0 0 5 20.5h3"/><path d="M16 20.5h3a1.5 1.5 0 0 0 1.5-1.5v-3"/></svg>Full Screen Map</span>
+              <span class="settings-desc" id="set-map-full-desc">Have the full screen map as the default view on the quest list.</span>
+              <label class="settings-knob">
+                <input id="set-map-full" type="checkbox" aria-labelledby="set-map-full-name" aria-describedby="set-map-full-desc" />
+                <span class="settings-switch" aria-hidden="true"><span class="switch-o">O</span><span class="switch-i">I</span></span>
+              </label>
+            </div>
+            <div class="settings-row settings-check">
+              <span class="settings-name" id="set-map-sharp-name"><svg class="ic" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M9 4 3.5 6v14L9 18l6 2 5.5-2V4L15 6 9 4z"/><path d="M9 4v14"/><path d="M15 6v14"/></svg>Sharper Map</span>
+              <span class="settings-desc" id="set-map-sharp-desc">Draw the map at your screen's full sharpness. Uses more battery.</span>
+              <label class="settings-knob">
+                <input id="set-map-sharp" type="checkbox" aria-labelledby="set-map-sharp-name" aria-describedby="set-map-sharp-desc" />
+                <span class="settings-switch" aria-hidden="true"><span class="switch-o">O</span><span class="switch-i">I</span></span>
+              </label>
+            </div>
+            <div class="settings-row settings-check">
+              <span class="settings-name" id="set-map-groups-name"><svg class="ic" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="8" cy="8.5" r="3.5"/><circle cx="16" cy="8.5" r="3.5"/><circle cx="12" cy="16" r="3.5"/></svg>Group Map Pins</span>
+              <span class="settings-desc" id="set-map-groups-desc">Show pins close together as one circle with a count until you zoom in.</span>
+              <label class="settings-knob">
+                <input id="set-map-groups" type="checkbox" checked aria-labelledby="set-map-groups-name" aria-describedby="set-map-groups-desc" />
+                <span class="settings-switch" aria-hidden="true"><span class="switch-o">O</span><span class="switch-i">I</span></span>
+              </label>
+            </div>
+            <div class="settings-row settings-check">
+              <span class="settings-name" id="set-hide-checklist-name"><svg class="ic" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="m3 17 2 2 4-4"/><path d="m3 7 2 2 4-4"/><path d="M13 6h8"/><path d="M13 12h8"/><path d="M13 18h8"/></svg>Hide Checklist</span>
+              <span class="settings-desc" id="set-hide-checklist-desc">Hide the checklist features on the quest list.</span>
+              <label class="settings-knob">
+                <input id="set-hide-checklist" type="checkbox" aria-labelledby="set-hide-checklist-name" aria-describedby="set-hide-checklist-desc" />
+                <span class="settings-switch" aria-hidden="true"><span class="switch-o">O</span><span class="switch-i">I</span></span>
+              </label>
+            </div>
+            <div class="settings-row settings-check">
+              <span class="settings-name" id="set-hide-dates-name"><svg class="ic" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="3.5" y="5" width="17" height="15.5" rx="2"/><path d="M3.5 10h17"/><path d="M8 3v4"/><path d="M16 3v4"/></svg>Hide Dates</span>
+              <label class="settings-knob">
+                <input id="set-hide-dates" type="checkbox" aria-labelledby="set-hide-dates-name" />
+                <span class="settings-switch" aria-hidden="true"><span class="switch-o">O</span><span class="switch-i">I</span></span>
+              </label>
+            </div>
+            <div class="settings-row settings-check">
+              <span class="settings-name" id="set-24h-name"><svg class="ic" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="12" r="9"/><path d="M12 7v5l3 2"/></svg>24-hour Time</span>
+              <label class="settings-knob">
+                <input id="set-24h" type="checkbox" aria-labelledby="set-24h-name" />
+                <span class="settings-switch" aria-hidden="true"><span class="switch-o">O</span><span class="switch-i">I</span></span>
+              </label>
+            </div>
+            <div class="settings-row settings-check">
+              <span class="settings-name" id="set-anim-name"><svg class="ic" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="3.5" y="3.5" width="17" height="17" rx="2"/><path d="M3.5 13.5h17"/><path d="m9.5 9.5 2.5-2.5 2.5 2.5"/></svg>Quest Panel Animation</span>
+              <span class="settings-desc" id="set-anim-desc">Enable alternative quest panel animation.</span>
+              <label class="settings-knob">
+                <input id="set-anim" type="checkbox" checked aria-labelledby="set-anim-name" aria-describedby="set-anim-desc" />
+                <span class="settings-switch" aria-hidden="true"><span class="switch-o">O</span><span class="switch-i">I</span></span>
+              </label>
+            </div>
+            <div class="settings-row settings-check">
+              <span class="settings-name" id="set-justify-name"><svg class="ic" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M4 5.5h16"/><path d="M4 10h16"/><path d="M4 14.5h16"/><path d="M4 19h9"/></svg>Justified Text</span>
+              <span class="settings-desc" id="set-justify-desc">Format paragraphs as justified rather than ragged.</span>
+              <label class="settings-knob">
+                <input id="set-justify" type="checkbox" aria-labelledby="set-justify-name" aria-describedby="set-justify-desc" />
+                <span class="settings-switch" aria-hidden="true"><span class="switch-o">O</span><span class="switch-i">I</span></span>
+              </label>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </header>
+
+  <main class="page-shell home">
+    <!-- Board: photos, headline, facts and countdown -->
+    <section class="board">
+      <div class="board-type">
+        <!-- Slideshow: photos set in the dashboard, hidden when there are none -->
+        <section class="home-slides" id="home-slides" aria-label="Photos" hidden>
+          <div class="hs-frame">
+            <div class="hs-stage" id="hs-stage">
+              <div class="hs-well" id="hs-well"></div>
+              <!-- Arrows and dots, shown when there is more than one photo -->
+              <div class="hs-bar" id="hs-bar" hidden>
+                <button class="hs-btn hs-prev" id="hs-prev" type="button" aria-label="Previous photo">
+                  <svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M10.5 2.5 5 8l5.5 5.5"/></svg>
+                </button>
+                <button class="hs-btn hs-next" id="hs-next" type="button" aria-label="Next photo">
+                  <svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5.5 2.5 11 8l-5.5 5.5"/></svg>
+                </button>
+                <div class="hs-dots" id="hs-dots"></div>
+              </div>
+            </div>
+            <p class="hs-cap" id="hs-cap" hidden></p>
+          </div>
+        </section>
+
+        <h1 class="board-name">One Day to Become a Legend of the City.</h1>
+
+
+        <!-- Facts and countdown. site-app.js runs the clock from the date and
+             heading here until stops set in the dashboard replace them. -->
+        <dl class="board-facts">
+          <div><dt><svg class="ic" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="3.5" y="5" width="17" height="15.5" rx="2"/><path d="M3.5 10h17"/><path d="M8 3v4"/><path d="M16 3v4"/></svg>Date</dt><dd>Tue Week 6 (20 Oct)</dd></div>
+          <div><dt><svg class="ic" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="12" r="9"/><path d="M12 7v5l3 2"/></svg>When</dt><dd>09:15 to 18:00</dd></div>
+          <div><dt><svg class="ic" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 21s-7-5.1-7-11a7 7 0 1 1 14 0c0 5.9-7 11-7 11z"/><circle cx="12" cy="10" r="2.5"/></svg>Where</dt><dd>UNSW Kensington</dd></div>
+          <div><dt><svg class="ic" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 2.5v19"/><path d="M16.5 5.5H10a3.25 3.25 0 0 0 0 6.5h4a3.25 3.25 0 0 1 0 6.5H7"/></svg>Price</dt><dd>Free</dd></div>
+          <div class="board-clock" data-countdown="2026-10-20T09:15:00+11:00" data-countdown-end="2026-10-20T18:00:00+11:00">
+            <dt data-cd-label>Event starts</dt>
+            <dd class="countdown-grid board-clock-figs">
+              <span class="board-clock-fig"><b data-cd-days>0</b> <span>days</span></span>
+              <span class="board-clock-fig"><b data-cd-hours>0</b> <span>hrs</span></span>
+              <span class="board-clock-fig"><b data-cd-mins>0</b> <span>mins</span></span>
+              <span class="board-clock-fig"><b data-cd-secs>0</b> <span>secs</span></span>
+            </dd>
+            <dd class="board-clock-msg is-hidden" data-cd-message></dd>
+          </div>
+        </dl>
+      </div>
+    </section>
+
+    <div class="home-signup">
+      <a class="board-cta" href="rego/">Sign up</a>
+    </div>
+
+    <div class="home-row" data-justify>
+      <section>
+        <h2 class="section-heading">About SCS</h2>
+        <p>Do you want something fun to do over the Flex Week? Do you want $700 of free food and a
+          chance to win a $700 prize pool? Well&hellip; come to SCS.2!</p>
+        <p>Ever wondered what a scavenger hunt would look like if the whole of Sydney was the
+          board game?</p>
+        <p>With 11 societies banding together, SCS is an amalgamation of a scavenger hunt, choose
+          your own adventure and a race that takes you all across Sydney. Explore seen (and
+          unseen) parts of the city as you group up in teams of 3&ndash;5 to navigate
+          Sydney&rsquo;s public transport network, earning points along the way to cement your
+          name as a Legend of the City.</p>
+        <p>With a prize pool of around $700, another $700 budgeted on food (more than last season)
+          and even better challenges, this is one event you cannot be missing this Flex Week!</p>
+      </section>
+
+      <section>
+        <h2 class="section-heading">Schedule</h2>
+        <ol class="day">
+          <li><time>09:15</time><b>Check In Opens</b><span>via Keith Burrows Theatre</span></li>
+          <li><time>10:00</time><b>Briefings</b></li>
+          <li><time>10:30</time><b>Quests Open</b></li>
+          <li><time>16:30</time><b>Quests Close</b></li>
+          <li><time>16:45</time><b>Pizza and Drinks</b><span>via UNSW Kensington</span></li>
+          <li><time>17:30</time><b>Closing Ceremony</b></li>
+          <li><time>18:00</time><b>Event Conclusion</b></li>
+        </ol>
+      </section>
+    </div>
+
+    <!-- Quests: kinds and Season 1 examples -->
+    <div class="home-row" data-justify>
+      <section>
+        <h2 class="section-heading">What Will You Be Doing?</h2>
+        <p>On the day you will be given a list of quests that you can complete. There are no
+          restrictions or quests you must do: you choose your own adventure that will give you
+          the most points by the end of the day to become a Legend of the City.</p>
+        <dl class="kinds">
+          <div><dt><span class="bullet bullet-blue" aria-hidden="true">M</span>Main Quests</dt><dd>This season there are 3 main quest locations where you will go and complete various challenges, and additional points are awarded for completing all three. The event is built around these 3 main quests, so consider doing them highly&hellip;</dd></div>
+          <div><dt><span class="bullet bullet-orange" aria-hidden="true">S</span>Side Quests</dt><dd>Scattered all over Sydney, from a bland photo on Bland Street to taking a nice, lovely, swim in your clothes. These quests are built for you to complete whilst traveling between Main Quest locations. Various points awarded depending on skill, luck, or pure braveness.</dd></div>
+          <div><dt><span class="bullet" aria-hidden="true">B</span>Bonus Quests</dt><dd>Dropped randomly throughout the day with no warning. Some might require you to do some game theory and gamble at the SCS.2 Casino&trade;&hellip;</dd></div>
+        </dl>
+      </section>
+
+      <section>
+        <h2 class="section-heading">Sample Quests from Season 1</h2>
+        <ul class="eg">
+          <li><b>Parramatta</b><span>Visit the SCS.1 Parramatta Campus and complete all
+            tasks.</span><i>Main Quest &middot; 400 points</i></li>
+          <li><b>Slow Rail!</b><span>Get off the light rail at Haymarket, run to Town Hall on
+            foot and get on the same vehicle.</span><i>Side Quest &middot; 125 points</i></li>
+          <li><b>Beach Day</b><span>Visit any beach and take a swim whilst wearing your
+            clothes.</span><i>Side Quest &middot; 200 points</i></li>
+          <li><b>Make 21</b><span>Using the numbers on transport vehicles and the basic
+            operations, make the number 21.</span><i>Bonus Quest &middot; 25 points</i></li>
+        </ul>
+      </section>
+    </div>
+
+    <!-- Season 1 flashback and societies -->
+    <div class="home-row" data-justify>
+      <section>
+        <h2 class="section-heading">Discover Season 1</h2>
+        <p>Season 1 ran in Term 1 Flex. 39 teams raced for six hours, and
+          lowkurtkirkkenankenuinely was crowned the winner with a total of 7,387 points. View
+          <a href="https://go.scs.andyrew.space/scs-1-tab">the Season 1 tab</a> to revisit
+          Season 1 including the Season 1 Quest list and submission highlights.</p>
+      </section>
+
+      <section>
+        <h2 class="section-heading">Collaborating Societies</h2>
+        <p>Eleven UNSW societies, supported by Arc.</p>
+        <p>Asian Studies Association, Chess Club, GeoGuessrSoc, PhotoSoc, PuzzleSoc, Queer Students
+          in STEM, RailSoc, Rhythm Games Society, Tabletop Games Society, WanderSoc and
+          WestSoc.</p>
+      </section>
+    </div>
+
+    <!-- Below 840px only, where the nav is a burger menu: a second
+         Sign up and an index of the other pages -->
+    <div class="home-again"><a class="board-cta" href="rego/">Sign up</a></div>
+
+    <section class="home-index">
+      <h2 class="section-heading">Explore the Site</h2>
+      <ul class="index-rows">
+        <li><a href="questlist/"><span><svg class="ic" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 21s-7-5.1-7-11a7 7 0 1 1 14 0c0 5.9-7 11-7 11z"/><circle cx="12" cy="10" r="2.5"/></svg>Quest List</span><svg width="16" height="16" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><path d="M5.5 2.5 11 8l-5.5 5.5"/></svg></a></li>
+        <li><a href="info/"><span><svg class="ic" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="12" r="9"/><path d="M12 11v6"/><path d="M11.95 7.5h.1"/></svg>Event Info</span><svg width="16" height="16" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><path d="M5.5 2.5 11 8l-5.5 5.5"/></svg></a></li>
+        <li><a href="welfare/"><span><svg class="ic" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 20.3 10.7 19C6 14.9 3 12.2 3 8.9 3 6.2 5.1 4 7.8 4c1.6 0 3.1.8 4.2 2 1.1-1.2 2.6-2 4.2-2 2.7 0 4.8 2.2 4.8 4.9 0 3.3-3 6-7.7 10.2L12 20.3z"/></svg>Welfare &amp; Safety</span><svg width="16" height="16" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><path d="M5.5 2.5 11 8l-5.5 5.5"/></svg></a></li>
+        <li><a href="tab/"><span><svg class="ic" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M7.76 21.01h8.48"/><path d="M12 13.59v7.42"/><path d="M6.7 2.99h10.6v5.3a5.3 5.3 0 0 1-10.6 0V2.99z"/><path d="M6.7 5.11H3.52v1.06a4.24 4.24 0 0 0 3.18 4.13"/><path d="M17.3 5.11h3.18v1.06a4.24 4.24 0 0 1-3.18 4.13"/></svg>Tab</span><svg width="16" height="16" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><path d="M5.5 2.5 11 8l-5.5 5.5"/></svg></a></li>
+        <li><a href="submit/"><span><svg class="ic" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M3 8A1.5 1.5 0 0 1 4.5 6.5h2.6l1.7-2.2h6.4l1.7 2.2h2.6A1.5 1.5 0 0 1 21 8v10a1.5 1.5 0 0 1-1.5 1.5h-15A1.5 1.5 0 0 1 3 18V8z"/><circle cx="12" cy="12.5" r="3.75"/></svg>Submit a Quest</span><svg width="16" height="16" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><path d="M5.5 2.5 11 8l-5.5 5.5"/></svg></a></li>
+      </ul>
+    </section>
+  </main>
+
+  <footer class="site-footer">
+    <div class="site-footer-inner">
+      <div class="site-footer-brand">
+        <img src="assets/icons/logo-64.png" srcset="assets/icons/logo-128.png 2x" width="39" height="32" alt="" />
+        <strong>Sydney Challenge Scramble</strong><br />
+        A free, student-run scavenger hunt, challenge filled race all across Sydney, with free food and a $700 prize pool, organised by UNSW societies.
+      </div>
+    </div>
+  </footer>
+
+  <nav class="tab-bar" aria-label="App navigation">
+    <a href="./" class="tab-home is-active" aria-current="page">
+      <svg viewBox="0 0.75 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M3.63 10.61 12 3.63l8.37 6.98"/><path d="M5.49 9.68V20.37h4.65v-5.58h3.72v5.58h4.65V9.68"/></svg>
+      <svg class="icon-fill" viewBox="0 0.75 24 24" fill="currentColor" aria-hidden="true"><path d="M12 2.66 2.95 10.21a.95.95 0 0 0 1.22 1.47l.21-.18V19.43a1.91 1.91 0 0 0 1.91 1.91h3.9v-5.62h3.62v5.62h3.9a1.91 1.91 0 0 0 1.91-1.91v-7.94l.21.18a.95.95 0 0 0 1.22-1.47L12 2.66z"/></svg>
+      <span>Home</span>
+    </a>
+    <a href="questlist/" class="tab-quests">
+      <svg viewBox="0 -0.55 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 21s-7-5.1-7-11a7 7 0 1 1 14 0c0 5.9-7 11-7 11z"/><circle cx="12" cy="10" r="2.5"/></svg>
+      <svg class="icon-fill" viewBox="0 -0.55 24 24" fill="currentColor" stroke="currentColor" stroke-width="2" stroke-linejoin="round" aria-hidden="true"><path fill-rule="evenodd" d="M12 21s-7-5.1-7-11a7 7 0 1 1 14 0c0 5.9-7 11-7 11zm0-7.25a3.75 3.75 0 1 0 0-7.5 3.75 3.75 0 0 0 0 7.5z"/></svg>
+      <span>Quests</span>
+    </a>
+    <a href="submit/" class="tab-submit">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M3 8A1.5 1.5 0 0 1 4.5 6.5h2.6l1.7-2.2h6.4l1.7 2.2h2.6A1.5 1.5 0 0 1 21 8v10a1.5 1.5 0 0 1-1.5 1.5h-15A1.5 1.5 0 0 1 3 18V8z"/><circle cx="12" cy="12.5" r="3.75"/></svg>
+      <svg class="icon-fill" viewBox="0 0 24 24" fill="currentColor" stroke="currentColor" stroke-width="2" stroke-linejoin="round" aria-hidden="true"><path fill-rule="evenodd" d="M3 8A1.5 1.5 0 0 1 4.5 6.5h2.6l1.7-2.2h6.4l1.7 2.2h2.6A1.5 1.5 0 0 1 21 8v10a1.5 1.5 0 0 1-1.5 1.5h-15A1.5 1.5 0 0 1 3 18V8zm9 9.25a4.75 4.75 0 1 0 0-9.5 4.75 4.75 0 0 0 0 9.5zm0-3.7a1.05 1.05 0 1 0 0-2.1 1.05 1.05 0 0 0 0 2.1z"/></svg>
+      <span>Submit</span>
+    </a>
+    <a href="info/" class="tab-info">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="12" r="9"/><path d="M12 11v6"/><path d="M11.95 7.5h.1"/></svg>
+      <svg class="icon-fill" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path fill-rule="evenodd" clip-rule="evenodd" d="M12 22a10 10 0 1 0 0-20 10 10 0 0 0 0 20zM12 6.4a1.2 1.2 0 1 1 0 2.4 1.2 1.2 0 0 1 0-2.4zm-1.1 4.2h2.2v7h-2.2z"/></svg>
+      <span>Info</span>
+    </a>
+    <a href="welfare/" class="tab-welfare">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 20.3 10.7 19C6 14.9 3 12.2 3 8.9 3 6.2 5.1 4 7.8 4c1.6 0 3.1.8 4.2 2 1.1-1.2 2.6-2 4.2-2 2.7 0 4.8 2.2 4.8 4.9 0 3.3-3 6-7.7 10.2L12 20.3z"/></svg>
+      <svg class="icon-fill" viewBox="0 0 24 24" fill="currentColor" stroke="currentColor" stroke-width="2" stroke-linejoin="round" aria-hidden="true"><path d="M12 20.3 10.7 19C6 14.9 3 12.2 3 8.9 3 6.2 5.1 4 7.8 4c1.6 0 3.1.8 4.2 2 1.1-1.2 2.6-2 4.2-2 2.7 0 4.8 2.2 4.8 4.9 0 3.3-3 6-7.7 10.2L12 20.3z"/></svg>
+      <span>Welfare</span>
+    </a>
+    <a href="tab/" class="tab-tab">
+      <svg viewBox="0 -0.95 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M7.76 21.01h8.48"/><path d="M12 13.59v7.42"/><path d="M6.7 2.99h10.6v5.3a5.3 5.3 0 0 1-10.6 0V2.99z"/><path d="M6.7 5.11H3.52v1.06a4.24 4.24 0 0 0 3.18 4.13"/><path d="M17.3 5.11h3.18v1.06a4.24 4.24 0 0 1-3.18 4.13"/></svg>
+      <svg class="icon-fill" viewBox="0 -0.95 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M7.76 21.01h8.48"/><path d="M12 13.59v7.42"/><path fill="currentColor" d="M6.7 2.99h10.6v5.3a5.3 5.3 0 0 1-10.6 0V2.99z"/><path d="M6.7 5.11H3.52v1.06a4.24 4.24 0 0 0 3.18 4.13"/><path d="M17.3 5.11h3.18v1.06a4.24 4.24 0 0 1-3.18 4.13"/></svg>
+      <span>Tab</span>
+    </a>
+  </nav>
+
+  <script src="assets/site.js" defer></script>
+  <script src="assets/site-viewer.js" defer></script>
+  <script src="assets/site-chrome.js" defer></script>
+  <script src="assets/site-input.js" defer></script>
+  <script src="assets/site-app.js" defer></script>
+  <script>
+  /* ---------------- Slideshow ----------------
+     Photos picked in the dashboard. The last list is kept in
+     localStorage and drawn at first paint, then refreshed from the
+     worker. Runs before site.js, so window.scs may not exist yet. */
+  (function () {
+    var KEY = 'scs2-slides-cache';
+    var HOST = 'https://files.scs.andyrew.space';
+
+    var sec = document.getElementById('home-slides');
+    var well = document.getElementById('hs-well');
+    var cap = document.getElementById('hs-cap');
+    var bar = document.getElementById('hs-bar');
+    var dots = document.getElementById('hs-dots');
+    if (!sec || !well || !cap || !bar || !dots) return;
+
+    var slides = [];
+    var boxes = [];
+    var loaded = [];
+    var at = 0;
+
+    function api() { return (window.scs && window.scs.TAB_API) || HOST; }
+    function fileUrl(key, small) {
+      return api() + '/api/slides/file?key=' + encodeURIComponent(key) + (small ? '&thumb=1' : '');
+    }
+
+    // The point a picture is cropped around, in percent; the middle
+    // when the list does not say
+    function point(v) {
+      var n = Number(v);
+      return v == null || v === '' || !isFinite(n) ? 50 : Math.max(0, Math.min(100, n));
+    }
+
+    // Cleaned slide list, or null to keep what is on screen
+    function clean(list) {
+      if (!list || typeof list.length !== 'number') return null;
+      var out = [];
+      for (var i = 0; i < list.length; i++) {
+        var s = list[i] || {};
+        if (!s.key) continue;
+        out.push({
+          key: String(s.key),
+          alt: s.alt == null ? '' : String(s.alt),
+          caption: s.caption == null ? '' : String(s.caption),
+          x: point(s.x),
+          y: point(s.y)
+        });
+      }
+      return out;
+    }
+
+    function same(a, b) {
+      if (!a || !b || a.length !== b.length) return false;
+      for (var i = 0; i < a.length; i++) {
+        if (a[i].key !== b[i].key || a[i].alt !== b[i].alt || a[i].caption !== b[i].caption ||
+          a[i].x !== b[i].x || a[i].y !== b[i].y) return false;
+      }
+      return true;
+    }
+
+    // Stored as {slides, step}, or as a bare array in the older format.
+    // The interval is kept so a reload starts at the right pace.
+    function readStored() {
+      var raw;
+      try { raw = JSON.parse(localStorage.getItem(KEY) || 'null'); }
+      catch (err) { return null; }
+      if (raw && !raw.length && raw.slides) {
+        STEP = cleanStep(raw.step);
+        return clean(raw.slides);
+      }
+      return clean(raw);
+    }
+    function writeStored(list) {
+      try { localStorage.setItem(KEY, JSON.stringify({ slides: list, step: STEP })); }
+      catch (err) { /* not persisted */ }
+    }
+    // 1 to 60 seconds; the worker uses the same bounds
+    function cleanStep(ms) {
+      var n = Math.round(Number(ms));
+      if (!isFinite(n) || n < 1000 || n > 60000) return STEP_DEFAULT;
+      return n;
+    }
+
+    // Image load or error: start the current picture's timer, or
+    // advance if the next one was overdue
+    function landed(e) {
+      var box = e.target.parentNode;
+      if (box) box.classList.add('is-loaded');
+      waiting();
+      var i = boxes.indexOf(box);
+      if (i === at && timer === null && !due) rest();
+      else if (due && i === wrap(at + 1)) advance();
+    }
+    function waiting() {
+      var st = document.getElementById('hs-stage');
+      if (st) st.classList.toggle('is-waiting', !!boxes[at] && !boxes[at].classList.contains('is-loaded'));
+    }
+    // Full-size file, not the thumbnail
+    function load(i) {
+      if (i < 0 || i >= slides.length || loaded[i]) return;
+      loaded[i] = 1;
+      boxes[i].firstChild.src = fileUrl(slides[i].key, false);
+    }
+    // A picture far from the one on screen is let go, so a long run
+    // does not hold every photograph at once
+    function unload(i) {
+      if (!loaded[i]) return;
+      loaded[i] = 0;
+      boxes[i].classList.remove('is-loaded');
+      boxes[i].firstChild.removeAttribute('src');
+    }
+    function apart(i) {
+      var d = Math.abs(i - at);
+      return Math.min(d, slides.length - d);
+    }
+    // The one after next is loaded too, so none is waited for when it is
+    // due; anything further than three away is let go
+    function holdNear() {
+      load(wrap(at + 2));
+      for (var i = 0; i < slides.length; i++) if (apart(i) > 3) unload(i);
+    }
+
+    // Past ten pictures the dots are a window of seven that moves along
+    // with the picture on screen, the ones at its edges smaller where
+    // more lie beyond
+    var DOTS_MAX = 10;
+    var DOTS_SHOWN = 7;
+    function paintDots() {
+      var n = dots.children.length;
+      var many = n > DOTS_MAX;
+      dots.classList.toggle('is-many', many);
+      if (!many) {
+        dots.style.removeProperty('width');
+        return;
+      }
+      var a = dots.children[0];
+      var step = dots.children[1].offsetLeft - a.offsetLeft;
+      if (step <= 0) return;
+      var first = Math.max(0, Math.min(n - DOTS_SHOWN, at - (DOTS_SHOWN - 1) / 2));
+      var last = first + DOTS_SHOWN - 1;
+      dots.style.width = (step * (DOTS_SHOWN - 1) + a.offsetWidth) + 'px';
+      dots.style.setProperty('--dots-shift', (-first * step) + 'px');
+      for (var k = 0; k < n; k++) {
+        var more = k < first + 2 ? first > 0 : k > last - 2 ? last < n - 1 : false;
+        var size = !more ? 1 : k === first || k === last ? 0.5 : 0.75;
+        dots.children[k].style.setProperty('--dot-size', String(size));
+        dots.children[k].tabIndex = k >= first && k <= last ? 0 : -1;
+      }
+    }
+
+    function wrap(i) {
+      var n = slides.length;
+      return n ? ((i % n) + n) % n : 0;
+    }
+
+    function show(i, byHand) {
+      if (!slides.length) return;
+      at = wrap(i);
+      for (var k = 0; k < boxes.length; k++) {
+        var on = k === at;
+        if (on) boxes[k].classList.add('is-on'); else boxes[k].classList.remove('is-on');
+        boxes[k].setAttribute('aria-hidden', on ? 'false' : 'true');
+        var dot = dots.children[k];
+        if (dot) {
+          if (on) dot.classList.add('is-on'); else dot.classList.remove('is-on');
+          dot.setAttribute('aria-current', on ? 'true' : 'false');
+        }
+      }
+      load(at);
+      waiting();
+      load(wrap(at + 1));
+      load(wrap(at - 1));
+      holdNear();
+      paintDots();
+      var text = slides[at].caption;
+      cap.textContent = text;
+      cap.hidden = !text;
+      if (byHand) rest();
+    }
+
+    // ---- Autoplay ----
+    // STEP ms a picture (3s unless the dashboard sets it). The timer
+    // restarts after a manual move and runs only while the slideshow is
+    // on screen and the tab is visible. A picture's time starts once it
+    // has loaded; if the next one is not loaded when time is up, the
+    // change waits for it.
+    var STEP_DEFAULT = 3000;
+    var STEP = STEP_DEFAULT;
+    var timer = null;
+    var due = false;      // time is up, waiting for the next picture
+    var hovered = false;  // mouse over the stage
+    var onScreen = true;
+
+    function stop() {
+      if (timer !== null) { window.clearTimeout(timer); timer = null; }
+      due = false;
+    }
+    function isLoaded(i) {
+      return !!boxes[i] && boxes[i].classList.contains('is-loaded');
+    }
+    function rest() {
+      stop();
+      if (slides.length < 2 || sec.hidden || hovered || viewing) return;
+      if (!onScreen || document.hidden || scs2ReducedMotion()) return;
+      // user is dragging or scrolling the slides
+      if (dragId != null || settleTimer || wheelIdle) return;
+      // not loaded yet: landed() starts the timer
+      if (!isLoaded(at)) return;
+      timer = window.setTimeout(advance, STEP);
+    }
+    function advance() {
+      timer = null;
+      if (!isLoaded(wrap(at + 1))) { due = true; return; }
+      due = false;
+      show(at + 1);
+      rest();
+    }
+    function scs2ReducedMotion() {
+      try { return window.matchMedia('(prefers-reduced-motion: reduce)').matches; }
+      catch (err) { return false; }
+    }
+    document.addEventListener('visibilitychange', rest);
+    if (window.IntersectionObserver) {
+      new window.IntersectionObserver(function (entries) {
+        onScreen = entries[0].isIntersecting;
+        rest();
+      }, { threshold: 0.25 }).observe(sec);
+    }
+    // Mouse hover and keyboard focus pause autoplay. Touch drags and
+    // taps manage the timer themselves.
+    var stage = document.getElementById('hs-stage');
+    if (stage) {
+      stage.addEventListener('pointerenter', function (e) {
+        if (e.pointerType !== 'mouse') return;
+        hovered = true;
+        stop();
+      });
+      stage.addEventListener('pointerleave', function (e) {
+        if (e.pointerType !== 'mouse') return;
+        hovered = false;
+        rest();
+      });
+      stage.addEventListener('focusin', stop);
+      stage.addEventListener('focusout', rest);
+    }
+
+    function build(list) {
+      slides = list;
+      boxes = [];
+      loaded = [];
+      well.textContent = '';
+      dots.textContent = '';
+      cap.textContent = '';
+      cap.hidden = true;
+      if (!slides.length) {
+        sec.hidden = true;
+        return;
+      }
+
+      for (var i = 0; i < slides.length; i++) {
+        var box = document.createElement('div');
+        box.className = 'hs-slide';
+        box.setAttribute('aria-hidden', 'true');
+        var img = document.createElement('img');
+        img.className = 'hs-img';
+        img.alt = slides[i].alt;
+        img.style.objectPosition = slides[i].x + '% ' + slides[i].y + '%';
+        img.decoding = 'async';
+        img.draggable = false;
+        // so the image cache in sw.js can store the response
+        img.crossOrigin = 'anonymous';
+        img.addEventListener('load', landed);
+        // a failed load counts as done
+        img.addEventListener('error', landed);
+        box.appendChild(img);
+        well.appendChild(box);
+        boxes.push(box);
+
+        var dot = document.createElement('button');
+        dot.type = 'button';
+        dot.className = 'hs-dot';
+        dot.setAttribute('data-i', String(i));
+        dot.setAttribute('aria-label', 'Photo ' + (i + 1) + ' of ' + slides.length);
+        dots.appendChild(dot);
+      }
+
+      bar.hidden = slides.length < 2;
+      sec.hidden = false;
+      show(at >= slides.length ? 0 : at);
+      rest();
+    }
+
+    document.getElementById('hs-prev').addEventListener('click', function () { show(at - 1, true); });
+    document.getElementById('hs-next').addEventListener('click', function () { show(at + 1, true); });
+    dots.addEventListener('click', function (e) {
+      var dot = e.target && e.target.closest ? e.target.closest('.hs-dot') : null;
+      if (!dot) return;
+      show(parseInt(dot.getAttribute('data-i'), 10) || 0, true);
+    });
+
+    // Arrow keys move the slideshow when it has focus, or when it is on
+    // screen and no overlay is open.
+    document.addEventListener('keydown', function (e) {
+      if (sec.hidden || slides.length < 2) return;
+      if (e.key !== 'ArrowLeft' && e.key !== 'ArrowRight') return;
+      if (e.metaKey || e.ctrlKey || e.altKey) return;
+      var t = e.target;
+      if (t && (/^(input|textarea|select)$/i.test(t.tagName || '') || t.isContentEditable)) return;
+      if (!sec.contains(document.activeElement)) {
+        var r = sec.getBoundingClientRect();
+        var h = window.innerHeight || document.documentElement.clientHeight;
+        if (r.bottom < 0 || r.top > h) return;
+        if (document.querySelector('.lb-overlay, .urgent-overlay, .confirm-overlay')) return;
+      }
+      e.preventDefault();
+      show(at + (e.key === 'ArrowRight' ? 1 : -1), true);
+    });
+
+    // ---- Dragging between pictures ----
+    // Touch and mouse both use pointer events. The picture follows the
+    // pointer with its neighbour beside it. Released past a fifth of the
+    // stage, or flicked, it moves on; otherwise it returns. Autoplay
+    // still cross-fades.
+    var dragId = null;       // active pointer id
+    var dragFrom = 0;        // start x
+    var dragY = 0;
+    var dragAt = 0;          // current x offset
+    var dragWide = false;    // confirmed as a horizontal swipe
+    var dragStart = 0;
+    var settleTimer = null;
+    var settleStep = 0;      // -1, 0 or 1: the move the settle ends on
+    var near = [];           // current slide and its neighbours
+
+    function stageWidth() {
+      return (stage && stage.clientWidth) || well.clientWidth || 1;
+    }
+    // Place the current slide and its neighbours. With two slides both
+    // neighbours are the same box, so it goes on the side the drag is
+    // heading.
+    function armNear(dx) {
+      var w = stageWidth();
+      var prev = wrap(at - 1);
+      var next = wrap(at + 1);
+      near = [{ box: boxes[at], base: 0 }];
+      if (prev === next) {
+        near.push({ box: boxes[next], base: dx < 0 ? w : -w });
+      } else {
+        near.push({ box: boxes[prev], base: -w });
+        near.push({ box: boxes[next], base: w });
+      }
+      for (var i = 0; i < near.length; i++) near[i].box.classList.add('is-near');
+      placeNear(0);
+    }
+    function placeNear(dx) {
+      for (var i = 0; i < near.length; i++) {
+        near[i].box.style.transform = 'translateX(' + (near[i].base + dx) + 'px)';
+      }
+    }
+    // Remove the drag styles with transitions off, reflow, then restore
+    // transitions, so the old slide does not fade out over the new one.
+    function clearNear() {
+      var i;
+      for (i = 0; i < near.length; i++) near[i].box.style.transition = 'none';
+      for (i = 0; i < near.length; i++) {
+        near[i].box.classList.remove('is-near');
+        near[i].box.style.transform = '';
+      }
+      well.classList.remove('is-dragging', 'is-settling');
+      void well.offsetWidth;
+      for (i = 0; i < near.length; i++) near[i].box.style.transition = '';
+      near = [];
+    }
+    // End the settle, whether it finished or a new drag interrupted it.
+    // A decided move is always applied so the picture and dots agree.
+    function finishSettle() {
+      if (settleTimer) { window.clearTimeout(settleTimer); settleTimer = null; }
+      var step = settleStep;
+      settleStep = 0;
+      // before clearNear() turns transitions back on, so the new
+      // picture does not fade in
+      if (step) show(at + step, true);
+      clearNear();
+      if (!step) rest();
+    }
+    function endDrag(step) {
+      settleStep = step;
+      if (scs2ReducedMotion()) { finishSettle(); return; }
+      well.classList.add('is-settling');
+      placeNear(step ? -step * stageWidth() : 0);
+      settleTimer = window.setTimeout(finishSettle, scs2Ms('--duration-fast', 250));
+    }
+    function scs2Ms(name, fallback) {
+      if (window.scs && window.scs.ms) return window.scs.ms(name, fallback);
+      return fallback;
+    }
+
+    well.addEventListener('pointerdown', function (e) {
+      if (dragId !== null || slides.length < 2) return;
+      if (e.pointerType === 'mouse' && e.button !== 0) return;
+      if (settleTimer) finishSettle();
+      dragId = e.pointerId;
+      dragFrom = e.clientX;
+      dragY = e.clientY;
+      dragAt = 0;
+      dragWide = false;
+      dragStart = Date.now();
+      // stop the browser's image drag, which would take the pointer
+      if (e.cancelable) e.preventDefault();
+      stop();
+    });
+
+    // Decided once the finger is 8px out: mostly vertical is the page
+    // scroll and lets go, anything else is a swipe.
+    function steer(dx, dy) {
+      if (dragWide || dragId === null) return;
+      if (Math.abs(dx) < 8 && Math.abs(dy) < 8) return;
+      if (Math.abs(dy) >= Math.abs(dx)) { dragId = null; rest(); return; }
+      dragWide = true;
+      well.classList.add('is-dragging');
+      armNear(dx);
+      try { well.setPointerCapture(dragId); } catch (err) { /* ignore */ }
+    }
+    well.addEventListener('pointermove', function (e) {
+      if (e.pointerId !== dragId) return;
+      var dx = e.clientX - dragFrom;
+      steer(dx, e.clientY - dragY);
+      if (!dragWide) return;
+      dragAt = dx;
+      placeNear(dx);
+    });
+    // Safari scrolls a pan-y element by a sideways drag's drift, so once
+    // a drag is a swipe its touch moves are cancelled.
+    well.addEventListener('touchmove', function (e) {
+      if (dragId === null || e.touches.length !== 1) return;
+      steer(e.touches[0].clientX - dragFrom, e.touches[0].clientY - dragY);
+      if (dragWide && e.cancelable) e.preventDefault();
+    }, { passive: false });
+
+    function releaseDrag(e) {
+      if (e.pointerId !== dragId) return;
+      var id = dragId;
+      dragId = null;
+      try { well.releasePointerCapture(id); } catch (err) { /* never captured */ }
+      if (!dragWide) { rest(); return; }
+      var w = stageWidth();
+      // Flick: under 300ms and over 44px (the tap target size).
+      // Drag: over a fifth of the stage.
+      var quick = (Date.now() - dragStart) < 300 && Math.abs(dragAt) > 44;
+      var far = Math.abs(dragAt) > w * 0.2;
+      endDrag((far || quick) ? (dragAt < 0 ? 1 : -1) : 0);
+    }
+    well.addEventListener('pointerup', releaseDrag);
+    well.addEventListener('pointercancel', releaseDrag);
+    // ---- Trackpad two-finger swipe ----
+    // Arrives as horizontal wheel events. The picture follows, and the
+    // move happens once the swipe passes a fifth of the stage or 90px,
+    // whichever is less, rather than when events stop, because momentum
+    // events continue for a second or more. One swipe moves one picture:
+    // later events are ignored until they stop or speed up again
+    // (momentum only slows, so a speed-up is a new swipe). A short swipe
+    // returns. Vertical wheel events are left to the page.
+    var WHEEL_GAP = 100;   // ms without events that ends a swipe
+    var wheel = null;      // current swipe state
+    var wheelIdle = null;
+    function endWheel() {
+      wheelIdle = null;
+      var done = wheel && wheel.done;
+      wheel = null;
+      if (done) rest();
+      else endDrag(0);
+    }
+    well.addEventListener('wheel', function (e) {
+      if (slides.length < 2 || dragId !== null) return;
+      if (Math.abs(e.deltaX) <= Math.abs(e.deltaY)) return;
+      // stop the browser treating it as back/forward
+      if (e.cancelable) e.preventDefault();
+      var w = stageWidth();
+      var unit = e.deltaMode === 1 ? 16 : (e.deltaMode === 2 ? w : 1);
+      var dx = e.deltaX * unit;
+      var speed = Math.abs(dx);
+      var now = Date.now();
+      var fresh = !wheel || now - wheel.t > WHEEL_GAP ||
+        (wheel.done && wheel.low < wheel.peak * 0.6 && speed > wheel.low * 2 && speed >= 3);
+      if (fresh) {
+        if (settleTimer) finishSettle();
+        stop();
+        wheel = { at: 0, done: false, t: now, peak: 0, low: 0 };
+        well.classList.add('is-dragging');
+        armNear(-dx);
+      }
+      wheel.t = now;
+      window.clearTimeout(wheelIdle);
+      wheelIdle = window.setTimeout(endWheel, WHEEL_GAP);
+      if (wheel.done) {
+        // swipe already acted on: track its peak speed and the lowest
+        // speed since the peak
+        if (speed >= wheel.peak) { wheel.peak = speed; wheel.low = speed; }
+        else if (speed < wheel.low) wheel.low = speed;
+        return;
+      }
+      wheel.at = Math.max(-w, Math.min(w, wheel.at - dx));
+      placeNear(wheel.at);
+      if (Math.abs(wheel.at) >= Math.min(w * 0.2, 90)) {
+        wheel.done = true;
+        wheel.peak = wheel.low = speed;
+        endDrag(wheel.at < 0 ? 1 : -1);
+      }
+    }, { passive: false });
+
+    // Swallow the click that ends a drag. Any other click opens the
+    // photo viewer.
+    well.addEventListener('click', function (e) {
+      if (dragWide) { e.preventDefault(); e.stopPropagation(); dragWide = false; return; }
+      if (!slides.length) return;
+      openViewer();
+    }, true);
+
+    // ---- The photo viewer ----
+    // The site's photo viewer at the slideshow's pace. The slideshow
+    // under it follows, so closing shrinks the photo back into its slide.
+    var viewing = false;
+    // a list that arrives while the viewer is open waits for it to close:
+    // the viewer's places are the old list's
+    var listAfterViewer = null;
+    function openViewer() {
+      if (viewing || !window.scs || !window.scs.lightbox) return;
+      if (settleTimer) finishSettle();
+      stop();
+      viewing = true;
+      var media = slides.map(function (s) {
+        return { url: fileUrl(s.key, false), type: 'image/*', name: s.caption };
+      });
+      window.scs.lightbox(media, at, boxes[at].firstChild, {
+        advance: scs2ReducedMotion() ? 0 : STEP,
+        onShow: function (i) { if (i !== at) show(i); },
+        originFor: function (i) { return boxes[i] ? boxes[i].firstChild : null; },
+        onClose: function () {
+          viewing = false;
+          if (!listAfterViewer) { rest(); return; }
+          // once the photo has shrunk back into the slide it came from
+          window.setTimeout(function () {
+            if (viewing || !listAfterViewer) return;
+            var next = listAfterViewer;
+            listAfterViewer = null;
+            at = 0;
+            build(next);
+          }, 300);
+        }
+      });
+    }
+
+    build(readStored() || []);
+
+    // Fetched after the deferred site.js has run, so it can use
+    // scs.fetch, which retries
+    function fetchList() {
+      var get = window.scs && window.scs.fetch ? window.scs.fetch : function (url, opts) { return fetch(url, opts); };
+      get(api() + '/api/slides', { cache: 'no-cache' }).then(function (r) {
+        return r.ok ? r.json() : null;
+      }).then(function (d) {
+        if (!d || !d.ok) return;
+        var next = clean(d.slides) || [];
+        var step = cleanStep(d.step_ms);
+        var paced = step !== STEP;
+        STEP = step;
+        writeStored(next);
+        // same slides: at most restart the timer for a new interval
+        if (same(next, slides)) { if (paced) rest(); return; }
+        if (viewing) { listAfterViewer = next; return; }
+        at = 0;
+        build(next);
+      }).catch(function () { /* keep what is on screen */ });
+    }
+    if (document.readyState === 'loading') document.addEventListener('DOMContentLoaded', fetchList);
+    else fetchList();
+  })();
+  </script>
+</body>
+</html>

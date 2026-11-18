@@ -1,0 +1,102 @@
+# SCS.2 tab bot — Cloudflare Worker config.
+# Nothing in this file needs editing per account. Everything that
+# differs between accounts is a secret (see secrets.example.json and
+# `npm run secrets`), and the database id is looked up by name when
+# you run `npm run deploy` (scripts/deploy.mjs).
+
+name = "scs-tab-bot"
+main = "src/index.ts"
+compatibility_date = "2026-07-01"
+
+# The dashboard page's files and the spinner page's (src/dash/, the
+# dashboard's script a part to a file in src/dash/js/), imported by
+# src/dash/files.js as Text modules: each import is the file's text as
+# a string. A glob is matched against the import as it is written
+# ('./dash.css', './js/core.js'), not against the path on disk. fallthrough keeps
+# wrangler's own Text rule (.txt, .html, .sql) as well, instead of this
+# block replacing it. A file the globs miss is not always an error: an
+# unmatched .css is bundled by esbuild as a stylesheet and its import is
+# {}, so the page goes out without its styles and the deploy succeeds.
+# tests/verify-dash-bundle.mjs builds the bundle and compares the page.
+[[rules]]
+type = "Text"
+globs = ["**/dash.css", "**/dash.html", "./js/*.js", "**/spinner.css", "**/spinner.html", "**/spinner.js"]
+fallthrough = true
+
+# Workers Logs: every request and every error the worker throws, with
+# its console output, kept in the Cloudflare dashboard (the worker's
+# Observability tab) for a few days and searchable there. Without it an
+# error is only seen by someone running `wrangler tail` at the time.
+[observability]
+enabled = true
+head_sampling_rate = 1
+
+# The worker's own clock. Once a minute it publishes any message
+# written ahead of time, sends the next batch of an announcement that
+# did not fit in one request, and retries a ticket email that failed.
+# Before this the only clock was somebody loading the site, so a
+# message written for 3am went out whenever the first person opened a
+# page. The site polling still does that job the instant it can; this
+# is the floor under it, for the hours when nobody is looking.
+[triggers]
+crons = ["* * * * *"]
+
+# Plain settings that are the same for every SCS.2 deployment. Anything
+# per account (server ids, keys, the check-in worker's address) is a
+# secret instead, so a `git pull` never overwrites it. A secret with
+# the same name as one of these would clash, so keep the two sets apart.
+[vars]
+# push notifications: a contact URL or mailto: the push services can reach you on
+VAPID_SUBJECT = "https://scs.andyrew.space"
+# how the confirmation emails present themselves: From is the
+# unmonitored address, replies go to the monitored inbox
+EMAIL_FROM = "SCS.2 Tab Team <tab@scs.andyrew.space>"
+EMAIL_REPLY_TO = "westsocunsw@gmail.com"
+# The hostname the public reads on. One worker answers on several — the
+# site's, the dashboard's, and the old workers.dev-style name while it
+# is still pointed here — and two things must not be left to whichever
+# one a request happened to arrive on:
+#  * links the bot posts in Discord, which would otherwise carry the
+#    dashboard's hostname into a public channel
+#  * the edge cache, which is keyed by the whole URL, so a copy stored
+#    under one hostname is invisible to a purge aimed at another
+PUBLIC_API = "https://files.scs.andyrew.space"
+# The hostname that is nothing but short links: go.<domain>/<slug>,
+# made on the dashboard's Files tab. Point it at this worker as a
+# custom domain in Cloudflare. Unset, the short links are simply off —
+# the rest of the worker does not notice.
+SHORT_HOST = "go.scs.andyrew.space"
+# The SUBMIT bucket's name, for uploads sent from the phone straight to
+# R2 (src/r2direct.ts). Keep it the same as bucket_name below. Direct
+# uploads also need the R2_* secrets; without them files go through the
+# worker as before.
+R2_BUCKET = "scs-submissions"
+
+# Proof uploads from the site's submit page land here. Create it with
+#   npx wrangler r2 bucket create scs-submissions
+# Files are kept until someone deletes them (storage is about
+# $0.015/GB-month, so keeping a whole event is pocket change). Add a
+# lifecycle delete rule in the dashboard only if you want auto-cleanup.
+[[r2_buckets]]
+binding = "SUBMIT"
+bucket_name = "scs-submissions"
+
+# The id is filled in from the account's database list by
+# `npm run deploy`; leave the placeholder as it is.
+[[d1_databases]]
+binding = "DB"
+database_name = "scs-scores"
+database_id = "PASTE-FILLED-IN-BY-NPM-RUN-DEPLOY"
+
+# Registration confirmation emails go out through Cloudflare Email
+# Service. One-time setup in the dashboard: Compute > Email Service >
+# Email Sending > Onboard Domain (it adds the SPF/DKIM/DMARC records
+# to the zone itself). No secret needed for this path.
+# `remote = true` lets `wrangler dev` send real email from local dev.
+# It needs a current wrangler — older ones print an "Unexpected
+# fields" warning and ignore it, which is harmless for deploys
+# (deployed workers are always remote). `npm i -D wrangler@latest`
+# makes both the warning and the limitation go away.
+[[send_email]]
+name = "EMAIL"
+remote = true
