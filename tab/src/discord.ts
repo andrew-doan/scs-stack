@@ -363,7 +363,7 @@ export async function writeGuard(interaction: Pick<Interaction, 'guild_id' | 'me
   if (!guild.organiser_role_id) return 'Score changes are locked until an organiser role is chosen for this server in the dashboard.';
   var roles = (interaction.member && interaction.member.roles) || [];
   if (roles.indexOf(guild.organiser_role_id) === -1) {
-    return 'Only organisers can change the tab — ask one to run this for you.';
+    return 'Only organisers can change the tab. Ask one to run this for you.';
   }
   return null;
 }
@@ -816,7 +816,7 @@ export async function verifyUser(env: Env, guild: DiscordGuildRow, user: Discord
   // a role for people in that position gives it, with Legend
   if (hits.every(function (p) { return !p.team_id && !p.team_name; })) {
     var waiting = 'Found you (**' + hits[0].name + '**), but you signed up without a team and OrgCom has not put you in one yet.';
-    var later = ' Run /verify again once you are in one — you will get an email.';
+    var later = ' Run /verify again once you are in one. You will get an email.';
     var asked: Known = {};
     var noTeam = await noTeamRole(env, guild, asked);
     if (noTeam) {

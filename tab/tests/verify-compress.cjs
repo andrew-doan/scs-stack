@@ -239,7 +239,7 @@ async function walk(b, width, theme, big, bad) {
   check('running', await stage() === 'busy', await stage());
   check('the bar and the tab\'s title have moved to match the percentage',
     (await p.$eval('#cp-bar', function (e) { return e.style.width; })) === '62%' &&
-    /^62% compressing a video \u2014 /.test(await p.title()),
+    /^62% compressing a video \| /.test(await p.title()),
     (await p.$eval('#cp-bar', function (e) { return e.style.width; })) + ' ' + (await p.title()));
   await audit(p, 'running', width);
 

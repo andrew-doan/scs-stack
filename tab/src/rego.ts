@@ -1029,7 +1029,7 @@ export async function handleRegoApi(request: Request, env: Env, ctx: Ctx, url: U
   }
   if (counts.everyone >= perAll) {
     if (ctx && ctx.waitUntil) {
-      ctx.waitUntil(alertOrganisers(env, env.DB, 'the hourly signup cap (' + perAll + ') tripped — the form is turning teams away for the rest of the hour. Raise it on the Rego tab if this is a real rush.'));
+      ctx.waitUntil(alertOrganisers(env, env.DB, 'the hourly signup cap (' + perAll + ') tripped. The form is turning teams away for the rest of the hour. Raise it on the Rego tab if this is a real rush.'));
     }
     return json({ error: 'Too many signups right now. Try again in a few minutes.' }, 429);
   }
@@ -1108,7 +1108,7 @@ export async function handleRegoApi(request: Request, env: Env, ctx: Ctx, url: U
     ctx.waitUntil((async function () {
       var cap = await guardValue(env.DB, 'rego_cap', 0);
       if (cap > 0 && (await peopleSignedUp(env.DB)) >= cap) {
-        await alertOrganisers(env, env.DB, 'the signup cap (' + cap + ' people) is reached — the form has closed itself.');
+        await alertOrganisers(env, env.DB, 'the signup cap (' + cap + ' people) is reached. The form has closed itself.');
       } else if (busyHour) {
         await alertOrganisers(env, env.DB, (counts.everyone + 1) + ' teams signed up in the past hour.');
       }

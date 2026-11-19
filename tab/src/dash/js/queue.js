@@ -67,10 +67,10 @@
       var row = h('div', 'enc-row' + (e.online ? '' : ' is-off'));
       row.appendChild(h('strong', null, e.name));
       var what = e.online
-        ? 'Online — ' + (e.state === 'encoding'
+        ? 'Online, ' + (e.state === 'encoding'
           ? 'encoding ' + (e.working_name || e.working_on || 'a video')
           : 'idle')
-        : 'Offline' + (e.last_seen ? ' — last seen ' + fmtTime(e.last_seen) : '');
+        : 'Offline' + (e.last_seen ? ', last seen ' + fmtTime(e.last_seen) : '');
       row.appendChild(h('span', 'enc-when', what));
       var tally = e.jobs_done + (e.jobs_done === 1 ? ' video done' : ' videos done');
       if (e.jobs_done > 0 && e.avg_ms > 0) tally += ' · ' + encoderPace(e.avg_ms);

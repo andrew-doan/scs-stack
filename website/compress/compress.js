@@ -79,7 +79,7 @@
   var pageTitle = document.title;
   function report(running, pct) {
     document.title = !running ? pageTitle
-      : (pct == null ? '' : pct + '% ') + 'compressing a video \u2014 ' + pageTitle;
+      : (pct == null ? '' : pct + '% ') + 'compressing a video | ' + pageTitle;
   }
 
   function cell(tag, cls, text) {
@@ -635,7 +635,7 @@
   if (scs.guardLeaving) {
     scs.guardLeaving(function () {
       if (!state.busy) return '';
-      return 'A video is being compressed. Stopping it loses the work — the next run ' +
+      return 'A video is being compressed. Stopping it loses the work. The next run ' +
         'starts from the beginning' + (state.engine === 'ffmpeg'
           ? ', and the 31 MB engine downloads again if the browser has not kept it.' : '.');
     });

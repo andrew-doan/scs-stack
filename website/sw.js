@@ -3,7 +3,7 @@
    the next version bump installs a new worker. Other pages and files:
    cached copy immediately, refreshed from the network in the background. */
 
-var CACHE = 'scs2-cache-v473';
+var CACHE = 'scs2-cache-v474';
 
 // Map tiles live in their own cache, kept across version bumps: they
 // are big, slow to fetch and the same from one release to the next.

@@ -313,8 +313,8 @@
       if (box && d.limits && d.limits[k] != null) box.value = String(d.limits[k]);
     });
     var line;
-    if (d.closed) line = 'Closed by hand — the form is refusing sign-ups.';
-    else if (d.cap && d.people >= d.cap) line = 'Full: ' + d.people + ' of ' + d.cap + ' spots taken — the form has closed itself.';
+    if (d.closed) line = 'Closed by hand. The form is refusing sign-ups.';
+    else if (d.cap && d.people >= d.cap) line = 'Full: ' + d.people + ' of ' + d.cap + ' spots taken. The form has closed itself.';
     else if (d.cap) line = d.people + ' of ' + d.cap + ' spots taken.';
     else line = d.people + ' ' + (d.people === 1 ? 'person' : 'people') + ' signed up, no cap.';
     el('rego-open-state').textContent = line;

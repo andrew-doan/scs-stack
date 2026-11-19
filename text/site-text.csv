@@ -490,7 +490,7 @@ T0488,Submit a quest,submit/index.html,335,Heading,h2,About,,,About
 T0489,Submit a quest,submit/index.html,336,Text,p,On this page you can view all past submissions and their status. If you would like a submission deleted please contact the @TabTeam on Discord.,,,On this page you can view all past submissions and their status. If you would like a submission deleted please contact the @TabTeam on Discord.
 T0490,Submit a quest,submit/index.html,339,Heading,h2,Next Steps After Submission,,,Next Steps After Submission
 T0491,Submit a quest,submit/index.html,343,List item,li,If accepted your team points and leaderboard position is automatically updated.,,,If accepted your team points and leaderboard position is automatically updated.
-T0492,Submit a quest,submit/index.html,344,List item,li,"If rejected you will be provided a reason and, if enabled, as a notification if you have them turned on. Feel free to resubmit your submission with the required adjustments!",,,"If rejected you will be provided a reason and, if enabled, as a notification if you have them turned on. Feel free to resubmit your submission with the required adjustments!"
+T0492,Submit a quest,submit/index.html,344,List item,li,"If rejected you will be given a reason, and a notification if you have them turned on. Feel free to resubmit with the required adjustments!",,,"If rejected you will be given a reason, and a notification if you have them turned on. Feel free to resubmit with the required adjustments!"
 T0493,Submit a quest,submit/index.html,347,List item,li,Make sure to send through submissions as you complete the quests. Do not send it in all at once at 4pm otherwise you will make the Tab Team very unhappy :(,,,Make sure to send through submissions as you complete the quests. Do not send it in all at once at 4pm otherwise you will make the Tab Team very unhappy :(
 T0494,Submit a quest,submit/submit.js,52,Text,js,your team,,,your team
 T0495,Submit a quest,submit/submit.js,115,Status line,js,Could not sign in.,,,Could not sign in.
@@ -568,7 +568,7 @@ T0566,Submit a quest,submit/submit.js,1524,Script text,js,All ,,"joins onto othe
 T0567,Submit a quest,submit/submit.js,1524,Script text,js, uploads finished,,"joins onto other text, so keep the spaces at the ends", uploads finished
 T0568,Submit a quest,submit/submit.js,1525,Script text,js,The file finished uploading.,,,The file finished uploading.
 T0569,Submit a quest,submit/submit.js,1525,Script text,js, files finished uploading.,,"joins onto other text, so keep the spaces at the ends", files finished uploading.
-T0570,Submit a quest,submit/submit.js,1531,Script text,js,Uploading — file ,,"joins onto other text, so keep the spaces at the ends",Uploading \u2014 file 
+T0570,Submit a quest,submit/submit.js,1531,Script text,js,Uploading file ,,"joins onto other text, so keep the spaces at the ends",Uploading file 
 T0571,Submit a quest,submit/submit.js,1531,Script text,js,Uploading,,,Uploading
 T0572,Submit a quest,submit/submit.js,1532,Script text,js,Uploading ,,"joins onto other text, so keep the spaces at the ends",Uploading 
 T0573,Submit a quest,submit/submit.js,1557,Script text,js,The connection dropped part way. Reload this page and choose ,,"joins onto other text, so keep the spaces at the ends",The connection dropped part way. Reload this page and choose 
@@ -599,7 +599,7 @@ T0597,Submit a quest,submit/submit.js,1863,Text,js, and ,,"joins onto other text
 T0598,Submit a quest,submit/submit.js,1863,Text,js, queued behind ,,"joins onto other text, so keep the spaces at the ends", queued behind 
 T0599,Submit a quest,submit/submit.js,1863,Text,js,it,,,it
 T0600,Submit a quest,submit/submit.js,1863,Text,js,them,,,them
-T0601,Submit a quest,submit/submit.js,1958,Tooltip,js, — still uploading,,"joins onto other text, so keep the spaces at the ends", \u2014 still uploading
+T0601,Submit a quest,submit/submit.js,1958,Tooltip,js,", still uploading",,,", still uploading"
 T0602,Submit a quest,submit/submit.js,1998,Label,js,Gallery,,,Gallery
 T0603,Submit a quest,submit/submit.js,2013,Script text,js,Could not change the gallery setting. Try again.,,,Could not change the gallery setting. Try again.
 T0604,Submit a quest,submit/submit.js,2052,Text,js,Nothing sent yet.,,,Nothing sent yet.
@@ -830,7 +830,7 @@ T0828,Messages,messages/messages.js,276,Script text,js,Please see the notificati
 T0829,Messages,messages/messages.js,287,Toast,js,Push Notifications for Announcements ,,"joins onto other text, so keep the spaces at the ends",Push Notifications for Announcements 
 T0830,Messages,messages/messages.js,292,Script text,js,That did not work. Try again.,,,That did not work. Try again.
 T0831,Register,rego/index.html,7,Page title,title,Register | SCS.2,,,Register | SCS.2
-T0832,Register,rego/index.html,8,Page description,meta,Sign your team up for SCS.2 — Legends of the City: a city-wide points race across Sydney on Tuesday 20 October.,,,Sign your team up for SCS.2 — Legends of the City: a city-wide points race across Sydney on Tuesday 20 October.
+T0832,Register,rego/index.html,8,Page description,meta,"Sign your team up for SCS.2: Legends of the City, a city-wide points race across Sydney on Tuesday 20 October.",,,"Sign your team up for SCS.2: Legends of the City, a city-wide points race across Sydney on Tuesday 20 October."
 T0833,Register,rego/index.html,38,Text,span,Register,,,Register
 T0834,Register,rego/index.html,208,Heading,h1,Register,,,Register
 T0835,Register,rego/index.html,216,Link,a,event Discord server,,,event Discord server
@@ -1012,7 +1012,7 @@ T1007,Discord commands,tab/src/commands.ts,28,Command description,discord,Organi
 T1008,Discord commands,tab/src/commands.ts,35,Command name,discord,score,,this is the word people type after the slash — changing it means re-registering the commands with Discord,score
 T1009,Discord commands,tab/src/commands.ts,36,Command description,discord,A team's total points and where they sit,,,A team's total points and where they sit
 T1010,Discord commands,tab/src/commands.ts,40,Command name,discord,leaderboard,,this is the word people type after the slash — changing it means re-registering the commands with Discord,leaderboard
-T1011,Discord commands,tab/src/commands.ts,41,Command description,discord,"The top 10 — or one place (3), or a stretch (3-10)",,,"The top 10 — or one place (3), or a stretch (3-10)"
+T1011,Discord commands,tab/src/commands.ts,41,Command description,discord,"The top 10, one place (3) or a stretch (3-10)",,,"The top 10, one place (3) or a stretch (3-10)"
 T1012,Discord commands,tab/src/commands.ts,44,Command name,discord,place,,this is the word people type after the slash — changing it means re-registering the commands with Discord,place
 T1013,Discord commands,tab/src/commands.ts,45,Command description,discord,"A place like 3, or a range like 3-10",,,"A place like 3, or a range like 3-10"
 T1014,Discord commands,tab/src/commands.ts,51,Command description,discord,Has a team done a quest?,,,Has a team done a quest?
@@ -1025,7 +1025,7 @@ T1020,Discord commands,tab/src/commands.ts,70,Command name,discord,verify,,this 
 T1021,Discord commands,tab/src/commands.ts,71,Command description,discord,Link your Discord to your team signup: your team role and private channel,,,Link your Discord to your team signup: your team role and private channel
 T1022,Discord commands,tab/src/commands.ts,75,Command description,discord,Have the bot post a message in a channel (organisers),,,Have the bot post a message in a channel (organisers)
 T1023,Discord commands,tab/src/commands.ts,80,Command description,discord,Where to post it,,,Where to post it
-T1024,Discord commands,tab/src/commands.ts,87,Command description,discord,What to post — write \n where you want a line break,,,What to post — write \\n where you want a line break
+T1024,Discord commands,tab/src/commands.ts,87,Command description,discord,What to post. Write \n where you want a line break,,,What to post. Write \\n where you want a line break
 T1025,Discord commands,tab/src/commands.ts,94,Command name,discord,help,,this is the word people type after the slash — changing it means re-registering the commands with Discord,help
 T1026,Discord commands,tab/src/commands.ts,95,Command description,discord,What the commands do,,,What the commands do
 T1027,Discord replies,tab/src/discord.ts,61,Reply,discord,", COALESCE(t.hidden, 0) AS team_hidden, COALESCE(r.hidden, 0) AS reg_hidden FROM participants p ",,"joins onto other text, so keep the spaces at the ends",", COALESCE(t.hidden, 0) AS team_hidden, COALESCE(r.hidden, 0) AS reg_hidden FROM participants p "
@@ -1045,7 +1045,7 @@ T1040,Discord replies,tab/src/discord.ts,277,Reply,discord,DISCORD_BOT_TOKEN is 
 T1041,Discord replies,tab/src/discord.ts,290,Reply,discord,Could not reach Discord.,,,Could not reach Discord.
 T1042,Discord replies,tab/src/discord.ts,362,Reply,discord,Score changes only work from a server set up in the dashboard.,,,Score changes only work from a server set up in the dashboard.
 T1043,Discord replies,tab/src/discord.ts,363,Reply,discord,Score changes are locked until an organiser role is chosen for this server in the dashboard.,,,Score changes are locked until an organiser role is chosen for this server in the dashboard.
-T1044,Discord replies,tab/src/discord.ts,366,Reply,discord,Only organisers can change the tab — ask one to run this for you.,,,Only organisers can change the tab — ask one to run this for you.
+T1044,Discord replies,tab/src/discord.ts,366,Reply,discord,Only organisers can change the tab. Ask one to run this for you.,,,Only organisers can change the tab. Ask one to run this for you.
 T1045,Discord replies,tab/src/discord.ts,382,Reply,discord,Team,,,Team
 T1046,Discord replies,tab/src/discord.ts,466,Reply,discord,Team ,,"joins onto other text, so keep the spaces at the ends",Team 
 T1047,Discord replies,tab/src/discord.ts,466,Reply,discord, is no longer on the tab.,,"joins onto other text, so keep the spaces at the ends", is no longer on the tab.
@@ -1072,7 +1072,7 @@ T1067,Discord replies,tab/src/discord.ts,812,Reply,discord,No signup lists the D
 T1068,Discord replies,tab/src/discord.ts,812,Reply,discord,"**. If your team is registered, ask an organiser to add your username to your signup in the dashboard; otherwise register at ",,"joins onto other text, so keep the spaces at the ends","**. If your team is registered, ask an organiser to add your username to your signup in the dashboard; otherwise register at "
 T1069,Discord replies,tab/src/discord.ts,818,Reply,discord,Found you (**,,,Found you (**
 T1070,Discord replies,tab/src/discord.ts,818,Reply,discord,"**), but you signed up without a team and OrgCom has not put you in one yet.",,,"**), but you signed up without a team and OrgCom has not put you in one yet."
-T1071,Discord replies,tab/src/discord.ts,819,Reply,discord, Run /verify again once you are in one — you will get an email.,,"joins onto other text, so keep the spaces at the ends", Run /verify again once you are in one — you will get an email.
+T1071,Discord replies,tab/src/discord.ts,819,Reply,discord, Run /verify again once you are in one. You will get an email.,,"joins onto other text, so keep the spaces at the ends", Run /verify again once you are in one. You will get an email.
 T1072,Discord replies,tab/src/discord.ts,826,Reply,discord, You have the role <@&,,"joins onto other text, so keep the spaces at the ends", You have the role <@&
 T1073,Discord replies,tab/src/discord.ts,836,Reply,discord,Your username is on more than one signup (,,,Your username is on more than one signup (
 T1074,Discord replies,tab/src/discord.ts,836,Reply,discord,"). Ask an organiser to fix that in the dashboard, then run /verify again.",,,"). Ask an organiser to fix that in the dashboard, then run /verify again."
@@ -1156,11 +1156,11 @@ T1150,Discord replies,tab/src/discord.ts,1831,Reply,discord,Could not delete ,,"
 T1151,Discord replies,tab/src/discord.ts,1848,Reply,discord, hidden teams forgotten,,"joins onto other text, so keep the spaces at the ends", hidden teams forgotten
 T1152,Discord replies,tab/src/index.ts,108,Reply,discord, points from ,,"joins onto other text, so keep the spaces at the ends", points from 
 T1153,Discord replies,tab/src/index.ts,135,Reply,discord,"That place needs to be a number like `3`, or a range like `3-10`.",,,"That place needs to be a number like `3`, or a range like `3-10`."
-T1154,Discord replies,tab/src/index.ts,138,Reply,discord,That range runs backwards — try something like `3-10`.,,,That range runs backwards — try something like `3-10`.
+T1154,Discord replies,tab/src/index.ts,138,Reply,discord,That range runs backwards. Try something like `3-10`.,,,That range runs backwards. Try something like `3-10`.
 T1155,Discord replies,tab/src/index.ts,143,Reply,discord,The table only goes down to ,,"joins onto other text, so keep the spaces at the ends",The table only goes down to 
 T1156,Discord replies,tab/src/index.ts,143,Reply,discord, right now.,,"joins onto other text, so keep the spaces at the ends", right now.
 T1157,Discord replies,tab/src/index.ts,148,Reply,discord, right now: **,,"joins onto other text, so keep the spaces at the ends", right now: **
-T1158,Discord replies,tab/src/index.ts,164,Reply,discord,No — the tab has nothing for ,,"joins onto other text, so keep the spaces at the ends",No — the tab has nothing for 
+T1158,Discord replies,tab/src/index.ts,164,Reply,discord,No. The tab has nothing for ,,"joins onto other text, so keep the spaces at the ends",No. The tab has nothing for 
 T1159,Discord replies,tab/src/index.ts,166,Reply,discord, is on the tab for **,,"joins onto other text, so keep the spaces at the ends", is on the tab for **
 T1160,Discord replies,tab/src/index.ts,166,Reply,discord,"**, but at 0 credit.",,,"**, but at 0 credit."
 T1161,Discord replies,tab/src/index.ts,170,Reply,discord, with part marks,,"joins onto other text, so keep the spaces at the ends", with part marks
@@ -1168,7 +1168,7 @@ T1162,Discord replies,tab/src/index.ts,171,Reply,discord, on the tab,,"joins ont
 T1163,Discord replies,tab/src/index.ts,187,Reply,discord,Nothing on the tab for **,,,Nothing on the tab for **
 T1164,Discord replies,tab/src/index.ts,195,Reply,discord, (part marks),,"joins onto other text, so keep the spaces at the ends", (part marks)
 T1165,Discord replies,tab/src/index.ts,232,Reply,discord,Posting into channels is locked until DISCORD_BOT_TOKEN is set on the worker (see the README).,,,Posting into channels is locked until DISCORD_BOT_TOKEN is set on the worker (see the README).
-T1166,Discord replies,tab/src/index.ts,251,Reply,discord,Could not reach Discord — try again in a moment.,,,Could not reach Discord — try again in a moment.
+T1166,Discord replies,tab/src/index.ts,251,Reply,discord,Could not reach Discord. Try again in a moment.,,,Could not reach Discord. Try again in a moment.
 T1167,Discord replies,tab/src/index.ts,255,Reply,discord,The bot cannot post in that channel. It needs to be invited with the `bot` scope and allowed to send messages there.,,,The bot cannot post in that channel. It needs to be invited with the `bot` scope and allowed to send messages there.
 T1168,Discord replies,tab/src/index.ts,257,Reply,discord,The bot cannot see that channel.,,,The bot cannot see that channel.
 T1169,Discord replies,tab/src/index.ts,258,Reply,discord,Discord refused the post (HTTP ,,"joins onto other text, so keep the spaces at the ends",Discord refused the post (HTTP 
@@ -1181,20 +1181,20 @@ T1175,Discord replies,tab/src/index.ts,323,Reply,discord," is scored by bands, s
 T1176,Discord replies,tab/src/index.ts,340,Reply,discord, counts up to ,,"joins onto other text, so keep the spaces at the ends", counts up to 
 T1177,Discord replies,tab/src/index.ts,343,Reply,discord," already, and it is credited once. Make it per unit in the quest editor to count it.",,"joins onto other text, so keep the spaces at the ends"," already, and it is credited once. Make it per unit in the quest editor to count it."
 T1178,Discord replies,tab/src/index.ts,372,Reply,discord,** is now ×,,,** is now ×
-T1179,Discord replies,tab/src/index.ts,389,Reply,discord,Nothing to remove — the tab has no ,,"joins onto other text, so keep the spaces at the ends",Nothing to remove — the tab has no 
+T1179,Discord replies,tab/src/index.ts,389,Reply,discord,Nothing to remove. The tab has no ,,"joins onto other text, so keep the spaces at the ends",Nothing to remove. The tab has no 
 T1180,Discord replies,tab/src/index.ts,399,Reply,discord," counts towards its challenge, so take the submission back on the dashboard instead.",,"joins onto other text, so keep the spaces at the ends"," counts towards its challenge, so take the submission back on the dashboard instead."
 T1181,Discord replies,tab/src/index.ts,408,Reply,discord,** is back to ×,,,** is back to ×
 T1182,Discord replies,tab/src/index.ts,416,Reply,discord,**SCS.2 tab bot**,,,**SCS.2 tab bot**
-T1183,Discord replies,tab/src/index.ts,418,Reply,discord,`/score team` — that team’s total and where they sit,,,`/score team` — that team’s total and where they sit
-T1184,Discord replies,tab/src/index.ts,419,Reply,discord,`/leaderboard` — the top 10,,,`/leaderboard` — the top 10
-T1185,Discord replies,tab/src/index.ts,420,Reply,discord,`/leaderboard 3` — whoever is third right now,,,`/leaderboard 3` — whoever is third right now
-T1186,Discord replies,tab/src/index.ts,421,Reply,discord,`/leaderboard 3-10` — that stretch of the table,,,`/leaderboard 3-10` — that stretch of the table
-T1187,Discord replies,tab/src/index.ts,422,Reply,discord,`/quest team quest` — has the team done a quest,,,`/quest team quest` — has the team done a quest
-T1188,Discord replies,tab/src/index.ts,423,Reply,discord,`/list team` — everything on the tab for a team,,,`/list team` — everything on the tab for a team
-T1189,Discord replies,tab/src/index.ts,424,Reply,discord,`/submit team quest` — put a completion on the tab; run it again on a repeatable to count it up,,,`/submit team quest` — put a completion on the tab; run it again on a repeatable to count it up
-T1190,Discord replies,tab/src/index.ts,425,Reply,discord,`/unsubmit team quest` — take one back off,,,`/unsubmit team quest` — take one back off
-T1191,Discord replies,tab/src/index.ts,426,Reply,discord,`/post channel message` — the bot posts your message in that channel (organisers; write \n for a line break),,,`/post channel message` — the bot posts your message in that channel (organisers; write \\n for a line break)
-T1192,Discord replies,tab/src/index.ts,427,Reply,discord,`/verify` — link your Discord to your team signup: you get your team role and private channel,,,`/verify` — link your Discord to your team signup: you get your team role and private channel
+T1183,Discord replies,tab/src/index.ts,418,Reply,discord,`/score team`: that team’s total and where they sit,,,`/score team`: that team’s total and where they sit
+T1184,Discord replies,tab/src/index.ts,419,Reply,discord,`/leaderboard`: the top 10,,,`/leaderboard`: the top 10
+T1185,Discord replies,tab/src/index.ts,420,Reply,discord,`/leaderboard 3`: whoever is third right now,,,`/leaderboard 3`: whoever is third right now
+T1186,Discord replies,tab/src/index.ts,421,Reply,discord,`/leaderboard 3-10`: that stretch of the table,,,`/leaderboard 3-10`: that stretch of the table
+T1187,Discord replies,tab/src/index.ts,422,Reply,discord,`/quest team quest`: has the team done a quest,,,`/quest team quest`: has the team done a quest
+T1188,Discord replies,tab/src/index.ts,423,Reply,discord,`/list team`: everything on the tab for a team,,,`/list team`: everything on the tab for a team
+T1189,Discord replies,tab/src/index.ts,424,Reply,discord,`/submit team quest`: put a completion on the tab; run it again on a repeatable to count it up,,,`/submit team quest`: put a completion on the tab; run it again on a repeatable to count it up
+T1190,Discord replies,tab/src/index.ts,425,Reply,discord,`/unsubmit team quest`: take one back off,,,`/unsubmit team quest`: take one back off
+T1191,Discord replies,tab/src/index.ts,426,Reply,discord,`/post channel message`: the bot posts your message in that channel (organisers; write \n for a line break),,,`/post channel message`: the bot posts your message in that channel (organisers; write \\n for a line break)
+T1192,Discord replies,tab/src/index.ts,427,Reply,discord,`/verify`: link your Discord to your team signup: you get your team role and private channel,,,`/verify`: link your Discord to your team signup: you get your team role and private channel
 T1193,Discord replies,tab/src/index.ts,429,Reply,discord,"Organisers can add `channel:` to /score, /leaderboard, /quest and /list to send the answer to another channel.",,,"Organisers can add `channel:` to /score, /leaderboard, /quest and /list to send the answer to another channel."
 T1194,Discord replies,tab/src/index.ts,430,Reply,discord,"Quest codes match the tab: SQ1, SQ1-10, MQ4. Case and spaces don’t matter.",,,"Quest codes match the tab: SQ1, SQ1-10, MQ4. Case and spaces don’t matter."
 T1195,Discord replies,tab/src/index.ts,435,Reply,discord,No team called “,,,No team called “
@@ -1386,7 +1386,7 @@ T1379,Shared chrome,assets/site.js,2048,Text,js,??? points,,,??? points
 T1380,Shared chrome,assets/site.js,2049,Text,js, points,,"joins onto other text, so keep the spaces at the ends", points
 T1381,App install,manifest.webmanifest,2,App name,manifest,Sydney Challenge Scramble — SCS.2,,,Sydney Challenge Scramble — SCS.2
 T1382,App install,manifest.webmanifest,3,"App name, short",manifest,SCS.2,,,SCS.2
-T1383,App install,manifest.webmanifest,4,App description,manifest,"SCS.2 — Legends of the City. Quest list, map, event info and your points tracker for the Sydney Challenge Scramble.",,,"SCS.2 — Legends of the City. Quest list, map, event info and your points tracker for the Sydney Challenge Scramble."
+T1383,App install,manifest.webmanifest,4,App description,manifest,"SCS.2: Legends of the City. Quest list, map, event info and your points tracker for the Sydney Challenge Scramble.",,,"SCS.2: Legends of the City. Quest list, map, event info and your points tracker for the Sydney Challenge Scramble."
 T1384,Offline,sw.js,98,Script text,js,assets/maplibre/fonts/Noto Sans Regular/0-255.pbf,,,assets/maplibre/fonts/Noto Sans Regular/0-255.pbf
 T1385,Offline,sw.js,99,Script text,js,assets/maplibre/fonts/Noto Sans Medium/0-255.pbf,,,assets/maplibre/fonts/Noto Sans Medium/0-255.pbf
 T1386,Offline,sw.js,100,Script text,js,assets/maplibre/fonts/Noto Sans Italic/0-255.pbf,,,assets/maplibre/fonts/Noto Sans Italic/0-255.pbf
@@ -1818,7 +1818,7 @@ T1810,assets/video-sizes.js,assets/video-sizes.js,225,Script text,js,This browse
 T1811,assets/video-sizes.js,assets/video-sizes.js,237,Text,js,Auto · ,,"joins onto other text, so keep the spaces at the ends",Auto · 
 T1812,assets/video-sizes.js,assets/video-sizes.js,269,Screen-reader label,js,Video quality,,,Video quality
 T1813,assets/video-sizes.js,assets/video-sizes.js,272,Script text,js,Original,,,Original
-T1814,compress/compress.js,compress/compress.js,82,Page title,js,compressing a video — ,,"joins onto other text, so keep the spaces at the ends",compressing a video \u2014 
+T1814,compress/compress.js,compress/compress.js,82,Page title,js,compressing a video | ,,"joins onto other text, so keep the spaces at the ends",compressing a video | 
 T1815,compress/compress.js,compress/compress.js,186,Label,js,Keep,,,Keep
 T1816,compress/compress.js,compress/compress.js,257,Script text,js,This video is already small for its length.,,,This video is already small for its length.
 T1817,compress/compress.js,compress/compress.js,261,Text,js,about ,,"joins onto other text, so keep the spaces at the ends",about 
@@ -1841,7 +1841,7 @@ T1833,compress/compress.js,compress/compress.js,608,Text,js,Over the ,,"joins on
 T1834,compress/compress.js,compress/compress.js,608,Text,js, target. Try a smaller one.,,"joins onto other text, so keep the spaces at the ends", target. Try a smaller one.
 T1835,compress/compress.js,compress/compress.js,616,Script text,js,Compression failed: ,,"joins onto other text, so keep the spaces at the ends",Compression failed: 
 T1836,compress/compress.js,compress/compress.js,616,Script text,js,unknown error,,,unknown error
-T1837,compress/compress.js,compress/compress.js,638,Message,js,A video is being compressed. Stopping it loses the work — the next run ,,"joins onto other text, so keep the spaces at the ends",A video is being compressed. Stopping it loses the work — the next run 
+T1837,compress/compress.js,compress/compress.js,638,Message,js,A video is being compressed. Stopping it loses the work. The next run ,,"joins onto other text, so keep the spaces at the ends",A video is being compressed. Stopping it loses the work. The next run 
 T1838,compress/compress.js,compress/compress.js,639,Script text,js,starts from the beginning,,,starts from the beginning
 T1839,compress/compress.js,compress/compress.js,640,Script text,js,", and the 31 MB engine downloads again if the browser has not kept it.",,,", and the 31 MB engine downloads again if the browser has not kept it."
 T1840,compress/compress.js,compress/compress.js,672,Script text,js,Shared.,,,Shared.

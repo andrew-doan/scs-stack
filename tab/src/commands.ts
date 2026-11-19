@@ -38,7 +38,7 @@ export const COMMANDS = [
   },
   {
     name: 'leaderboard',
-    description: 'The top 10 — or one place (3), or a stretch (3-10)',
+    description: 'The top 10, one place (3) or a stretch (3-10)',
     options: [{
       type: 3,
       name: 'place',
@@ -84,7 +84,7 @@ export const COMMANDS = [
       {
         type: 3,
         name: 'message',
-        description: 'What to post — write \\n where you want a line break',
+        description: 'What to post. Write \\n where you want a line break',
         required: true,
         max_length: 2000
       }

@@ -1528,7 +1528,7 @@
       }
       var job = jobs[at];
       at += 1;
-      setUploadTitle(jobs.length > 1 ? 'Uploading \u2014 file ' + at + ' of ' + jobs.length : 'Uploading');
+      setUploadTitle(jobs.length > 1 ? 'Uploading file ' + at + ' of ' + jobs.length : 'Uploading');
       setStatus('Uploading ' + job.entry.name + (jobs.length > 1 ? ' (' + at + ' of ' + jobs.length + ')' : '') + '\u2026');
       uploadBig(job.entry, job.file, job.doneParts, function () { tick(job); }, job.twin).then(function () {
         forgetUpload(job.entry.file);
@@ -1955,7 +1955,7 @@
         var up = document.createElement('span');
         up.className = 'sub-thumb sub-thumb-up';
         up.textContent = '\u2191';
-        up.title = m.name + ' \u2014 still uploading';
+        up.title = m.name + ', still uploading';
         strip.appendChild(up);
         return;
       }

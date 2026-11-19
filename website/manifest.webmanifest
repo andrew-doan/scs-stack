@@ -1,7 +1,7 @@
 {
   "name": "Sydney Challenge Scramble — SCS.2",
   "short_name": "SCS.2",
-  "description": "SCS.2 — Legends of the City. Quest list, map, event info and your points tracker for the Sydney Challenge Scramble.",
+  "description": "SCS.2: Legends of the City. Quest list, map, event info and your points tracker for the Sydney Challenge Scramble.",
   "start_url": "./",
   "scope": "./",
   "display": "standalone",

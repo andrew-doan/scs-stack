@@ -135,7 +135,7 @@ async function cmdLeaderboard(db: D1Database, interaction: Interaction): Promise
       return 'That place needs to be a number like `3`, or a range like `3-10`.';
     }
   }
-  if (from < 1 || to < from) return 'That range runs backwards — try something like `3-10`.';
+  if (from < 1 || to < from) return 'That range runs backwards. Try something like `3-10`.';
   // places count the teams that finished; one that did not has none, but
   // the top of the board still shows it
   var last = lastPlace(rows);
@@ -161,7 +161,7 @@ async function cmdQuest(db: D1Database, interaction: Interaction): Promise<strin
     'SELECT c.amount, c.points, q.group_id, q.scoring FROM held c JOIN quests q ON q.code = c.quest_code WHERE c.team_id = ?1 AND c.quest_code = ?2'
   ).bind(team.id, quest.code).first<{ amount: number; points: number; group_id: number | null; scoring: string }>();
 
-  if (!row) return 'No — the tab has nothing for ' + quest.code + ' from **' + team.name + '**.';
+  if (!row) return 'No. The tab has nothing for ' + quest.code + ' from **' + team.name + '**.';
   if (row.amount === 0 && !row.points) {
     return 'No — ' + quest.code + ' is on the tab for **' + team.name + '**, but at 0 credit.';
   }
@@ -248,7 +248,7 @@ async function postToChannel(env: Env, channelId: unknown, content: string, keep
       body: JSON.stringify(payload)
     });
   } catch (err) {
-    return { ok: false, why: 'Could not reach Discord — try again in a moment.' };
+    return { ok: false, why: 'Could not reach Discord. Try again in a moment.' };
   }
   if (resp.ok) return { ok: true };
   if (resp.status === 401 || resp.status === 403) {
@@ -386,7 +386,7 @@ async function cmdUnsubmit(db: D1Database, interaction: Interaction, env: Env, c
     'SELECT amount FROM held WHERE team_id = ?1 AND quest_code = ?2'
   ).bind(team.id, quest.code).first<{ amount: number }>();
   if (!row) {
-    return 'Nothing to remove — the tab has no ' + quest.code + ' for **' + team.name + '**.';
+    return 'Nothing to remove. The tab has no ' + quest.code + ' for **' + team.name + '**.';
   }
   var oldTotal = await teamTotal(db, team.id);
   if (!(await ledgerReady(db))) return BEHIND_DISCORD;
@@ -415,16 +415,16 @@ function cmdHelp(): string {
   return [
     '**SCS.2 tab bot**',
     '',
-    '`/score team` — that team’s total and where they sit',
-    '`/leaderboard` — the top 10',
-    '`/leaderboard 3` — whoever is third right now',
-    '`/leaderboard 3-10` — that stretch of the table',
-    '`/quest team quest` — has the team done a quest',
-    '`/list team` — everything on the tab for a team',
-    '`/submit team quest` — put a completion on the tab; run it again on a repeatable to count it up',
-    '`/unsubmit team quest` — take one back off',
-    '`/post channel message` — the bot posts your message in that channel (organisers; write \\n for a line break)',
-    '`/verify` — link your Discord to your team signup: you get your team role and private channel',
+    '`/score team`: that team’s total and where they sit',
+    '`/leaderboard`: the top 10',
+    '`/leaderboard 3`: whoever is third right now',
+    '`/leaderboard 3-10`: that stretch of the table',
+    '`/quest team quest`: has the team done a quest',
+    '`/list team`: everything on the tab for a team',
+    '`/submit team quest`: put a completion on the tab; run it again on a repeatable to count it up',
+    '`/unsubmit team quest`: take one back off',
+    '`/post channel message`: the bot posts your message in that channel (organisers; write \\n for a line break)',
+    '`/verify`: link your Discord to your team signup: you get your team role and private channel',
     '',
     'Organisers can add `channel:` to /score, /leaderboard, /quest and /list to send the answer to another channel.',
     'Quest codes match the tab: SQ1, SQ1-10, MQ4. Case and spaces don’t matter.'
