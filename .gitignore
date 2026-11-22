@@ -1,0 +1,18 @@
+__pycache__/
+# npm run backup: copies of the databases and the buckets, and the
+# R2 token it reads. Both hold what people typed into the sign-up form.
+backups/
+backup.json
+# local environment files: keys and settings for one machine
+.env
+.env.*
+!.env.example
+.claude/worktrees/
+# GPX files as teams sent them and the trip history (TfNSW Open Data,
+# saved by TransportSeek): what
+# tracks/clean.mjs reads (tracks/CLAUDE.md). A recording can start at
+# someone's home, so only the cleaned copies are kept.
+tracks/gpx/
+tracks/stringlines/
+# whose each GPX file is: real team and file names
+tracks/teams.json

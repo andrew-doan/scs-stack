@@ -1,0 +1,138 @@
+/* Registration page. Form fields, hints and status lines are shared
+   in ../assets/site.css. */
+
+.rg-label { margin: 16px 0 6px; font-size: var(--t-small); font-weight: 800; line-height: 1.4; }
+.rg-label .rg-req { color: var(--line-red); }
+.rg-muted { color: var(--muted); font-weight: 400; font-size: 0.88rem; }
+
+.rg-checks {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(210px, 1fr));
+  gap: 4px 14px;
+}
+.rg-check,
+.rg-radio {
+  display: flex;
+  gap: 10px;
+  align-items: center;
+  padding: 6px 0;
+  cursor: pointer;
+  line-height: 1.4;
+}
+/* Drawn rather than the browser's own: the native box is a pure white
+   square with a pale grey edge on the paper, and in the dark theme a
+   filled grey one that reads as already chosen or switched off. These
+   take the text boxes' edge, a size a thumb can hit, and the green
+   once picked. A radio stays round, since round is what says only one
+   of these. */
+.rg-check input,
+.rg-radio input {
+  appearance: none;
+  -webkit-appearance: none;
+  flex: none;
+  width: 20px;
+  height: 20px;
+  margin: 0;
+  border: 2px solid var(--border-strong);
+  border-radius: 2px;
+  background: var(--surface);
+  cursor: pointer;
+}
+.rg-radio input { border-radius: 50%; }
+.rg-check input:checked {
+  border-color: var(--accent-solid);
+  background: var(--accent-solid) url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 16 16'%3E%3Cpath d='M3.5 8.5l3 3 6-7' fill='none' stroke='%23fff' stroke-width='2.2' stroke-linecap='square'/%3E%3C/svg%3E") center / 16px no-repeat;
+}
+.rg-radio input:checked {
+  border-color: var(--accent-solid);
+  background: var(--accent-solid);
+  box-shadow: inset 0 0 0 3px var(--surface);
+}
+.rg-check input:focus-visible,
+.rg-radio input:focus-visible { outline: 2px solid var(--accent); outline-offset: 2px; }
+/* a box under a grid of choices is a new question, not the next choice */
+.rg-checks + .sub-field { margin-top: 14px; }
+
+/* One column of form. Across the whole of a desktop page a name box
+   was 1150px wide and the choices ran five to a row with one left
+   over. */
+#rego-form { max-width: 760px; }
+/* the words and the photos above the form end where it does */
+.rg-top { max-width: 760px; }
+.rg-top > p { max-width: none; }
+
+/* one card per person: its name at the top of the card, the fields
+   beneath. The name was a black sign bar, one per card, so a team of
+   five was a form striped with five black bands. */
+.rg-team,
+.rg-member { padding: 0; margin: 0 0 14px; }
+.rg-member { animation: t-rise var(--duration-fast) var(--ease-smooth-out) both; }
+.rg-member.is-leaving { animation: rg-member-out var(--duration-quick) var(--ease-smooth-out) forwards; pointer-events: none; }
+@keyframes rg-member-out { to { opacity: 0; transform: translateY(var(--distance-small)); } }
+.rg-head {
+  display: flex;
+  justify-content: space-between;
+  align-items: baseline;
+  gap: 12px;
+  padding: 16px 16px 0;
+  font-size: var(--t-lede);
+  font-weight: 800;
+  letter-spacing: -0.01em;
+  line-height: 1.25;
+}
+.rg-head button {
+  background: none;
+  border: 0;
+  padding: 0;
+  color: var(--muted);
+  font: inherit;
+  font-size: var(--t-small);
+  font-weight: 700;
+  text-decoration: underline;
+  text-underline-offset: 3px;
+  cursor: pointer;
+}
+.rg-head button:hover { color: var(--text); }
+/* a member card's title is the name typed into it, which can be long */
+.rg-member-head span { min-width: 0; overflow-wrap: anywhere; }
+.rg-member-body { padding: 14px 16px 16px; }
+.rg-two {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 0 12px;
+}
+/* The email's label runs to two lines beside the zID's one, so each
+   label sits on its own box and the two boxes stay level. */
+.rg-two > .sub-field { grid-template-rows: 1fr auto; }
+.rg-two > .sub-field > span { align-self: end; }
+@media (max-width: 560px) {
+  .rg-two { grid-template-columns: 1fr; }
+}
+
+.rg-add-row { display: flex; gap: 12px; align-items: center; margin: 0 0 22px; }
+
+/* the honeypot lives far off screen; people never see or tab to it */
+.rg-trap {
+  position: absolute;
+  left: -9999px;
+  top: -9999px;
+  height: 1px;
+  overflow: hidden;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .rg-member, .rg-member.is-leaving { animation: none; }
+}
+
+/* the human check's widget, when the worker says it is on */
+.rg-turnstile { margin: 0 0 12px; }
+.rg-turnstile:empty { margin: 0; }
+
+/* rego.js hides a card, the team name and the buttons it does not want
+   for the kind of signup picked; .card, .sub-field and .btn all set a
+   display of their own, which beats the attribute */
+#rego-form [hidden] { display: none !important; }
+/* the two ways to sign up sit closer than the questions under them */
+.rg-modes { padding-top: 8px; }
+/* without a team the card opens on the societies question */
+#rg-team-field[hidden] + .rg-label { margin-top: 0; }

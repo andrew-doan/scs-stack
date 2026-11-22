@@ -1,0 +1,241 @@
+/* Compress a video. One column: the file, two sets of options, the
+   action, then the result. Form fields, buttons and the type ladder are
+   shared in ../assets/site.css. */
+.cp-page { --cp-w: 760px; }
+
+.cp-tool { max-width: var(--cp-w); margin-top: 20px; }
+
+.cp-cap {
+  margin: 0 0 10px;
+  font-size: var(--t-micro);
+  font-weight: 800;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: var(--muted);
+}
+
+/* ---- the file ---- */
+
+.cp-file-input { display: none; }
+
+.cp-meta {
+  display: grid;
+  grid-template-columns: auto minmax(0, 1fr) auto;
+  align-items: center;
+  gap: 14px;
+  padding: 14px 16px;
+  border: 1px solid var(--border);
+  border-radius: 2px;
+  background: var(--surface);
+}
+.cp-meta > svg { width: 26px; height: 26px; color: var(--muted); }
+.cp-meta-text { display: grid; gap: 2px; min-width: 0; }
+.cp-meta strong { font-weight: 800; line-height: 1.4; overflow-wrap: anywhere; }
+.cp-meta span {
+  color: var(--muted);
+  font-size: var(--t-small);
+  line-height: 1.5;
+  font-variant-numeric: tabular-nums lining-nums;
+}
+.cp-change {
+  font-weight: 800;
+  border-bottom: 2px solid currentColor;
+  cursor: pointer;
+}
+/* the file cannot change while it is being compressed */
+.cp-tool[data-stage="busy"] .cp-change { visibility: hidden; }
+
+/* With nothing chosen this is the only thing to press. Once there is a
+   file, the file's own row carries Change instead. */
+.cp-pick {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 10px;
+  width: 100%;
+  min-height: 48px;
+  padding: 10px 20px;
+  border: 2px solid var(--accent-solid);
+  border-radius: 2px;
+  background: var(--accent-solid);
+  color: var(--on-accent);
+  font-weight: 800;
+  cursor: pointer;
+  transition: transform var(--duration-quick) var(--ease-smooth-out),
+    box-shadow var(--duration-quick) var(--ease-smooth-out);
+}
+.cp-pick svg { width: 22px; height: 22px; flex: none; }
+.cp-pick:hover { transform: translateY(-1px); box-shadow: var(--shadow-hover); }
+.cp-pick:active { transform: translate(1px, 1px); box-shadow: none; }
+.cp-tool:not([data-stage="idle"]) .cp-pick { display: none; }
+
+/* ---- the options ---- */
+
+.cp-setup { margin-top: 28px; }
+.cp-choice + .cp-choice { margin-top: 24px; }
+
+.cp-opts {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(9.5rem, 1fr));
+  gap: 8px;
+}
+
+/* name and figure on the first line, the note under them */
+.cp-size {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) auto;
+  grid-template-areas: "name fig" "note note";
+  align-items: baseline;
+  gap: 2px 10px;
+  min-height: 48px;
+  padding: 10px 12px;
+  border: 1px solid var(--border-strong);
+  border-radius: 2px;
+  background: var(--surface);
+  color: var(--text);
+  font: inherit;
+  text-align: left;
+  cursor: pointer;
+  transition: background var(--duration-quick) var(--ease-smooth-out),
+    border-color var(--duration-quick) var(--ease-smooth-out);
+}
+.cp-size.is-hidden { display: none; }
+.cp-size-name { grid-area: name; font-weight: 800; }
+.cp-size-fig {
+  grid-area: fig;
+  font-size: var(--t-small);
+  font-weight: 700;
+  font-variant-numeric: tabular-nums lining-nums;
+  white-space: nowrap;
+}
+.cp-size small {
+  grid-area: note;
+  color: var(--muted);
+  font-size: var(--t-small);
+  line-height: 1.4;
+  font-variant-numeric: tabular-nums lining-nums;
+  overflow-wrap: anywhere;
+}
+.cp-size small:empty { display: none; }
+@media (hover: hover) and (pointer: fine) {
+  .cp-size:hover:not(.is-selected) { background: var(--tint); }
+}
+.cp-size:active { transform: translate(1px, 1px); }
+/* the picked one is the sign's black, the way a picked chip is */
+.cp-size.is-selected {
+  background: var(--sign-bg);
+  border-color: var(--pick-edge);
+  color: var(--sign-ink);
+}
+.cp-size.is-selected small { color: inherit; opacity: 0.75; }
+
+/* ---- what it should come to, and the action ---- */
+
+.cp-guess { margin: 22px 0 0; line-height: 1.6; }
+.cp-guess b { font-weight: 850; font-variant-numeric: tabular-nums lining-nums; }
+
+.cp-run { width: 100%; margin-top: 14px; }
+.cp-run[disabled] { opacity: 0.45; pointer-events: none; box-shadow: none; }
+.cp-tool[data-stage="busy"] .cp-run { display: none; }
+/* with a result on screen, Save is the green one */
+.cp-tool[data-stage="done"] .cp-run {
+  border-color: var(--text);
+  background: var(--surface);
+  color: var(--text);
+}
+
+/* ---- running ---- */
+
+/* the one field on the page asking to be looked at */
+.cp-progress {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) auto;
+  column-gap: 14px;
+  row-gap: 12px;
+  align-items: baseline;
+  margin-top: 22px;
+  padding: 13px 14px 15px;
+  border: 2px solid var(--glow-edge);
+  border-radius: 2px;
+  background: var(--glow-fill);
+}
+.cp-stage { margin: 0; }
+.cp-pct {
+  margin: 0;
+  text-align: right;
+  font-size: var(--t-head);
+  font-weight: 850;
+  letter-spacing: -0.035em;
+  line-height: 1;
+  font-variant-numeric: tabular-nums lining-nums;
+}
+.cp-track {
+  grid-column: 1 / -1;
+  display: block;
+  height: 10px;
+  border-radius: 2px;
+  background: var(--border);
+  overflow: hidden;
+}
+.cp-track span {
+  display: block;
+  height: 100%;
+  width: 0;
+  background: var(--text);
+  transition: width var(--duration-fast) var(--ease-smooth-out);
+}
+
+/* ---- the result ---- */
+
+.cp-result { margin-top: 28px; }
+.cp-result-line {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: baseline;
+  gap: 4px 14px;
+  margin: 0;
+  font-size: var(--t-head);
+  font-weight: 850;
+  letter-spacing: -0.02em;
+  line-height: 1.15;
+  font-variant-numeric: tabular-nums lining-nums;
+}
+.cp-was,
+.cp-arrow { color: var(--muted); font-weight: 800; }
+.cp-result-note { margin: 8px 0 0; color: var(--muted); line-height: 1.55; }
+.cp-result.is-over .cp-result-note { color: var(--alert-ink); }
+
+.cp-result video {
+  display: block;
+  width: 100%;
+  max-height: 52vh;
+  margin-top: 18px;
+  border: 1px solid var(--border);
+  border-radius: 2px;
+  background: var(--sign-bg);
+}
+
+.cp-actions {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 10px;
+  margin-top: 18px;
+}
+.cp-then { margin: 14px 0 0; line-height: 1.55; }
+.cp-then a { color: var(--text); font-weight: 800; }
+
+/* ---- the view's one status line ---- */
+
+.cp-status {
+  margin: 16px 0 0;
+  color: var(--muted);
+  line-height: 1.55;
+  min-height: 1.55em;
+}
+.cp-tool[data-stage="failed"] .cp-status { color: var(--alert-ink); font-weight: 700; }
+.cp-tool[data-stage="idle"] .cp-status { margin: 0; min-height: 0; }
+
+@media (max-width: 560px) {
+  .cp-opts { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+  .cp-actions { grid-template-columns: minmax(0, 1fr); }
+}

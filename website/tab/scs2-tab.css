@@ -1,0 +1,649 @@
+/* Live tab — page styles. Theme tokens live in ../assets/site.css. */
+
+/* Gold, silver and bronze for the top three. A place is not a route,
+   so the medals are metal rather than anything out of the --line-*
+   palette. The same three fills in both themes: a medal does not
+   change colour with the room, and each carries its number at enough
+   contrast either way. The discs are unoutlined: a ring round a filled
+   disc is a second edge on a shape that already has one, and silver
+   still reads against the aged ground on its fill alone. */
+:root {
+  --medal-1: #d9a300;
+  --medal-1-ink: #111111;
+  --medal-2: #b9bcc0;
+  --medal-2-ink: #111111;
+  --medal-3: #9c5f26;
+  --medal-3-ink: #ffffff;
+}
+
+/* How fresh the board is. It used to be the hero's second black bar,
+   set at hero-copy size — a signage bar carries a name or a sentence
+   about the page, and a clock that changes every second is neither, so
+   a timestamp on one was the largest thing under the title. It reads
+   as a column label instead, on the same left edge and at the same
+   size as the heads it sits over, right where the numbers it dates
+   are. Tabular figures so the ticking seconds do not shuffle the line
+   sideways. */
+.tab-updated {
+  /* A status line, set the way the quest list sets its own ("93 of 93
+     quests shown"): a sentence, small and muted. In the column heads'
+     capitals it read as a seventh head, and its full stop as a typo. */
+  margin: 0 0 var(--after-title, 24px);
+  font-size: var(--t-small);
+  font-weight: 700;
+  line-height: 1.4;
+  color: var(--muted);
+  font-variant-numeric: tabular-nums;
+  display: flex;
+  align-items: flex-start;
+  gap: 6px;
+}
+.tab-updated .ic { width: 1.15em; }
+.tab-updated.is-refreshing .ic-refresh { animation: tab-refresh-turn 800ms linear infinite; }
+@keyframes tab-refresh-turn { to { transform: rotate(360deg); } }
+@media (prefers-reduced-motion: reduce) {
+  .tab-updated.is-refreshing .ic-refresh { animation: none; }
+}
+/* the time comes first in the markup so an empty one can hide the marks
+   after it; they are drawn ahead of it */
+.tab-updated .ic { order: -1; }
+#tab-updated:empty ~ .ic { visibility: hidden; }
+
+.tab-table-card {
+  /* sideways only. overflow-x alone turns the other axis into auto as
+     well, and the FLIP rows' transforms give it something to scroll
+     into — the card could be dragged up and down by hand. hidden
+     blocks the gesture (clip cannot pair with auto; it computes to
+     hidden anyway). */
+  overflow-x: auto;
+  overflow-y: hidden;
+}
+
+/* The board is on the page rather than in a box: a forty-row table is
+   not a unit. Fixed columns so every figure sits on the same edge
+   whatever is in the row above it. */
+.tab-table {
+  width: 100%;
+  border-collapse: collapse;
+  table-layout: fixed;
+  font-size: 1.0625rem;
+  font-variant-numeric: tabular-nums lining-nums;
+}
+
+/* the head is a line of labels over the rule, not a black bar —
+   the page already spends its black on the board at the top */
+.tab-table th {
+  text-align: right;
+  font-size: var(--t-micro);
+  font-weight: 800;
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+  color: var(--muted);
+  background: transparent;
+  padding: 0 14px 8px;
+  border-bottom: var(--rule-w) solid var(--rule-ink);
+}
+.tab-table th.tab-col-team,
+.tab-table th.tab-col-last { text-align: left; }
+
+.tab-table td {
+  padding: 12px 14px;
+  border-bottom: 1px solid var(--border);
+  vertical-align: middle;
+}
+
+/* the table keeps the page's own left and right edges */
+.tab-table th:first-child,
+.tab-table td:first-child { padding-left: 0; }
+.tab-table th:last-child,
+.tab-table td:last-child { padding-right: 0; }
+
+/* Six columns: what identifies a row, what is read, then the figures,
+   then the trailing text column. */
+.tab-col-rank { width: 64px; text-align: right; }
+.tab-col-points { width: 104px; text-align: right; }
+.tab-col-behind { width: 96px; text-align: right; }
+.tab-col-quests { width: 88px; text-align: right; }
+.tab-col-last { width: 37%; }
+/* A narrower window takes the room out of the figures' gutters and the
+   last column rather than the names: at 800px the four fixed columns
+   and 37% left a team's name about 120px and it broke over three
+   lines. */
+@media (max-width: 1100px) {
+  .tab-col-rank { width: 48px; }
+  .tab-col-points { width: 88px; }
+  .tab-col-behind { width: 84px; }
+  .tab-col-quests { width: 72px; }
+  .tab-col-last { width: 30%; }
+}
+
+/* one size across the row; weight says what outranks what */
+td.tab-col-rank { font-weight: 800; }
+td.tab-team { font-weight: 600; overflow-wrap: break-word; }
+td.tab-col-points { font-weight: 800; }
+td.tab-col-behind,
+td.tab-col-quests,
+td.tab-col-last { font-weight: 400; }
+
+/* the top three wear medals; every other rank is the figure itself */
+/* The disc is taller than the line it sits on, and a row with a medal
+   in it came out 8px taller than the rows without. The negative margin
+   takes it out of the line's height, so every row is one height and the
+   disc spills into the cell's padding instead. */
+.rank-bullet {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  min-width: 28px;
+  height: 28px;
+  margin: -4px 0;
+  padding: 0 5px;
+  border: 0;
+  border-radius: 50%;
+  font-weight: 800;
+  font-variant-numeric: tabular-nums;
+  line-height: 1;
+}
+/* Every other place in a box the medal's width, so a 4 sits under the
+   3 rather than under the medal's right edge. */
+.rank-figure {
+  display: inline-flex;
+  justify-content: center;
+  min-width: 28px;
+  padding: 0 5px;
+  font-variant-numeric: tabular-nums;
+}
+.rank-bullet--1 { background: var(--medal-1); color: var(--medal-1-ink); }
+.rank-bullet--2 { background: var(--medal-2); color: var(--medal-2-ink); }
+.rank-bullet--3 { background: var(--medal-3); color: var(--medal-3-ink); }
+
+/* Last scored: when, which code, and what it was. The time is tabular
+   and the name takes what is left, so a long quest name wraps under
+   itself rather than under the clock; with less than its basis left
+   beside the code, as in a narrow window, the name goes onto a line of
+   its own under them. */
+.tab-last {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: baseline;
+  gap: 2px 10px;
+}
+.tab-last-at {
+  flex: none;
+  font-weight: 400;
+  font-variant-numeric: tabular-nums;
+  white-space: nowrap;
+}
+.tab-last .code { flex: none; }
+/* break-word rather than anywhere: anywhere makes the box's smallest
+   possible width one character, and a flex item that may be one
+   character wide is one, so every quest name came down the page a
+   letter at a time */
+.tab-last-name { flex: 1 1 9em; min-width: 0; overflow-wrap: break-word; }
+
+/* the totals close the table, under the columns they sum. With no
+   standings there is nothing to sum, and the row would be a line of
+   dashes under a rule hard against the head's. */
+.tab-table.is-empty tfoot { display: none; }
+.tab-table tbody tr:last-child td { border-bottom: 0; }
+.tab-table tfoot td {
+  border-top: var(--rule-w) solid var(--rule-ink);
+  border-bottom: 0;
+  padding-top: 14px;
+  font-weight: 800;
+}
+
+/* the word that leads a figure on a phone, where there is no column
+   head beside it; on the page the head says it instead */
+.tab-word { display: none; }
+
+/* the message, then the one thing to do about it */
+#tab-error {
+  display: grid;
+  gap: 10px;
+  justify-items: start;
+}
+
+.tab-retry {
+  border: 1px solid var(--accent-dark);
+  border-radius: 2px;
+  background: var(--accent);
+  color: var(--on-accent);
+  font: inherit;
+  font-weight: 700;
+  font-size: 0.88rem;
+  padding: 6px 12px;
+  cursor: pointer;
+}
+.tab-retry:active { transform: translate(1px, 1px); }
+
+/* once team pages are open the name is a link to the team's own page */
+.tab-team-link { color: inherit; text-decoration: none; }
+.tab-team-go {
+  width: 0.8em;
+  height: 0.8em;
+  margin-left: 4px;
+  vertical-align: -0.05em;
+  color: var(--muted);
+}
+.tab-table tr.has-team-link { cursor: pointer; }
+@media (hover: hover) and (pointer: fine) {
+  .tab-table tr.has-team-link:hover { background: var(--tint); }
+  .tab-table tr.has-team-link:hover .tab-team-link { text-decoration: underline; text-underline-offset: 2px; }
+}
+.tab-table tr.has-team-link:active { background: var(--tint); }
+
+/* The one thing the table cannot carry: what is not on it yet. Set at
+   the size the rows are read at rather than a fourth size of its own. */
+/* The mark before it is what says this is a note about the board
+   rather than another line of the board. It sits on the first line's
+   own baseline box, so the sentence wraps under the words rather than
+   under the icon. */
+.tab-waiting {
+  display: grid;
+  grid-template-columns: auto minmax(0, 1fr);
+  gap: 8px;
+  align-items: start;
+  margin: 20px 0 0;
+  color: var(--muted);
+  font-size: 1.0625rem;
+  max-width: 34em;
+}
+.tab-waiting-mark {
+  width: 1.05em;
+  height: 1.05em;
+  margin-top: 0.22em;   /* the cap height of the line beside it */
+  flex: none;
+}
+/* Closed: a sign where the board was, and none of the board */
+.tab-closed-sign { display: none; }
+html.tab-closed .tab-closed-sign {
+  display: block;
+  padding: 20px 22px 22px;
+  background: var(--sign-bg);
+  color: var(--sign-ink);
+  border: 1px solid var(--sign-edge);
+  border-radius: 2px;
+}
+.tab-closed-title {
+  margin: 0;
+  font-size: clamp(1.75rem, 5vw, 2.6rem);
+  font-weight: 800;
+  letter-spacing: -0.035em;
+  line-height: 1.08;
+  text-wrap: balance;
+}
+.tab-closed-note {
+  margin: 12px 0 0;
+  max-width: 34em;
+  color: var(--sign-muted);
+  line-height: 1.5;
+}
+html.tab-closed .tab-bar-row,
+html.tab-closed .tab-table-card,
+html.tab-closed .tab-dnf-note,
+html.tab-closed .tab-waiting { display: none; }
+
+/* After the event: a black band at the top saying so, with the way to
+   the recap and the replay and the picture of the tab. Full width on a phone and in the
+   narrow column, the width of the content on a desktop, as the welfare
+   page's band. */
+.tab-over {
+  --bleed-m: calc(50% - 50vw);
+  --bleed-p: calc(50vw - 50%);
+  margin: 0 var(--bleed-m) var(--after-title, 24px);
+  padding: 24px var(--bleed-p) 26px;
+  background: var(--sign-bg);
+  color: var(--sign-ink);
+  border-block: 1px solid var(--sign-edge);
+}
+.tab-over[hidden] { display: none; }
+html.is-pwa .tab-over { margin-top: calc(var(--shell-top, 24px) * -1); }
+@media (min-width: 841px) {
+  html:not(.is-pwa) .tab-over {
+    margin-inline: 0;
+    padding: 24px 28px 26px;
+    border: 1px solid var(--sign-edge);
+    border-radius: 2px;
+  }
+}
+.tab-over-title {
+  margin: 0;
+  font-size: var(--t-lede);
+  font-weight: 800;
+  line-height: 1.25;
+  letter-spacing: -0.02em;
+}
+.tab-over-line { margin: 6px 0 0; line-height: 1.5; opacity: 0.85; }
+.tab-over-actions { display: flex; flex-wrap: wrap; gap: 10px; margin-top: 18px; }
+.tab-over-actions > span { flex: 0 1 auto; display: flex; }
+.tab-over-actions > span[hidden] { display: none; }
+@media (max-width: 560px) {
+  .tab-over-actions > span { flex: 1 1 100%; }
+  .tab-over-actions .btn { width: 100%; }
+}
+/* the buttons after the first are outlines on the black */
+.tab-over .tab-share .btn,
+.tab-over .tab-replay .btn {
+  background: transparent;
+  border-color: var(--sign-ink);
+  color: var(--sign-ink);
+}
+html.tab-closed .tab-over { display: none; }
+
+/* A team that did not finish: a dash for its place and a * after its
+   points, hung in the cell's padding so the figures keep the column's
+   edge. The line under the board says what the * means. */
+.tab-dnf-mark { margin-right: -0.45em; }
+.tab-dnf-note { margin: 12px 0 0; color: var(--muted); font-size: 1.0625rem; }
+
+
+/* ---------------- The phone ----------------
+   Six columns need about 700px and there are 358 to play with. Two
+   views, and the reader picks (`.tab-view`, kept in localStorage
+   `scs2-tab-view`):
+
+   Compact — one line a team: place, name, quests, points. Forty teams
+   fit on two screens, which is what the board is for most of the day:
+   where everybody is.
+
+   Full — the same line, and under the name one more: what the team
+   last scored, and how far behind the leader it is. The detail line
+   never wraps; a long quest name is cut, because a row that grows to
+   four lines is what made the old layout read as a pile.
+
+   Both are the table's own rows laid out as grids: a row that is a
+   grid is no longer a table row, and a table left to size itself
+   around one takes its widest measure and hangs off the side of the
+   phone. The roles on the markup keep it a table to a screen reader. */
+.tab-bar-row {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  margin: 0 0 var(--after-title, 24px);
+}
+.tab-bar-row .tab-updated { margin: 0; }
+/* the switch is a phone's question; a desk has room for every column */
+.tab-view { display: none; }
+
+@media (max-width: 840px) {
+  .tab-view {
+    display: inline-flex;
+    gap: 6px;
+  }
+  /* Two options in words, at a thumb's height: the quest list's chips
+     and the submit page's two views say theirs in sentence case too. */
+  .tab-view button {
+    min-height: 44px;
+    padding: 0 14px;
+    border: 1px solid var(--border-strong);
+    border-radius: 2px;
+    background: transparent;
+    color: var(--text);
+    font: inherit;
+    font-size: var(--t-small);
+    font-weight: 800;
+    cursor: pointer;
+    transition: background-color var(--duration-quick) var(--ease-smooth-out), color var(--duration-quick) var(--ease-smooth-out);
+  }
+  /* the one in use is filled with the sign's black and gives up its
+     outline, the way a picked quest-list chip does */
+  .tab-view button[aria-pressed="true"] {
+    background: var(--sign-bg);
+    border-color: var(--pick-edge);
+    color: var(--sign-ink);
+  }
+
+  .tab-table,
+  .tab-table thead,
+  .tab-table tbody,
+  .tab-table tfoot {
+    display: block;
+    width: 100%;
+  }
+  .tab-table { font-size: 1rem; }
+
+  .tab-table thead tr,
+  .tab-table tbody tr,
+  .tab-table tfoot tr {
+    display: grid;
+    grid-template-columns: 28px minmax(0, 1fr) 64px 72px;
+    column-gap: 10px;
+    align-items: center;
+  }
+  .tab-table thead th,
+  .tab-table tbody td,
+  .tab-table tfoot td {
+    width: auto;
+    padding: 0;
+    border: 0;
+  }
+  .tab-table thead tr {
+    padding-bottom: 7px;
+    border-bottom: var(--rule-w) solid var(--rule-ink);
+  }
+  .tab-table tbody tr {
+    padding: 10px 0;
+    border-bottom: 1px solid var(--border);
+  }
+  .tab-table tbody tr:last-child { border-bottom: 0; }
+  .tab-table tfoot tr {
+    padding-top: 12px;
+    border-top: var(--rule-w) solid var(--rule-ink);
+  }
+
+  /* the place needs no head: a column of 1 to 43 says what it is */
+  .tab-table th.tab-col-rank,
+  .tab-table th.tab-col-behind,
+  .tab-table th.tab-col-last { display: none; }
+  .tab-table thead th { grid-row: 1; }
+  .tab-table th.tab-col-team { grid-column: 2; }
+  .tab-table th.tab-col-quests { grid-column: 3; }
+  .tab-table th.tab-col-points { grid-column: 4; }
+
+  /* every first line the disc's height, so a medal row is no taller
+     than the ones under it */
+  .tab-table td.tab-col-rank { grid-column: 1; grid-row: 1; text-align: center; line-height: 26px; }
+  /* A name takes two lines before it is cut: on one, the team in first
+     place lost half its name to the ellipsis while the columns beside it
+     held two digits each. */
+  .tab-table td.tab-team {
+    grid-column: 2;
+    grid-row: 1;
+    display: -webkit-box;
+    -webkit-box-orient: vertical;
+    -webkit-line-clamp: 2;
+    overflow: hidden;
+    overflow-wrap: anywhere;
+    line-height: 1.25;
+  }
+  .tab-table td.tab-col-quests { grid-column: 3; grid-row: 1; color: var(--muted); }
+  .tab-table td.tab-col-points { grid-column: 4; grid-row: 1; }
+  .tab-table td.tab-col-behind,
+  .tab-table td.tab-col-last { display: none; }
+  .rank-bullet { min-width: 26px; height: 26px; margin: -4px 0; font-size: 0.9rem; }
+  .rank-figure { min-width: 26px; }
+  .tab-table tfoot td.tab-col-quests { color: var(--text); }
+
+  /* ---- full: a second line under the name ---- */
+  .tab-table-card.is-full .tab-table tbody tr { row-gap: 3px; }
+  .tab-table-card.is-full .tab-table td.tab-col-last,
+  .tab-table-card.is-full .tab-table td.tab-col-behind {
+    display: block;
+    grid-row: 2;
+    font-size: 0.8rem;
+    line-height: 1.35;
+    color: var(--muted);
+  }
+  .tab-table-card.is-full .tab-table td.tab-col-last { grid-column: 2 / span 2; min-width: 0; }
+  .tab-table-card.is-full .tab-table td.tab-col-behind { grid-column: 4; text-align: right; }
+  .tab-table-card.is-full .tab-last { gap: 6px; flex-wrap: nowrap; white-space: nowrap; overflow: hidden; }
+  .tab-table-card.is-full .tab-last-name { overflow: hidden; text-overflow: ellipsis; }
+  .tab-table-card.is-full .tab-last .code { font-size: 0.7rem; }
+  .tab-table-card.is-full .tab-last-at { font-weight: 700; color: var(--text); }
+  /* the gap to the leader, as a minus figure under the points it is
+     taken from; the leader's own is left blank rather than a zero */
+  .tab-table-card.is-full td.tab-col-behind .tab-word { display: none; }
+  .tab-table-card.is-full td.tab-col-behind::before { content: '\2212'; }
+  .tab-table-card.is-full tr.is-leader td.tab-col-behind,
+  .tab-table-card.is-full tr.is-dnf td.tab-col-behind { visibility: hidden; }
+  /* the points are the row's last column here, with no padding to hang in */
+  .tab-dnf-mark { margin-right: 0; }
+  .tab-table tfoot td.tab-col-behind,
+  .tab-table tfoot td.tab-col-last { display: none !important; }
+
+  .tab-word { display: none; }
+}
+
+/* the stat digits use the shared number pop-in in site.css */
+
+/* a team new to the table rises in */
+.tab-table tr.is-new { animation: t-rise var(--duration-fast) var(--ease-smooth-out) both; }
+@media (prefers-reduced-motion: reduce) { .tab-table tr.is-new { animation: none; } }
+
+/* ---------------- Skeleton reveal (transitions.dev 14) ----------------
+   The first load pulses grey placeholders where the numbers and the
+   table land; when the API first answers, the real content
+   cross-fades in with a small blur. Adapted from the pattern: the
+   content keeps its place in flow (the table's height is data-driven)
+   and the skeleton overlays it. Tokens in site.css. */
+.t-skel { position: relative; display: block; }
+.t-skel-skeleton {
+  position: absolute;
+  inset: 0;
+  z-index: 1;
+  opacity: 1;
+  filter: blur(0);
+  transition:
+    opacity var(--reveal-dur) var(--reveal-ease),
+    filter  var(--reveal-dur) var(--reveal-ease);
+}
+.t-skel-content {
+  position: relative;
+  z-index: 2;
+  opacity: 0;
+  filter: blur(var(--reveal-blur));
+  transition:
+    opacity var(--reveal-dur) var(--reveal-ease),
+    filter  var(--reveal-dur) var(--reveal-ease);
+}
+.t-skel.is-revealed .t-skel-skeleton {
+  opacity: 0;
+  filter: blur(var(--reveal-blur));
+  pointer-events: none;
+}
+.t-skel.is-revealed .t-skel-content {
+  opacity: 1;
+  filter: blur(0);
+}
+
+/* the wait is open-ended, so the pulse loops until data lands */
+.t-skel-skeleton.is-pulsing > * {
+  animation: t-skel-pulse var(--pulse-dur) ease-in-out infinite;
+}
+@keyframes t-skel-pulse {
+  0%, 100% { opacity: 1; }
+  50%      { opacity: var(--pulse-min); }
+}
+
+/* placeholder shapes: hard-edged grey bars, per the design system */
+.tab-skel-bar,
+.tab-skel-row {
+  display: block;
+  background: var(--border);
+  border-radius: 2px;
+}
+
+/* an empty table is only a header row tall — the placeholder is a
+   table of the same shape: ranks 1-10 as themselves, grey bars where
+   the names and numbers go, an all-bar row for the unknown rest, and
+   the totals row under them */
+#tab-skel-table:not(.is-revealed) { min-height: 640px; }
+.tab-skel-table td .tab-skel-bar { height: 14px; width: 100%; }
+.tab-skel-table td.tab-col-rank .tab-skel-bar { width: 18px; margin-left: auto; }
+.tab-skel-table td.tab-col-points .tab-skel-bar,
+.tab-skel-table td.tab-col-behind .tab-skel-bar,
+.tab-skel-table td.tab-col-quests .tab-skel-bar { width: 44px; margin-left: auto; }
+@media (max-width: 840px) {
+  #tab-skel-table:not(.is-revealed) { min-height: 560px; }
+  .tab-skel-table td.tab-col-quests .tab-skel-bar { width: 28px; }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .t-skel-skeleton,
+  .t-skel-content { transition: none !important; }
+  .t-skel-skeleton.is-pulsing > * { animation: none !important; }
+}
+
+/* ---------------- Frozen ----------------
+   Partway through the day the tab stops in public. Frost grows in from
+   the edges of the screen, icicles hang off the top bar, snow falls,
+   and the line under the title says when the standings stopped. */
+
+/* over everything the page shows, under the fixed chrome, and never in
+   the way of a tap or a scroll */
+.tab-ice {
+  position: fixed;
+  inset: 0;
+  z-index: 1040;
+  pointer-events: none;
+  animation: ice-settle 900ms var(--ease-smooth-out);
+}
+@keyframes ice-settle { from { opacity: 0; } }
+/* the slab: a cold wash and a slight blur, so the standings read as
+   behind a block of ice rather than under a pattern */
+.tab-ice::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  backdrop-filter: blur(1px) saturate(0.7);
+  -webkit-backdrop-filter: blur(1px) saturate(0.7);
+  background: linear-gradient(160deg, rgba(190, 226, 244, 0.34), rgba(228, 244, 251, 0.2) 45%, rgba(166, 210, 232, 0.36));
+}
+html[data-theme="dark"] .tab-ice::before {
+  background: linear-gradient(160deg, rgba(120, 175, 205, 0.2), rgba(150, 196, 220, 0.1) 45%, rgba(110, 165, 198, 0.22));
+}
+.tab-frost,
+.tab-snow {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+}
+
+/* hung from the bottom edge of the top bar, inside it, so they leave
+   with it when it slides away */
+.tab-icicles {
+  position: absolute;
+  left: 0;
+  top: 100%;
+  width: 100%;
+  height: 72px;
+  pointer-events: none;
+  transform-origin: 50% 0;
+  animation: icicles-grow 1200ms var(--ease-smooth-out);
+}
+@keyframes icicles-grow { from { transform: scaleY(0); } }
+.tab-icicle { fill: #d9edf7; }
+.tab-icicle-shade { fill: #a9cfe3; }
+.tab-icicle-shine { fill: #ffffff; opacity: 0.85; }
+.tab-snowbank { fill: #fbfdfe; }
+html[data-theme="dark"] .tab-icicle { fill: #bcdcec; }
+html[data-theme="dark"] .tab-icicle-shade { fill: #7fb0ca; }
+html[data-theme="dark"] .tab-snowbank { fill: #e8f2f7; }
+
+/* the line under the title wears a snowflake instead of the refresh mark */
+.tab-updated .ic-snow { display: none; }
+html.tab-frozen .tab-updated .ic-snow { display: inline-block; color: #4f8fb4; }
+html.tab-frozen .tab-updated .ic-refresh { display: none; }
+html[data-theme="dark"].tab-frozen .tab-updated .ic-snow { color: #9fcde6; }
+
+/* the leaderboard keeps working underneath, a little colder */
+html.tab-frozen .tab-table-card,
+html.tab-frozen .tab-waiting { filter: saturate(0.85); }
+
+@media (prefers-reduced-motion: reduce) {
+  .tab-ice,
+  .tab-icicles { animation: none; }
+}

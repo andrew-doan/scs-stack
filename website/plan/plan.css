@@ -1,0 +1,91 @@
+/* The route planner. */
+.pl-pick {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: flex-end;
+  gap: 12px;
+  margin-bottom: 20px;
+}
+.pl-pick .sub-field { flex: 1 1 14rem; margin: 0; }
+.sub-field select,
+.pl-stop-place {
+  width: 100%;
+  min-height: 48px;
+  border: 1px solid var(--border-strong);
+  border-radius: 2px;
+  padding: 11px;
+  background: var(--surface);
+  color: var(--text);
+  font: inherit;
+}
+.pl-note {
+  margin: 14px 0 0;
+  color: var(--muted);
+  font-size: var(--t-small);
+  line-height: 1.5;
+}
+
+/* the route drawn stop to stop */
+.pl-map {
+  max-width: 40rem;
+  border: 1px solid var(--border);
+  border-radius: 2px;
+  background: var(--surface);
+}
+.pl-map svg { display: block; width: 100%; height: auto; }
+.pl-line { fill: none; stroke: var(--text); stroke-width: 4; stroke-linejoin: round; stroke-linecap: round; }
+.pl-disc { fill: var(--line-red); stroke: var(--surface); stroke-width: 3; }
+.pl-disc-here { fill: var(--surface); stroke: var(--text); stroke-width: 4; }
+.pl-disc-n {
+  fill: #ffffff;
+  font-size: 13px;
+  font-weight: 800;
+  text-anchor: middle;
+  dominant-baseline: central;
+  font-variant-numeric: tabular-nums lining-nums;
+}
+
+/* a stop: its number, what it is, and what can be done with it */
+.pl-stops, .pl-results { list-style: none; margin: 0; padding: 0; }
+.pl-stop {
+  display: grid;
+  grid-template-columns: auto minmax(0, 1fr);
+  column-gap: 12px;
+  row-gap: 8px;
+  align-items: start;
+  padding: 14px 0;
+  border-bottom: 1px solid var(--border);
+}
+.pl-stop-n { background: var(--line-red); color: #ffffff; margin-top: 2px; }
+.pl-stop-n.is-loose { background: var(--tint); }
+.pl-stop-body { display: grid; gap: 4px; min-width: 0; }
+.pl-stop-name { font-weight: 800; color: var(--text); overflow-wrap: break-word; }
+.pl-stop-meta { color: var(--muted); font-size: var(--t-small); line-height: 1.45; }
+.pl-stop-place { margin-top: 4px; max-width: 24rem; }
+.pl-stop-tools { grid-column: 2; display: flex; flex-wrap: wrap; gap: 8px; }
+.pl-tool {
+  display: inline-flex;
+  align-items: center;
+  min-height: 40px;
+  padding: 6px 12px;
+  border: 1px solid var(--border-strong);
+  border-radius: 2px;
+  background: var(--surface);
+  color: var(--text);
+  font: inherit;
+  font-size: var(--t-small);
+  font-weight: 700;
+  text-decoration: none;
+  cursor: pointer;
+}
+.pl-tool:disabled { opacity: 0.45; cursor: default; }
+
+.pl-result {
+  display: grid;
+  grid-template-columns: auto minmax(0, 1fr) auto;
+  gap: 12px;
+  align-items: center;
+  padding: 10px 0;
+  border-bottom: 1px solid var(--border);
+}
+.pl-result-name { overflow-wrap: break-word; min-width: 0; }

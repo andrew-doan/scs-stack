@@ -1,0 +1,221 @@
+/* The slideshow (assets/slideshow.js): a picture matted in paper over a
+   sign plate, the controls on a bar across the foot. */
+html.ss-open, html.ss-open body { overflow: hidden; }
+
+.ss-overlay {
+  position: fixed;
+  inset: 0;
+  z-index: 1600;
+  /* the room's margins: the picture well is measured against them */
+  --ss-side: 24px;
+  --ss-mat: 22px;
+  --ss-drop: 248px;
+  background: var(--sign-bg);
+  color: var(--sign-ink);
+  display: grid;
+  grid-template-rows: 1fr auto;
+}
+
+/* one column pinned to the stage's width, so the plate cannot widen it */
+.ss-stage {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr);
+  place-items: center;
+  min-height: 0;
+  padding: var(--ss-side) var(--ss-side) 12px;
+  cursor: pointer;
+}
+
+.ss-frame {
+  display: grid;
+  grid-template-rows: 1fr auto;
+  min-width: 0;
+  max-width: min(1400px, 100%);
+  max-height: 100%;
+  background: var(--card-bg);
+  border: 1px solid var(--border-strong);
+  border-radius: 2px;
+  animation: ss-in var(--duration-slow) var(--ease-smooth-out);
+}
+@keyframes ss-in {
+  from { opacity: 0; transform: scale(0.985); }
+}
+
+/* the mat: paper around the picture */
+.ss-mat {
+  padding: var(--ss-mat) var(--ss-mat) calc(var(--ss-mat) - 4px);
+  display: grid;
+  place-items: center;
+  min-height: 0;
+}
+/* the picture well: one size for every slide, the picture fitted whole */
+.ss-mat img,
+.ss-mat video {
+  display: block;
+  width: min(1180px, calc(100vw - 2 * var(--ss-side) - 2 * var(--ss-mat) - 2px));
+  height: calc(100vh - var(--ss-drop));
+  object-fit: contain;
+  background: var(--sign-bg);
+  border: 1px solid var(--border);
+  border-radius: 2px;
+}
+
+/* the plate: code and name on the left, team on the right */
+.ss-plate {
+  display: flex;
+  align-items: baseline;
+  gap: 16px;
+  min-width: 0;
+  padding: 11px 16px 12px;
+  background: var(--sign-bg);
+  color: var(--sign-ink);
+}
+.ss-plate-line {
+  display: flex;
+  align-items: baseline;
+  gap: 12px;
+  flex: 0 1 auto;
+  min-width: 0;
+}
+.ss-code {
+  flex: none;
+  padding: 0;
+  background: none;
+  color: var(--sign-ink);
+  font-family: var(--mono);
+  font-size: var(--t-small);
+  font-weight: 700;
+}
+.ss-quest-name {
+  font-size: var(--t-lede);
+  font-weight: 700;
+  letter-spacing: -0.012em;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+.ss-team {
+  margin-left: auto;
+  flex: 0 1 auto;
+  min-width: 0;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  color: var(--sign-muted);
+  font-size: var(--t-small);
+  font-weight: 700;
+}
+
+/* the controls: faint while the show runs, full on a hover or a pause */
+.ss-bar {
+  display: flex;
+  gap: 10px;
+  align-items: center;
+  justify-content: center;
+  padding: 12px 12px calc(12px + env(safe-area-inset-bottom, 0px));
+  background: var(--sign-bg);
+  opacity: 0.25;
+  transition: opacity var(--duration-fast) var(--ease-smooth-out);
+}
+.ss-overlay:hover .ss-bar,
+.ss-overlay.is-paused .ss-bar { opacity: 1; }
+
+.ss-btn {
+  border: 2px solid var(--sign-muted);
+  border-radius: 2px;
+  background: transparent;
+  color: var(--sign-ink);
+  font: inherit;
+  font-weight: 700;
+  padding: 8px 14px;
+  min-height: 42px;
+  cursor: pointer;
+  transition:
+    background-color var(--duration-quick) var(--ease-smooth-out),
+    color var(--duration-quick) var(--ease-smooth-out),
+    border-color var(--duration-quick) var(--ease-smooth-out);
+}
+.ss-btn:hover {
+  background: var(--sign-ink);
+  border-color: var(--sign-ink);
+  color: var(--sign-bg);
+}
+.ss-btn:active { transform: translate(1px, 1px); }
+.ss-btn:focus-visible { outline: 2px solid var(--accent); outline-offset: 2px; }
+/* a fixed square, so play and pause do not move the bar */
+.ss-btn.ss-square {
+  width: 46px;
+  padding-left: 0;
+  padding-right: 0;
+  display: inline-grid;
+  place-items: center;
+}
+
+.ss-count {
+  color: var(--sign-muted);
+  font-family: var(--mono);
+  font-size: var(--t-small);
+  font-weight: 700;
+  font-variant-numeric: tabular-nums lining-nums;
+  padding: 0 10px;
+}
+
+/* the settings, on paper */
+.ss-panel {
+  position: absolute;
+  right: 12px;
+  bottom: 76px;
+  width: min(330px, calc(100vw - 24px));
+  background: var(--surface);
+  color: var(--text);
+  border: 1px solid var(--border-strong);
+  border-radius: 2px;
+  box-shadow: var(--shadow);
+  padding: 16px;
+  display: grid;
+  gap: 14px;
+}
+.ss-panel-title {
+  margin: 0;
+  font-size: 0.72rem;
+  font-weight: 800;
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+  color: var(--muted);
+}
+.ss-field { display: grid; gap: 6px; }
+.ss-field-top {
+  display: flex;
+  justify-content: space-between;
+  gap: 10px;
+  font-size: var(--t-small);
+}
+.ss-field-top strong { font-variant-numeric: tabular-nums lining-nums; }
+.ss-field input[type="range"] { width: 100%; accent-color: var(--accent); }
+.ss-select {
+  width: 100%;
+  font: inherit;
+  color: var(--text);
+  background: var(--surface);
+  border: 1px solid var(--border-strong);
+  border-radius: 2px;
+  padding: 9px 10px;
+}
+.ss-select:focus-visible { outline: 2px solid var(--accent); outline-offset: 1px; }
+.ss-check { margin: 0; }
+
+@media (max-width: 700px) {
+  .ss-overlay { --ss-side: 12px; --ss-mat: 12px; --ss-drop: 240px; }
+  .ss-stage { padding-bottom: 6px; }
+  .ss-plate { flex-wrap: wrap; gap: 4px 14px; padding: 10px 12px 11px; }
+  .ss-team { margin-left: 0; }
+  /* the count goes above the controls on a phone */
+  .ss-bar { opacity: 1; flex-wrap: wrap; gap: 8px; }
+  .ss-count { order: -1; flex-basis: 100%; text-align: center; padding: 0 0 2px; }
+  .ss-btn { padding: 8px 11px; }
+  .ss-btn.ss-square { width: 44px; }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .ss-frame { animation: none; }
+}

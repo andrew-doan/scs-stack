@@ -1,0 +1,16 @@
+-- The hidden flag on teams, for databases created before September 2026.
+--
+-- This one was missing for a long time. The flag arrived with a comment
+-- in schema.sql telling whoever ran the database to do a one-off ALTER
+-- by hand, and no file was put here — so `npm run db:migrate` reported
+-- success without adding it, and `npm run db:schema` could not add it
+-- either, because re-running a CREATE TABLE IF NOT EXISTS over a table
+-- that already exists does nothing at all. A live database therefore
+-- had no way to get the column, while every test had it, because the
+-- tests build from schema.sql.
+--
+-- The symptom is the leaderboard, the public stats, the gallery, the
+-- recap and every Discord team lookup answering
+--   worker error: no such column: hidden — the database is behind
+-- while the command that message names runs clean.
+ALTER TABLE teams ADD COLUMN hidden INTEGER NOT NULL DEFAULT 0;

@@ -1,0 +1,1185 @@
+<header>
+  <h1>SCS.2 <span>Dashboard</span></h1>
+  <button id="menu-btn" class="menu-btn hidden" type="button" aria-expanded="false" aria-controls="tabs">Menu</button>
+  <p id="who-line" class="hidden"><span id="who"></span> · <a href="/dash/spinner">Spinner</a> · <a id="sign-out" href="#">Sign out</a></p>
+</header>
+<main>
+  <div id="login" class="card t-input hidden">
+    <div class="row-form">
+      <input id="login-name" type="text" placeholder="Your name" autocomplete="username" />
+      <input id="login-pass" type="password" placeholder="Password" autocomplete="current-password" />
+      <input id="login-code" type="text" inputmode="numeric" autocomplete="one-time-code"
+             placeholder="6-digit code" maxlength="9" class="hidden" />
+      <button id="login-btn" type="button" class="fixed">Sign in</button>
+    </div>
+    <div id="login-turnstile"></div>
+    <p id="login-error" class="info error" aria-live="polite"></p>
+    <div id="enrol" class="hidden">
+      <h3>Set up your code</h3>
+      <p class="hint">Scan this with an authenticator app, then type the six digits it shows.</p>
+      <img id="enrol-qr" alt="Enrolment QR code" width="200" height="200" />
+      <p class="hint">Or type the key in by hand: <code id="enrol-secret"></code></p>
+    </div>
+  </div>
+
+  <div id="backup" class="card hidden">
+    <h3>Your backup codes</h3>
+    <p class="hint">Print these and keep them somewhere that is not your phone. Each one works once,
+      and they are the way in if your phone is dead or lost. They are not shown again.</p>
+    <pre id="backup-list"></pre>
+    <button id="backup-print" type="button">Print them</button>
+    <button id="backup-done" type="button" class="primary">I have kept these</button>
+  </div>
+
+  <div id="main" class="hidden">
+    <div class="tabs" id="tabs" role="tablist">
+      <span class="tabs-pill" aria-hidden="true"></span>
+      <button data-tab="tab" class="is-active" type="button" role="tab" aria-selected="true">Scores</button>
+      <button data-tab="ranks" type="button" role="tab" aria-selected="false">Recap</button>
+      <button data-tab="review" type="button" role="tab" aria-selected="false">Queue<span id="review-count" class="badge"></span></button>
+      <button data-tab="desk" type="button" role="tab" aria-selected="false">Desk</button>
+      <button data-tab="ledger" type="button" role="tab" aria-selected="false">Ledger</button>
+      <button data-tab="map" type="button" role="tab" aria-selected="false">Map</button>
+      <button data-tab="routes" type="button" role="tab" aria-selected="false">Routes</button>
+      <button data-tab="quests" type="button" role="tab" aria-selected="false">Quests</button>
+      <button data-tab="teams" type="button" role="tab" aria-selected="false">Teams</button>
+      <button data-tab="messages" type="button" role="tab" aria-selected="false">Messages</button>
+      <button data-tab="push" type="button" role="tab" aria-selected="false">Push</button>
+      <button data-tab="email" type="button" role="tab" aria-selected="false">Email</button>
+      <button data-tab="rego" type="button" role="tab" aria-selected="false">Rego</button>
+      <button data-tab="files" type="button" role="tab" aria-selected="false">Files</button>
+      <button data-tab="discord" type="button" role="tab" aria-selected="false">Discord</button>
+      <button data-tab="settings" type="button" role="tab" aria-selected="false">Settings</button>
+      <button data-tab="accounts" type="button" role="tab" aria-selected="false">Accounts</button>
+      <button data-tab="log" type="button" role="tab" aria-selected="false">Log</button>
+      <div class="menu-who"><span id="who-menu"></span><a href="/dash/spinner">Spinner</a><a id="sign-out-menu" href="#">Sign out</a></div>
+    </div>
+
+    <section id="view-tab" class="view">
+      <div id="board" class="board"></div>
+      <p id="sched-state" class="status-line hidden"></p>
+      <div id="ledger-state" class="ledger-state hidden"></div>
+      <div class="card freeze-card">
+        <div class="card-head">
+          <h2 class="card-title">Public tab</h2>
+          <button id="freeze-btn" type="button" class="quiet fixed">Freeze the tab</button>
+          <button id="close-btn" type="button" class="quiet fixed">Close the tab</button>
+          <button id="standings-image" type="button" class="quiet fixed">Copy the standings as an image</button>
+          <button id="tab-export" type="button" class="quiet fixed">Export the tab</button>
+        </div>
+        <p id="freeze-state" class="card-sub freeze-state"></p>
+        <p class="card-sub freeze-note">Frozen, the live tab, the quest counts and Discord show the standings
+          as they were. Closed, they show nothing at all. You keep scoring here as normal.</p>
+        <h3 class="sub-title">Last scored column</h3>
+        <div class="row-form">
+          <label class="check-inline">Show no submission sent after
+            <input id="last-until" type="datetime-local" /></label>
+          <button id="last-until-save" type="button" class="quiet fixed">Save</button>
+        </div>
+        <p class="card-sub">Each team's last accepted submission. Points are not changed.</p>
+        <h3 class="sub-title">Saved standings</h3>
+        <p id="copy-empty" class="muted hidden">Nothing saved yet. A copy is saved at every freeze, and each hour the standings move.</p>
+        <div class="row-form copy-bar">
+          <select id="copy-pick" aria-label="Saved standings"></select>
+          <span id="copy-step" class="copy-step">
+            <button id="copy-prev" type="button" class="quiet small">Earlier</button>
+            <button id="copy-next" type="button" class="quiet small">Later</button>
+          </span>
+          <span class="grow"></span>
+          <button id="copy-save" type="button" class="quiet small">Save the standings now</button>
+        </div>
+        <div id="copy-tools" class="hidden">
+          <div class="row-form copy-actions">
+            <button id="copy-freeze" type="button" class="quiet fixed">Freeze the tab with this</button>
+            <button id="copy-image" type="button" class="quiet small">Copy as image</button>
+            <button id="copy-delete" type="button" class="quiet small">Delete</button>
+          </div>
+          <p id="copy-since" class="muted copy-since"></p>
+          <div id="copy-view" class="copy-view"></div>
+        </div>
+      </div>
+    </section>
+
+    <section id="view-ranks" class="view hidden">
+      <div class="status-line ranks-bar">
+        <span id="ranks-state"></span>
+        <button id="ranks-load" type="button" class="quiet small">Count again</button>
+        <button id="custom-add" type="button" class="quiet small">Add a board</button>
+      </div>
+      <div id="ranks-grid" class="ranks-grid">
+        <div class="card rank-card">
+          <div class="card-head"><h2 class="card-title">Points</h2></div>
+          <p class="card-sub">The tab as it is now, frozen or not.</p>
+          <div id="rank-points" class="rank-view"></div>
+        </div>
+        <div class="card rank-card">
+          <div class="card-head"><h2 class="card-title">Quests done</h2></div>
+          <p class="card-sub">Different quests per team. A quest's sub codes count as one.</p>
+          <label class="check-inline rank-on-recap"><input id="done-on-recap" type="checkbox" /> On the recap page</label>
+          <div id="done-view" class="rank-view"></div>
+        </div>
+        <div class="card rank-card">
+          <div class="card-head">
+            <h2 class="card-title">Photo to submission</h2>
+            <select id="times-order" aria-label="Order">
+              <option value="fast">Fastest first</option>
+              <option value="slow">Slowest first</option>
+            </select>
+          </div>
+          <p class="card-sub">Average time from taking a photo or video to sending it in, over accepted submissions whose files say when they were taken.</p>
+          <label class="check-inline rank-on-recap"><input id="times-on-recap" type="checkbox" /> On the recap page, as the 3 fastest and the 3 slowest</label>
+          <div id="times-view" class="rank-view"></div>
+        </div>
+      </div>
+      <div class="card recap-card">
+        <div class="card-head">
+          <h2 class="card-title">Recap</h2>
+          <button id="recap-load" type="button" class="quiet fixed">Show the numbers</button>
+        </div>
+        <p id="recap-state" class="card-sub">SCS.2 in Numbers, as the site's recap page counts it, whether or not it is on.</p>
+        <h3 class="sub-title">Hours on the charts</h3>
+        <p id="recap-seen" class="muted"></p>
+        <div class="row-form">
+          <label class="check-inline">From <input id="recap-from" type="datetime-local" step="3600" /></label>
+          <label class="check-inline">to <input id="recap-to" type="datetime-local" step="3600" /></label>
+          <select id="recap-mode" aria-label="Hours outside them">
+            <option value="merge">Add hours outside to the nearest hour shown</option>
+            <option value="hide">Leave hours outside off the charts</option>
+          </select>
+          <button id="recap-hours-save" type="button" class="quiet fixed">Save hours</button>
+        </div>
+        <h3 class="sub-title">Processing Time</h3>
+        <p class="muted">Counts the submissions sent and decided in this time.</p>
+        <div class="row-form">
+          <label class="check-inline">From <input id="review-from" type="datetime-local" /></label>
+          <label class="check-inline">to <input id="review-to" type="datetime-local" /></label>
+          <button id="review-save" type="button" class="quiet fixed">Save</button>
+        </div>
+        <h3 class="sub-title">Quest times on team and quest pages</h3>
+        <p class="muted">A quest recorded outside this time shows without its time, and a quest's page leaves out the submissions sent outside it.</p>
+        <div class="row-form">
+          <label class="check-inline">From <input id="team-times-from" type="datetime-local" /></label>
+          <label class="check-inline">to <input id="team-times-to" type="datetime-local" /></label>
+          <button id="team-times-save" type="button" class="quiet fixed">Save</button>
+        </div>
+        <h3 class="sub-title">Times without their date</h3>
+        <p class="muted">A time on a day these rules match shows without its date, on every page of the site.</p>
+        <div id="date-rules" class="date-rules"></div>
+        <div class="row-form">
+          <button id="date-rule-add" type="button" class="quiet fixed">Add a rule</button>
+          <button id="date-rules-save" type="button" class="quiet fixed">Save rules</button>
+        </div>
+        <h3 class="sub-title">Left out of Most done side quests and Rarely done</h3>
+        <div class="row-form">
+          <select id="most-skip-pick" aria-label="Quest to leave out"><option value="">Pick a quest</option></select>
+          <button id="most-skip-add" type="button" class="quiet fixed">Leave out</button>
+        </div>
+        <p id="most-skip-list" class="most-skip-list"></p>
+        <h3 class="sub-title">Quests shown photo by photo</h3>
+        <p class="muted">On the quest's page and the replay, each photo at the place it was taken, rather than each team once, when it sent the quest.</p>
+        <div class="row-form">
+          <select id="quest-view-pick" aria-label="Quest"><option value="">Pick a quest</option></select>
+          <select id="quest-view-kind" aria-label="Places">
+            <option value="stations">At the stations</option>
+            <option value="places">At the quest's places</option>
+          </select>
+          <button id="quest-view-set" type="button" class="quiet fixed">Show photo by photo</button>
+        </div>
+        <p id="quest-view-list" class="most-skip-list"></p>
+        <h3 class="sub-title">Arrivals</h3>
+        <p class="muted">Counts the check-ins in this time.</p>
+        <div class="row-form">
+          <label class="check-inline">From <input id="arrivals-from" type="datetime-local" /></label>
+          <label class="check-inline">to <input id="arrivals-to" type="datetime-local" /></label>
+          <button id="arrivals-save" type="button" class="quiet fixed">Save</button>
+        </div>
+        <h3 class="sub-title">Leaderboards</h3>
+        <p class="muted">The recap shows the boards above that are ticked On the recap page.</p>
+        <h3 class="sub-title">Sections</h3>
+        <p class="muted">Shown on the recap page after the leaderboards, in this order. Photos and videos come from the Files tab.</p>
+        <div id="sec-list" class="sec-list"></div>
+        <div class="row-form">
+          <button id="sec-add" type="button" class="quiet fixed">Add a section</button>
+          <button id="sec-save" type="button" class="fixed">Save sections</button>
+        </div>
+      </div>
+      <div id="recap-view" class="rg-summary recap-view hidden"></div>
+    </section>
+
+    <section id="view-desk" class="view hidden">
+      <div class="row-form desk-bar">
+        <select id="desk-quest" class="fixed" aria-label="Quest"></select>
+        <label class="check-inline"><input id="desk-voided" type="checkbox" /> Show undone lines</label>
+      </div>
+      <p id="desk-empty" class="muted hidden">Pick a quest.</p>
+      <div id="desk-record" class="card pt-card hidden">
+        <div class="card-head"><h2 class="card-title">Record a result</h2></div>
+        <div class="pt-grid">
+          <label><span>Team</span><select id="pt-team"></select></label>
+        </div>
+        <div id="pt-codes" class="pt-codes"></div>
+        <div id="pt-answer" class="pt-answer"></div>
+        <div class="pt-grid">
+          <label><span>Note</span><input id="pt-note" type="text" maxlength="500" /></label>
+        </div>
+        <div class="pt-files">
+          <button id="pt-files-btn" type="button" class="quiet fixed">Add photos or videos</button>
+          <input id="pt-files" type="file" accept="image/*,video/*" multiple class="hidden" />
+          <div id="pt-files-list"></div>
+        </div>
+        <div class="row-form pt-send">
+          <button id="pt-add" type="button" class="primary fixed">Record</button>
+          <span id="pt-worth" class="muted"></span>
+        </div>
+      </div>
+      <div id="desk-standings" class="card hidden"></div>
+      <div id="desk-question" class="card hidden"></div>
+      <div id="desk-teams" class="card hidden"></div>
+    </section>
+
+    <section id="view-review" class="view hidden">
+      <div class="row-form">
+        <span id="review-one" class="review-one hidden"></span>
+        <select id="review-quest" class="fixed" aria-label="Which quest"><option value="">Every quest</option></select>
+        <select id="review-team" class="fixed" aria-label="Which team"><option value="">Every team</option></select>
+        <button id="review-refresh" type="button" class="quiet fixed">Refresh</button>
+        <span id="review-empty" class="muted"></span>
+      </div>
+      <p id="review-ledger" class="status-line hidden"></p>
+      <div id="review-list"></div>
+      <div class="card enc-card">
+        <div class="card-head">
+          <h2 class="card-title">Video encoders</h2>
+          <span id="enc-counts" class="muted"></span>
+          <button id="enc-release" type="button" class="quiet small fixed">Retry failed videos</button>
+        </div>
+        <div id="enc-list"></div>
+      </div>
+    </section>
+
+    <section id="view-ledger" class="view hidden">
+      <div class="row-form ledger-bar">
+        <select id="ledger-team" class="fixed" aria-label="Team"></select>
+        <label class="check-inline"><input id="ledger-voided" type="checkbox" /> Show undone lines</label>
+      </div>
+      <div id="ledger-view"></div>
+    </section>
+
+    <section id="view-map" class="view hidden">
+      <div class="card">
+        <div class="card-head">
+          <h2 class="card-title">Where teams are</h2>
+          <button id="map-refresh" type="button" class="quiet fixed">Refresh</button>
+        </div>
+        <p class="card-sub">Each team is drawn at the pin of the last quest it sent proof for that has one.</p>
+        <div id="team-map" class="team-map"></div>
+        <ul class="tm-key">
+          <li><span class="tm-swatch tm-fresh"></span>In the last 30 min</li>
+          <li><span class="tm-swatch tm-mid"></span>30 to 90 min ago</li>
+          <li><span class="tm-swatch tm-old"></span>Over 90 min ago</li>
+        </ul>
+        <p id="map-error" class="info error hidden"></p>
+      </div>
+      <div class="card">
+        <div class="card-head"><h2 class="card-title">Last sent</h2></div>
+        <div class="table-scroll">
+          <table>
+            <thead><tr><th>Team</th><th>Last sent</th><th>Last pin</th><th>At the pin</th></tr></thead>
+            <tbody id="map-rows"></tbody>
+          </table>
+        </div>
+      </div>
+    </section>
+
+    <section id="view-routes" class="view hidden">
+      <div class="card">
+        <div class="card-head">
+          <h2 class="card-title">Routes</h2>
+          <button id="routes-add" type="button" class="fixed">Add GPX files</button>
+          <input id="routes-files" type="file" multiple accept=".gpx,application/gpx+xml" class="hidden" />
+        </div>
+        <p class="card-sub">The route each team recorded for the GPS quest. The replay shows them once its switch is on in Settings.</p>
+        <div class="table-scroll">
+          <table>
+            <thead><tr><th>Team</th><th>Recorded</th><th>Saved</th><th></th></tr></thead>
+            <tbody id="routes-rows"></tbody>
+          </table>
+        </div>
+      </div>
+      <div id="routes-editor" class="card hidden">
+        <div class="card-head">
+          <h2 id="routes-file" class="card-title"></h2>
+          <span id="routes-queue" class="muted"></span>
+        </div>
+        <div class="set-row">
+          <span><span class="set-name">Team</span></span>
+          <span class="set-control"><select id="routes-team" aria-label="Team"></select></span>
+        </div>
+        <div class="set-row">
+          <span><span class="set-name">Keep</span><span class="set-hint">Sydney time. Empty keeps the whole day.</span></span>
+          <span class="set-control">
+            <label class="check-inline">From <input id="routes-from" type="time" /></label>
+            <label class="check-inline">to <input id="routes-to" type="time" /></label>
+          </span>
+        </div>
+        <div class="set-row">
+          <span><span class="set-name">Leave out</span></span>
+          <span class="set-control">
+            <span id="routes-cuts" class="rt-cuts"></span>
+            <button id="routes-cut-add" type="button" class="quiet small fixed">Add a stretch</button>
+          </span>
+        </div>
+        <div class="set-row">
+          <span><span class="set-name">Recorded trips</span><span id="routes-trips-state" class="set-hint"></span></span>
+          <span class="set-control">
+            <button id="routes-trips-add" type="button" class="quiet small fixed">Load files</button>
+            <input id="routes-trips" type="file" multiple accept=".json,application/json" class="hidden" />
+          </span>
+        </div>
+        <div id="routes-map" class="team-map rt-map"></div>
+        <ul class="tm-key">
+          <li><span class="rt-swatch rt-raw"></span>As recorded</li>
+          <li><span class="rt-swatch rt-clean"></span>Cleaned</li>
+          <li><span class="rt-swatch rt-filled"></span>Filled in underground</li>
+        </ul>
+        <p id="routes-summary" class="note"></p>
+        <ul id="routes-notes" class="rt-notes"></ul>
+        <textarea id="routes-notes-box" class="rt-notes-box" maxlength="4000" placeholder="Notes (optional)"></textarea>
+        <div class="set-foot">
+          <button id="routes-save" type="button" class="fixed">Save route</button>
+          <button id="routes-skip" type="button" class="quiet fixed hidden">Skip this file</button>
+          <button id="routes-cancel" type="button" class="quiet fixed">Cancel</button>
+          <button id="routes-gpx" type="button" class="quiet fixed">Download cleaned GPX</button>
+          <span id="routes-status" class="muted"></span>
+        </div>
+      </div>
+      <div class="card">
+        <div class="card-head"><h2 class="card-title">GPX files teams sent</h2></div>
+        <div class="table-scroll">
+          <table>
+            <thead><tr><th>Team</th><th>File</th><th>Sent</th><th></th></tr></thead>
+            <tbody id="routes-sent"></tbody>
+          </table>
+        </div>
+      </div>
+    </section>
+
+    <section id="view-quests" class="view hidden">
+      <div class="row-form">
+        <input id="quest-filter" type="search" placeholder="Filter by code, name or region" />
+        <select id="quest-view-as" class="fixed" aria-label="Show the quests one viewer can see"></select>
+      </div>
+      <div class="row-form">
+        <button id="quest-regions-toggle" type="button" class="quiet fixed">Regions</button>
+        <button id="quest-tags-toggle" type="button" class="quiet fixed">Tags</button>
+        <button id="quest-asks-toggle" type="button" class="quiet fixed">Polls and wagers</button>
+        <button id="quest-phones-toggle" type="button" class="quiet fixed">Payphones</button>
+        <button id="quest-open-all" type="button" class="quiet fixed">Open everything now</button>
+        <label class="check-inline fixed"><input id="quest-show-dash-hidden" type="checkbox" /> Show hidden tags</label>
+        <span class="grow"></span>
+        <details class="menu fixed">
+          <summary>Import and export</summary>
+          <div class="menu-pop">
+            <button id="quest-file-btn" type="button" class="quiet">Import a CSV or JSON file</button>
+            <button id="quest-import" type="button" class="quiet">Import the SCS.2 list</button>
+            <button id="quest-export-csv" type="button" class="quiet">Export CSV</button>
+            <button id="quest-export-json" type="button" class="quiet">Export JSON</button>
+            <button id="quest-export-open-csv" type="button" class="quiet">Export what everyone sees (CSV)</button>
+            <button id="quest-export-open-json" type="button" class="quiet">Export what everyone sees (JSON)</button>
+          </div>
+        </details>
+        <input id="quest-file" type="file" accept=".csv,.json,text/csv,application/json" class="hidden" />
+        <button id="quest-retire" type="button" class="danger fixed hidden">Retire current quests</button>
+      </div>
+      <p id="quest-status" class="info"></p>
+      <div id="quest-file-preview" class="hidden"></div>
+      <div id="quest-regions" class="card hidden"></div>
+      <div id="quest-tags" class="card hidden"></div>
+      <div id="quest-asks" class="card hidden"></div>
+      <div id="quest-phones" class="card hidden"></div>
+      <div id="quest-list"></div>
+    </section>
+
+    <section id="view-teams" class="view hidden">
+      <div class="card">
+        <div class="card-head">
+          <h2 class="card-title">Teams</h2>
+          <label class="check-inline fixed"><input id="teams-hide-hidden" type="checkbox" /> Hide hidden teams everywhere</label>
+        </div>
+        <div class="row-form">
+          <input id="team-name" type="text" placeholder="New team name" />
+          <button id="team-add" type="button" class="fixed">Add team</button>
+        </div>
+        <div class="table-scroll">
+          <table>
+            <thead><tr><th class="num">#</th><th>Team</th><th class="num">Points</th><th class="num">Quests</th><th></th></tr></thead>
+            <tbody id="team-rows"></tbody>
+          </table>
+        </div>
+      </div>
+      <div class="card">
+        <div class="card-head">
+          <h2 class="card-title">Submit codes</h2>
+          <button id="codes-generate" type="button" class="quiet fixed">Mint missing codes</button>
+          <button id="codes-show" type="button" class="quiet fixed">Show codes</button>
+        </div>
+        <p class="card-sub">Teams sign in on the submit page with their team name and this code. Hand them out privately.</p>
+        <div class="table-scroll">
+          <table id="codes-table" class="hidden">
+            <thead><tr><th>Team</th><th>Code</th></tr></thead>
+            <tbody id="codes-rows"></tbody>
+          </table>
+        </div>
+      </div>
+      <div class="card">
+        <div class="card-head"><h2 class="card-title">Team groups</h2></div>
+        <p class="card-sub">A quest set to team groups shows only to the teams in them.</p>
+        <div id="team-groups"></div>
+        <div class="row-form qr-add">
+          <input id="team-group-name" type="text" placeholder="New team group" />
+          <button id="team-group-add" type="button" class="fixed">Add team group</button>
+        </div>
+      </div>
+    </section>
+
+    <section id="view-messages" class="view hidden">
+      <div class="card msg-compose">
+        <div class="card-head"><h2 id="msg-form-title" class="card-title">New message</h2></div>
+        <div class="row-form">
+          <input id="msg-title" type="text" maxlength="120" placeholder="Title" />
+        </div>
+        <textarea id="msg-body" maxlength="8000" placeholder="What the message says"></textarea>
+        <div class="row-form msg-files-row">
+          <button id="msg-files-btn" type="button" class="quiet fixed">Attach files</button>
+          <input id="msg-files" type="file" multiple class="hidden"
+            accept="image/jpeg,image/png,image/gif,image/webp,image/heic,image/heif,.heic,.heif,application/pdf,text/plain,text/csv,text/markdown,.doc,.docx,.xls,.xlsx,.ppt,.pptx" />
+          <span class="muted">Up to six, 25MB each</span>
+          <span id="msg-files-list" class="muted"></span>
+        </div>
+        <div class="msg-send">
+          <div class="set-row">
+            <span><span class="set-name">Who can see it</span><span id="msg-who-hint" class="set-hint"></span></span>
+            <span class="set-control">
+              <select id="msg-who" aria-label="Who can see it">
+                <option value="everyone">Everyone</option>
+                <option value="teams">Signed-in teams</option>
+                <option value="groups">Team groups</option>
+              </select>
+            </span>
+            <div id="msg-groups" class="qg-picks msg-groups hidden"></div>
+          </div>
+          <div class="set-row">
+            <span><span class="set-name">Who notices</span><span id="msg-urgency-hint" class="set-hint"></span></span>
+            <span class="set-control">
+              <select id="msg-urgency" aria-label="Who notices">
+                <option value="normal">Normal</option>
+                <option value="silent">Silent</option>
+                <option value="urgent">Urgent</option>
+              </select>
+            </span>
+          </div>
+          <div class="set-row" id="msg-also-row">
+            <span><span class="set-name">Also send</span></span>
+            <span class="set-control">
+              <label class="check-inline" id="msg-discord-row"><input id="msg-discord" type="checkbox" checked /> Post to Discord</label>
+              <label class="check-inline" id="msg-push-row"><input id="msg-push" type="checkbox" /> Push notification</label>
+            </span>
+          </div>
+          <div class="set-row" id="msg-posted-row">
+            <span><span class="set-name">Posted at</span><span id="msg-posted-hint" class="set-hint">Empty is now.</span></span>
+            <span class="set-control">
+              <input id="msg-posted-at" type="datetime-local" aria-label="Posted at" />
+              <button id="msg-posted-clear" type="button" class="quiet small fixed">Clear</button>
+            </span>
+          </div>
+          <div class="set-row" id="msg-publish-row">
+            <span><span class="set-name">Publish at</span><span id="msg-publish-hint" class="set-hint">Empty posts it now.</span></span>
+            <span class="set-control">
+              <input id="msg-publish-at" type="datetime-local" aria-label="Publish at" />
+              <button id="msg-publish-clear" type="button" class="quiet small fixed">Clear</button>
+            </span>
+          </div>
+        </div>
+        <input id="msg-hidden" type="checkbox" class="hidden" aria-hidden="true" tabindex="-1" />
+        <div class="set-foot">
+          <button id="msg-post" type="button" class="fixed">Post message</button>
+          <button id="msg-draft" type="button" class="quiet fixed">Save as draft</button>
+          <button id="msg-cancel" type="button" class="quiet fixed hidden">Cancel edit</button>
+          <span id="msg-status" class="muted"></span>
+        </div>
+      </div>
+      <div class="card">
+        <div class="card-head">
+          <h2 class="card-title">Messages</h2>
+          <span id="msg-count" class="muted"></span>
+          <label class="check-inline fixed"><input id="msg-show-archived" type="checkbox" /> Show the archived ones</label>
+        </div>
+        <div id="msg-list"></div>
+      </div>
+    </section>
+
+    <section id="view-push" class="view hidden">
+      <div class="card">
+        <div class="card-head">
+          <h2 class="card-title">Send a notification</h2>
+          <span id="push-count" class="muted"></span>
+        </div>
+        <div class="row-form">
+          <input id="push-title" type="text" maxlength="80" placeholder="Title" />
+        </div>
+        <textarea id="push-body" maxlength="300" placeholder="Message"></textarea>
+        <div class="row-form">
+          <input id="push-url" type="text" maxlength="200" placeholder="Page to open on tap, e.g. /tab/ (optional)" />
+          <select id="push-kind" class="fixed" aria-label="Kind of notification">
+            <option value="announce">Announcement (buzzes)</option>
+            <option value="update">Quiet update (silent, replaces the last one)</option>
+          </select>
+        </div>
+        <div class="row-form">
+          <label for="push-target" class="fixed">Send to</label>
+          <select id="push-target" class="fixed">
+            <option value="all">Everyone</option>
+            <option value="team">One team</option>
+            <option value="device">One device</option>
+          </select>
+          <select id="push-team" class="hidden" aria-label="Team"></select>
+          <select id="push-device" class="hidden" aria-label="Device"></select>
+        </div>
+        <div class="set-foot">
+          <button id="push-send" type="button" class="fixed">Send to everyone</button>
+          <span id="push-status" class="muted"></span>
+        </div>
+      </div>
+      <div class="card">
+        <div class="card-head"><h2 class="card-title">Devices</h2></div>
+        <p class="card-sub">The service is the company carrying the notification, not the device: Safari on a Mac and on an iPhone both say Apple. Rename a device to tell them apart.</p>
+        <div class="table-scroll">
+          <table>
+            <thead><tr><th>Name</th><th>Service</th><th>Team</th><th>Subscribed</th><th></th></tr></thead>
+            <tbody id="push-devices"></tbody>
+          </table>
+        </div>
+      </div>
+    </section>
+
+    <section id="view-email" class="view hidden">
+      <p id="ann-mail-off" class="mail-off hidden"><strong>Email sending is off.</strong> Nothing can be sent until it is turned back on in Settings.
+        <button id="ann-mail-off-go" type="button" class="quiet small" data-goto="settings" data-anchor="set-email">Open Settings</button></p>
+      <div class="card">
+        <div class="card-head">
+          <h2 class="card-title">Email an announcement</h2>
+          <span id="ann-reach" class="muted"></span>
+        </div>
+        <p class="card-sub">Each person gets their own copy, addressed to them alone.</p>
+        <p id="ann-off" class="note hidden">Email is not set up on the worker, so nothing can be sent from here yet.</p>
+        <div class="row-form">
+          <label for="ann-target" class="fixed">Send to</label>
+          <select id="ann-target" class="fixed">
+            <option value="all">Everyone signed up</option>
+            <option value="team">One team</option>
+            <option value="list">Addresses I type or paste</option>
+          </select>
+          <select id="ann-team" class="hidden" aria-label="Team"></select>
+        </div>
+        <div id="ann-list-box" class="hidden">
+          <textarea id="ann-list" rows="4" aria-label="Email addresses" placeholder="One address per line, or paste rows from a spreadsheet"></textarea>
+          <p id="ann-list-note" class="muted"></p>
+        </div>
+        <div class="row-form">
+          <label for="ann-reply" class="fixed">Replies go to</label>
+          <input id="ann-reply" type="email" maxlength="120" autocomplete="off" />
+        </div>
+        <div class="row-form">
+          <input id="ann-subject" type="text" maxlength="150" placeholder="Subject" />
+          <select id="ann-format" class="fixed" aria-label="Written as">
+            <option value="text">Text</option>
+            <option value="html">HTML</option>
+          </select>
+        </div>
+        <div id="ann-tools"></div>
+        <textarea id="ann-body" maxlength="20000" placeholder="What the email says"></textarea>
+        <p class="ann-preview-head"><label for="ann-footer" class="set-name">Line at the bottom</label></p>
+        <textarea id="ann-footer" rows="2" maxlength="500" placeholder="Nothing at the bottom"></textarea>
+        <p id="ann-preview-head" class="ann-preview-head hidden"><span class="set-name">Preview</span></p>
+        <div id="ann-preview-slot"></div>
+        <div class="row-form">
+          <input id="ann-test-to" type="email" placeholder="Your address, for a test" />
+          <button id="ann-test" type="button" class="quiet fixed">Send a test</button>
+        </div>
+        <div class="set-foot">
+          <button id="ann-send" type="button" class="fixed">Send to everyone</button>
+          <span id="ann-status" class="muted"></span>
+        </div>
+      </div>
+      <div class="card">
+        <div class="card-head"><h2 class="card-title">Sent</h2></div>
+        <div class="table-scroll">
+          <table>
+            <thead><tr><th>Subject</th><th>To</th><th>When</th><th class="num">Sent</th><th></th></tr></thead>
+            <tbody id="ann-rows"></tbody>
+          </table>
+        </div>
+      </div>
+    </section>
+
+    <section id="view-rego" class="view hidden">
+      <div class="row-form">
+        <button id="rego-new" type="button" class="fixed">New team</button>
+        <input id="rego-filter" type="search" placeholder="Filter by team, name, zID, email or Discord" />
+        <button id="rego-export" type="button" class="quiet fixed">Export CSV</button>
+        <button id="rego-resync" type="button" class="quiet fixed">Resync Google Sheet</button>
+      </div>
+      <p class="status-line"><span id="rego-standing"></span>
+        <button type="button" class="quiet small" data-goto="settings" data-anchor="set-signups">Sign-up settings</button></p>
+      <p id="rego-mail-off" class="mail-off hidden"><strong>Email sending is off.</strong> Confirmations wait and go out once it is back on.
+        <button id="rego-mail-off-go" type="button" class="quiet small" data-goto="settings" data-anchor="set-email">Open Settings</button></p>
+      <div id="rego-summary" class="rg-summary"></div>
+      <div id="rego-list"></div>
+      <p id="rego-empty" class="note"></p>
+    </section>
+
+    <section id="view-files" class="view hidden">
+      <div class="card">
+        <div class="card-head"><h2 class="card-title">Files</h2></div>
+        <p class="card-sub">A poster, a map, a schedule: anyone with the link can open it. Up to <span id="drop-max">90MB</span>.</p>
+        <div class="row-form">
+          <input id="drop-file" type="file" />
+          <input id="drop-note" type="text" maxlength="120" placeholder="What is it (optional)" />
+          <button id="drop-send" type="button" class="fixed">Upload</button>
+          <span id="drop-state" class="muted"></span>
+        </div>
+        <div class="table-scroll">
+          <table>
+            <thead><tr><th>File</th><th class="num">Size</th><th>Link</th><th></th></tr></thead>
+            <tbody id="drop-rows"></tbody>
+          </table>
+        </div>
+      </div>
+      <div class="card">
+        <div class="card-head"><h2 class="card-title">Short links</h2></div>
+        <p class="card-sub">A link to a file serves the file itself, so it embeds where you paste it. End the name in the
+          file's extension (<span class="mono">poster.png</span>) for Discord to show it as a picture.</p>
+        <div class="row-form">
+          <span id="link-host" class="muted"></span>
+          <input id="link-slug" type="text" maxlength="64" placeholder="name-after-the-slash" />
+          <select id="link-kind" aria-label="What the link does">
+            <option value="url">goes to an address</option>
+            <option value="file">serves a file</option>
+          </select>
+          <input id="link-target" type="text" maxlength="2000" placeholder="https://..." />
+          <select id="link-file" class="hidden" aria-label="File"></select>
+          <button id="link-save" type="button" class="fixed">Save link</button>
+        </div>
+        <div class="table-scroll">
+          <table>
+            <thead><tr><th>Link</th><th>Points at</th><th class="num">Opened</th><th></th></tr></thead>
+            <tbody id="link-rows"></tbody>
+          </table>
+        </div>
+      </div>
+      <div class="card" id="lp-card">
+        <div class="card-head"><h2 class="card-title">Link page</h2><span id="lp-open"></span></div>
+        <p class="card-sub">What the short-link domain shows on its own: links, headings and social icons. Off, it goes to the site.</p>
+        <div class="alb-form">
+          <label class="check-inline alb-wide"><input id="lp-on" type="checkbox" /> Show the link page</label>
+          <label class="alb-field"><span>Title</span><input id="lp-title" type="text" maxlength="80" placeholder="SCS.2 Legends of the City" /></label>
+          <label class="alb-field"><span>Line under it (optional)</span><input id="lp-bio" type="text" maxlength="300" /></label>
+        </div>
+        <div class="lp-look">
+          <div class="lp-preview" id="lp-preview" aria-label="How the top of the page looks">
+            <div class="lp-preview-pic" id="lp-preview-pic"></div>
+            <div class="lp-preview-shade" id="lp-preview-shade"></div>
+            <div class="lp-preview-words"><b id="lp-preview-title"></b><span id="lp-preview-bio"></span></div>
+          </div>
+          <div class="lp-look-controls">
+            <label class="alb-field"><span>Header picture</span><select id="lp-bg"><option value="">None: the black board</option></select></label>
+            <label class="alb-field"><span>Upload a picture</span><input id="lp-bg-file" type="file" accept="image/*" /></label>
+            <label class="alb-field"><span>Darkness <b id="lp-dim-val"></b></span><input id="lp-dim" type="range" min="0" max="90" step="5" /></label>
+            <label class="alb-field"><span>Blur <b id="lp-blur-val"></b></span><input id="lp-blur" type="range" min="0" max="20" step="1" /></label>
+            <p id="lp-contrast" class="lp-contrast"></p>
+          </div>
+        </div>
+        <div class="row-form"><button id="lp-settings-save" type="button" class="fixed">Save page</button><span id="lp-stats" class="muted"></span></div>
+        <p id="lp-backup" class="card-sub hidden">No backup copy is set up, so if the database is down this page is too. Setting it up is in the deploy notes (Link page backup).</p>
+        <div class="row-form" id="lp-form">
+          <select id="lp-kind" aria-label="Kind">
+            <option value="link">Link</option>
+            <option value="heading">Heading</option>
+            <option value="social">Social icon</option>
+          </select>
+          <select id="lp-icon" class="hidden" aria-label="Icon"></select>
+          <input id="lp-label" type="text" maxlength="80" placeholder="Label" />
+          <input id="lp-url" type="text" maxlength="2000" placeholder="https://..." />
+          <label class="check-inline" id="lp-featured-row"><input id="lp-featured" type="checkbox" /> Green</label>
+          <button id="lp-add" type="button" class="fixed">Add</button>
+        </div>
+        <div class="table-scroll">
+          <table>
+            <thead><tr><th>Row</th><th>Goes to</th><th class="num">Opened</th><th></th></tr></thead>
+            <tbody id="lp-rows"></tbody>
+          </table>
+        </div>
+      </div>
+      <div class="card" id="albums-card">
+        <div class="card-head"><h2 class="card-title">Albums</h2></div>
+        <p class="card-sub">Photo and video albums on the site's Albums page.</p>
+        <div class="alb-form">
+          <label class="alb-field alb-wide"><span>Name</span><input id="alb-name" type="text" maxlength="80" /></label>
+          <label class="alb-field"><span>Who can see it</span>
+            <select id="alb-visibility">
+              <option value="listed">Anyone, from the Albums page</option>
+              <option value="link">Anyone with the link</option>
+              <option value="hidden">Only organisers</option>
+            </select>
+          </label>
+          <label class="alb-field"><span>Who can add to it</span>
+            <select id="alb-adding">
+              <option value="teams">Teams, with their submit code</option>
+              <option value="anyone">Anyone</option>
+              <option value="closed">Only organisers, from here</option>
+            </select>
+          </label>
+          <label class="alb-field alb-wide"><span>About (optional)</span><textarea id="alb-about" rows="2" maxlength="1000"></textarea></label>
+          <label class="check-inline"><input id="alb-gallery" type="checkbox" /> Include the whole gallery: accepted submissions whose team ticked Show in the gallery</label>
+          <div id="alb-teams-field" class="alb-field alb-wide" role="group" aria-labelledby="alb-teams-name">
+            <span id="alb-teams-name">Gallery photos from these teams</span>
+            <div id="alb-teams" class="alb-teams"></div>
+          </div>
+          <div id="alb-merges-field" class="alb-field alb-wide" role="group" aria-labelledby="alb-merges-name">
+            <span id="alb-merges-name">Merge in these albums</span>
+            <div id="alb-merges" class="alb-teams"></div>
+          </div>
+          <label class="check-inline"><input id="alb-show-hidden" type="checkbox" /> Show photos and videos from hidden teams</label>
+          <label class="check-inline"><input id="alb-details" type="checkbox" checked /> Show photo details and location: when, where and on what each photo was taken, and the original file on a download</label>
+          <label class="alb-field"><span>Opens in</span>
+            <select id="alb-order">
+              <option value="added">Recently added</option>
+              <option value="taken">Date taken</option>
+            </select>
+          </label>
+          <div class="row-form alb-actions">
+            <button id="alb-save" type="button" class="fixed">Make album</button>
+            <button id="alb-cancel" type="button" class="quiet fixed hidden">Cancel</button>
+          </div>
+        </div>
+        <p id="alb-no-check" class="note hidden">Albums open to anyone have no person check: TURNSTILE_SECRET and TURNSTILE_SITE_KEY are not set.</p>
+        <div class="table-scroll">
+          <table>
+            <thead><tr><th>Album</th><th>Who can add</th><th class="num">Photos</th><th>Link</th><th></th></tr></thead>
+            <tbody id="alb-rows"></tbody>
+          </table>
+        </div>
+      </div>
+      <div class="card hidden" id="album-open">
+        <div class="card-head">
+          <h2 class="card-title" id="album-open-name"></h2>
+          <button id="album-close" type="button" class="quiet small">Close</button>
+        </div>
+        <p id="album-open-line" class="card-sub"></p>
+        <div class="row-form">
+          <input id="album-files" type="file" accept="image/*,video/*" multiple />
+          <button id="album-upload" type="button" class="fixed">Add photos and videos</button>
+          <label class="check-inline fixed"><input id="album-replace" type="checkbox" /> Replace photos with the same name</label>
+        </div>
+        <ul id="album-queue" class="aq-list"></ul>
+        <div class="row-form alb-point-bar hidden" id="album-pointing">
+          <span id="album-pointing-what"></span>
+          <button id="album-pointing-cancel" type="button" class="quiet small">Cancel</button>
+        </div>
+        <div class="row-form" id="album-tools">
+          <button id="album-author-start" type="button" class="quiet fixed">Change who added them</button>
+        </div>
+        <div class="row-form alb-point-bar hidden" id="album-author">
+          <span id="album-author-picked" class="fixed"></span>
+          <button id="album-author-all" type="button" class="quiet small fixed">Pick all</button>
+          <select id="album-author-who" aria-label="Who added them"></select>
+          <input id="album-author-name" class="hidden" type="text" maxlength="60" list="album-author-names" aria-label="Name" placeholder="Name" />
+          <datalist id="album-author-names"></datalist>
+          <button id="album-author-set" type="button" class="fixed" disabled>Set</button>
+          <button id="album-author-done" type="button" class="quiet fixed">Done</button>
+        </div>
+        <div id="album-photos" class="alb-photos"></div>
+      </div>
+    </section>
+
+    <section id="view-discord" class="view hidden">
+      <p id="discord-status" class="dc-status"></p>
+      <div id="discord-hold-card" class="card">
+        <div class="set-row">
+          <span><span class="set-name">Hold posts</span><span class="set-hint">Nothing goes to a server ticked here: no reviews, points, check-ins, announcements, codes or menus. Each message is written to the Log instead, and a command's answer shows only to whoever ran it.</span></span>
+          <span class="set-control" id="discord-hold"></span>
+        </div>
+      </div>
+      <div id="discord-servers"></div>
+      <div id="discord-post" class="card hidden">
+        <div class="card-head"><h2 class="card-title">Send a message</h2></div>
+        <div class="row-form">
+          <select id="discord-post-guild" aria-label="Server"></select>
+          <select id="discord-post-channel" aria-label="Channel"></select>
+        </div>
+        <textarea id="discord-post-text" rows="4" placeholder="Markdown and @mentions work as in Discord"></textarea>
+        <div class="row-form">
+          <button id="discord-post-send" type="button" class="fixed">Send</button>
+          <button id="discord-post-leaderboard" type="button" class="quiet fixed">Post the top 10</button>
+        </div>
+      </div>
+      <div id="discord-menus" class="card hidden"></div>
+      <div id="discord-teams" class="card hidden"></div>
+      <div id="discord-codes" class="card hidden"></div>
+      <div id="discord-members" class="card hidden"></div>
+    </section>
+
+    <section id="view-settings" class="view hidden">
+      <nav class="subnav" aria-label="Settings">
+        <a href="#set-signups" data-anchor="set-signups">Sign-ups</a>
+        <a href="#set-submissions" data-anchor="set-submissions">Submissions</a>
+        <a href="#set-eoi" data-anchor="set-eoi">EOI</a>
+        <a href="#set-home" data-anchor="set-home">Home page</a>
+        <a href="#set-after" data-anchor="set-after">After the event</a>
+        <a href="#set-email" data-anchor="set-email">Email</a>
+        <a href="#set-storage" data-anchor="set-storage">Storage</a>
+        <a href="#set-tools" data-anchor="set-tools">Tools</a>
+      </nav>
+
+      <div class="card" id="set-signups">
+        <div class="card-head">
+          <h2 class="card-title">Sign-ups</h2>
+          <span id="rego-open-state" class="muted"></span>
+        </div>
+        <div class="set-row">
+          <span><span class="set-name">Registrations open</span></span>
+          <span class="set-control"><label class="check-inline"><input id="rego-open" type="checkbox" /> Open</label></span>
+        </div>
+        <div class="set-row">
+          <span><span class="set-name">Close after</span><span class="set-hint">People, not teams. The form closes itself at this number; empty for no cap.</span></span>
+          <span class="set-control"><input id="rego-cap" type="number" min="0" max="100000" placeholder="no cap" aria-label="Close after this many people" /> people</span>
+        </div>
+        <div class="set-row">
+          <span><span class="set-name">Teams an hour</span><span class="set-hint">Past this, sign-ups are refused until the hour is up.</span></span>
+          <span class="set-control"><input id="lim-rego-per-hour" type="number" min="1" max="100000" aria-label="Teams an hour" /></span>
+        </div>
+        <div class="set-row">
+          <span><span class="set-name">From one connection an hour</span><span class="set-hint">Everyone on the campus wifi counts as one connection.</span></span>
+          <span class="set-control"><input id="lim-rego-per-ip-hour" type="number" min="1" max="100000" aria-label="Sign-ups from one connection an hour" /></span>
+        </div>
+        <div class="set-row">
+          <span><span class="set-name">Confirmation emails an hour</span><span class="set-hint">Past this, a team is registered without its email; resend it from the Rego tab.</span></span>
+          <span class="set-control"><input id="lim-rego-email-per-hour" type="number" min="1" max="100000" aria-label="Confirmation emails an hour" /></span>
+        </div>
+        <div class="set-row">
+          <span><span class="set-name">Emails to one address a day</span></span>
+          <span class="set-control"><input id="lim-rego-email-per-day" type="number" min="1" max="100000" aria-label="Emails to one address a day" /></span>
+        </div>
+        <div class="set-foot">
+          <button id="rego-settings-save" type="button" class="fixed">Save sign-up settings</button>
+          <span id="rego-guard-note" class="muted"></span>
+        </div>
+      </div>
+
+      <div class="card" id="set-submissions">
+        <div class="card-head"><h2 class="card-title">Submissions</h2></div>
+        <div class="set-row">
+          <span><span class="set-name">Waiting on review, per team</span><span class="set-hint">Past this many, a team's new sends wait in a queue until some are reviewed.</span></span>
+          <span class="set-control">
+            <input id="lim-submit-max-pending" type="number" min="1" max="100000" aria-label="Submissions waiting on review per team" />
+            <button id="lim-save" type="button" class="fixed">Save</button>
+          </span>
+        </div>
+        <p id="lim-state" class="muted"></p>
+      </div>
+
+      <div class="card" id="set-albums">
+        <div class="card-head"><h2 class="card-title">Albums</h2></div>
+        <div class="set-row">
+          <span><span class="set-name">From one connection an hour</span><span class="set-hint">For albums anyone can add to. Teams signed in with their submit code are not counted, and everyone else on the campus wifi counts as one connection.</span></span>
+          <span class="set-control">
+            <input id="lim-album-per-hour" type="number" min="1" max="100000" aria-label="Photos and videos from one connection an hour" />
+            <button id="lim-album-save" type="button" class="fixed">Save</button>
+          </span>
+        </div>
+        <p id="lim-album-state" class="muted"></p>
+      </div>
+
+      <div class="card" id="set-eoi">
+        <div class="card-head"><h2 class="card-title">EOI</h2></div>
+        <p class="card-sub">Points for every person on a team who filled in the EOI. They go on the team's total and show on its team page, not in the quest list.</p>
+        <div class="set-row">
+          <span><span class="set-name">Points per person</span></span>
+          <span class="set-control">
+            <input id="eoi-points" type="number" min="0" max="100000" step="any" aria-label="EOI points per person" />
+            <button id="eoi-points-save" type="button" class="fixed">Save</button>
+          </span>
+        </div>
+        <div class="set-row">
+          <span><span class="set-name">EOI list</span><span class="set-hint">A CSV with one person a row: their email, their zID or both. A new file replaces the list.</span></span>
+          <span class="set-control">
+            <input id="eoi-file" type="file" accept=".csv,text/csv,text/plain" aria-label="EOI list" />
+            <button id="eoi-upload" type="button" class="fixed">Upload</button>
+          </span>
+        </div>
+        <p id="eoi-state" class="muted"></p>
+        <div class="row-form">
+          <button id="eoi-award" type="button" class="primary fixed">Award the EOI points</button>
+          <span id="eoi-award-state" class="muted"></span>
+        </div>
+        <div id="eoi-teams"></div>
+      </div>
+
+      <div class="card" id="set-home">
+        <div class="card-head"><h2 class="card-title">Home page</h2></div>
+        <h3 class="sub-title">Countdown</h3>
+        <p class="card-sub">The home page counts to the first stop still ahead.</p>
+        <div id="cd-rows" class="cd-rows"></div>
+        <label class="cd-over">After the last stop
+          <input id="cd-over" type="text" maxlength="160" placeholder="SCS.2 is over. Results are on Discord." /></label>
+        <div class="row-form">
+          <button id="cd-add" type="button" class="quiet fixed">Add a stop</button>
+          <button id="cd-save" type="button" class="fixed">Save the countdown</button>
+          <span id="cd-state" class="muted"></span>
+        </div>
+        <h3 class="sub-title">Slideshow</h3>
+        <p class="card-sub">JPEG, PNG or GIF, up to 25MB. Every visitor downloads each picture at the size it is uploaded, so shrink a photo to about 1920 pixels on its long side (under 1MB) before adding it. Say what each picture shows: that is what a screen reader reads out. Click a picture to choose the part the home page keeps in view.</p>
+        <div class="row-form">
+          <input id="slide-file" type="file" accept="image/jpeg,image/png,image/gif,image/webp,image/heic,image/heif,.heic,.heif" />
+          <input id="slide-alt" type="text" maxlength="200" placeholder="What the picture shows" />
+          <input id="slide-caption" type="text" maxlength="160" placeholder="Caption (optional)" />
+          <button id="slide-send" type="button" class="fixed">Add picture</button>
+          <span id="slide-state" class="muted"></span>
+        </div>
+        <div class="row-form">
+          <label class="check-inline fixed">Each picture shows for
+            <input id="slide-step" type="number" min="1" max="60" step="0.1" /> seconds</label>
+          <button id="slide-step-save" type="button" class="quiet fixed">Save</button>
+          <span id="slide-step-state" class="muted"></span>
+        </div>
+        <div class="row-form" id="slide-tools">
+          <button id="slide-edit" type="button" class="quiet fixed">Edit</button>
+          <span id="slide-count" class="muted"></span>
+        </div>
+        <div class="row-form slide-edit-bar" id="slide-edit-bar" hidden>
+          <span id="slide-picked" class="muted"></span>
+          <button id="slide-hide" type="button" class="quiet fixed" disabled>Hide</button>
+          <button id="slide-show" type="button" class="quiet fixed" disabled>Show</button>
+          <button id="slide-done" type="button" class="fixed">Done</button>
+        </div>
+        <div id="slide-board" class="slide-board" hidden></div>
+        <div class="table-scroll" id="slide-table">
+          <table>
+            <thead><tr><th></th><th>Picture</th><th>Order</th><th></th></tr></thead>
+            <tbody id="slide-rows"></tbody>
+          </table>
+        </div>
+      </div>
+
+      <div class="card" id="set-after">
+        <div class="card-head">
+          <h2 class="card-title">After the event</h2>
+          <span id="flag-state" class="muted"></span>
+        </div>
+        <div class="set-row">
+          <span><span class="set-name">Team pages</span><span class="set-hint">Every name on the leaderboard links to what that team did and when.</span></span>
+          <span class="set-control"><label class="check-inline"><input id="flag-team-pages" type="checkbox" /> On the site</label></span>
+        </div>
+        <div class="set-row">
+          <span><span class="set-name">Recap page</span><span class="set-hint">SCS.2 in Numbers: submissions by hour, the podium, the quests nobody did.</span></span>
+          <span class="set-control"><label class="check-inline"><input id="flag-recap" type="checkbox" /> On the site</label></span>
+        </div>
+        <div class="set-row">
+          <span><span class="set-name">Replay</span><span class="set-hint">The routes teams recorded, played back on a map with each quest as it was sent. On a team's page too.</span></span>
+          <span class="set-control"><label class="check-inline"><input id="flag-replay" type="checkbox" /> On the site</label></span>
+        </div>
+        <div class="set-row">
+          <span><span class="set-name">Push notifications</span><span class="set-hint">Turned off, no phone gets one: not for a rejection, a message or the Push tab.</span></span>
+          <span class="set-control"><label class="check-inline"><input id="flag-push-off" type="checkbox" /> Turned off</label></span>
+        </div>
+      </div>
+
+      <div class="card rg-mail-card" id="set-email">
+        <div class="card-head"><h2 class="card-title">Email</h2></div>
+        <div class="set-row">
+          <span><span class="set-name">Stop sending email</span><span class="set-hint">Nothing is emailed: no announcements, tests or confirmations. Sign-ups still go through, and their confirmations go out once this is off.</span></span>
+          <span class="set-control"><label class="check-inline"><input id="email-hold" type="checkbox" /> Stopped</label></span>
+        </div>
+        <h3 class="sub-title">Test the confirmation email</h3>
+        <div class="row-form">
+          <input id="email-test-to" type="email" placeholder="Send a test to" />
+          <button id="email-test-send" type="button" class="quiet fixed">Send a plain test</button>
+        </div>
+        <div class="row-form rg-mail-row">
+          <input id="email-test-name" type="text" placeholder="Name on the ticket" />
+          <input id="email-test-team" type="text" placeholder="Team" />
+          <button id="email-test-ticket" type="button" class="quiet fixed">Send the ticket email</button>
+        </div>
+        <div class="row-form rg-mail-row">
+          <input id="email-test-banner" type="url" placeholder="https:// link to a header picture" />
+          <button id="email-test-banner-send" type="button" class="quiet fixed">Send it with that picture</button>
+        </div>
+        <p id="email-test-out" class="rg-mail-out muted">The plain test says whether inboxes will show the sender's name.
+          The ticket email is the real confirmation with a demo code, which adds nobody to the check-in board.</p>
+      </div>
+
+      <div class="card" id="set-storage">
+        <div class="card-head">
+          <h2 class="card-title">Storage</h2>
+          <button id="storage-count" type="button" class="quiet fixed">Count</button>
+        </div>
+        <p id="storage-state" class="card-sub">Every file kept in the bucket, sorted by what it is, and the database.</p>
+      </div>
+      <div id="storage-view" class="rg-summary recap-view hidden"></div>
+
+      <div class="card hidden" id="set-privacy">
+        <div class="card-head"><h2 class="card-title">Personal data</h2></div>
+        <p id="privacy-state" class="card-sub">Email addresses, zIDs and dietary needs from the sign-ups, the EOI list and the announcements sent, here and on the check-in worker.</p>
+        <div class="set-row">
+          <span><span class="set-name">Download a copy</span><span class="set-hint">Everything that removing takes off, in one file.</span></span>
+          <span class="set-control"><button id="privacy-export" type="button" class="quiet fixed">Download</button></span>
+        </div>
+        <div class="set-row">
+          <span><span class="set-name">Remove from the database</span><span class="set-hint" id="privacy-remove-out">Choose the copy you downloaded. Nothing is removed unless it holds everything stored now.</span></span>
+          <span class="set-control" id="privacy-remove-host"><button id="privacy-remove" type="button" class="quiet fixed">Choose the copy</button></span>
+        </div>
+        <div class="set-row">
+          <span><span class="set-name">Put it back</span><span class="set-hint" id="privacy-restore-out">From a copy. Anything typed in since stays.</span></span>
+          <span class="set-control"><button id="privacy-restore" type="button" class="quiet fixed">Choose the copy</button></span>
+        </div>
+        <input id="privacy-file" type="file" accept="application/json,.json" class="hidden" />
+      </div>
+
+      <div class="card hidden" id="set-originals">
+        <div class="card-head">
+          <h2 class="card-title">Original videos</h2>
+          <button id="originals-count" type="button" class="quiet fixed">Count again</button>
+        </div>
+        <p id="originals-state" class="card-sub">The videos teams sent, as their phones wrote them, location included. The site plays the encoder's copies.</p>
+        <div class="set-row">
+          <span><span class="set-name">Download them</span><span class="set-hint" id="originals-zip-out">ZIP files of up to 2 GB each. A video counts as saved once its ZIP has downloaded in full.</span></span>
+          <span class="set-control"><button id="originals-zip" type="button" class="quiet fixed">Download</button></span>
+        </div>
+        <div id="originals-parts" class="originals-parts hidden"></div>
+        <div class="set-row">
+          <span><span class="set-name">Delete the saved originals</span><span class="set-hint" id="originals-delete-out">Only videos that have been saved and that have a copy the site plays.</span></span>
+          <span class="set-control" id="originals-delete-host"></span>
+        </div>
+      </div>
+
+      <div class="card" id="set-tools">
+        <div class="card-head"><h2 class="card-title">Tools</h2></div>
+        <div class="set-row">
+          <span><span class="set-name">Export everything</span><span class="set-hint">One JSON file of every table: scores, quests, submissions, messages, registrations and the log.</span></span>
+          <span class="set-control"><button id="export-all" type="button" class="quiet fixed">Export</button></span>
+        </div>
+        <div class="set-row">
+          <span><span class="set-name">Tidy photo storage</span><span class="set-hint" id="reclean-out">Deletes the second, cleaned copy kept of each photo, which nothing uses now, and reads when older photos were taken.</span></span>
+          <span class="set-control"><button id="reclean" type="button" class="quiet fixed">Tidy</button></span>
+        </div>
+        <div class="set-row">
+          <span><span class="set-name">Version counters</span><span class="set-hint">Open pages fetch the quest list again when Quests changes, up or down. Set by hand only to undo a mistake.</span></span>
+          <span class="set-control counters-row">
+            <label for="counter-quests">Quests</label>
+            <input id="counter-quests" type="number" min="0" step="1" />
+            <button id="counter-quests-set" type="button" class="quiet small fixed">Set</button>
+            <label for="counter-messages">Messages</label>
+            <input id="counter-messages" type="number" min="0" step="1" />
+            <button id="counter-messages-set" type="button" class="quiet small fixed">Set</button>
+          </span>
+        </div>
+      </div>
+    </section>
+
+    <section id="view-accounts" class="view hidden">
+      <div class="card">
+        <div class="card-head">
+          <h2 class="card-title">Accounts</h2>
+          <button id="auth-backup-new" type="button" class="quiet fixed">New backup codes for me</button>
+          <button id="acc-new" type="button" class="fixed">New account</button>
+        </div>
+        <div class="table-scroll">
+          <table>
+            <thead><tr><th>Name</th><th>Tabs</th><th>Password</th><th>Code</th><th>Last signed in</th><th></th></tr></thead>
+            <tbody id="acc-rows"></tbody>
+          </table>
+        </div>
+      </div>
+
+      <div class="card t-input hidden" id="acc-edit">
+        <div class="card-head"><h2 class="card-title" id="acc-edit-title">New account</h2></div>
+        <div class="acc-fields">
+          <label>Name <input id="acc-name" type="text" maxlength="40" autocomplete="off" /></label>
+          <label>Password <input id="acc-pass" type="password" autocomplete="new-password" /></label>
+        </div>
+        <label class="acc-check"><input id="acc-admin" type="checkbox" />
+          <span>Admin<span class="set-hint">Every tab, including this one.</span></span></label>
+        <div id="acc-perms" class="acc-picks" role="group" aria-label="Tabs"></div>
+        <div id="acc-quests-box" class="acc-quests">
+          <label class="acc-check"><input id="acc-all-quests" type="checkbox" checked />
+            <span>Every quest<span class="set-hint" id="acc-quests-hint">Untick to let it score and review only the quests ticked below.</span></span></label>
+          <input id="acc-quests-find" type="search" class="acc-quests-find hidden" placeholder="Find a quest" aria-label="Find a quest" />
+          <div id="acc-quests" class="acc-picks hidden" role="group" aria-label="Quests"></div>
+        </div>
+        <label class="acc-check"><input id="acc-2fa" type="checkbox" checked />
+          <span>Require a code from an authenticator app<span class="set-hint" id="acc-2fa-hint">Set up the first time they sign in.</span></span></label>
+        <div class="acc-actions">
+          <button id="acc-save" type="button">Create account</button>
+          <button id="acc-cancel" type="button" class="quiet">Cancel</button>
+          <span class="grow"></span>
+          <span id="acc-danger" class="inline"></span>
+        </div>
+      </div>
+
+      <div class="card">
+        <div class="card-head"><h2 class="card-title">Second password</h2></div>
+        <p class="card-sub" id="guard-sub">Ticked actions ask for it before they go through.</p>
+        <div id="guard-rows" class="acc-picks"></div>
+      </div>
+
+      <div class="card">
+        <div class="card-head">
+          <h2 class="card-title">Sign-in attempts</h2>
+          <span id="auth-standing" class="muted"></span>
+        </div>
+        <div class="table-scroll">
+          <table>
+            <thead><tr><th>When</th><th>Name</th><th>From</th><th>What happened</th></tr></thead>
+            <tbody id="auth-attempts"></tbody>
+          </table>
+        </div>
+      </div>
+    </section>
+
+    <section id="view-log" class="view hidden">
+      <div class="card">
+        <div class="card-head"><h2 class="card-title">Log</h2></div>
+        <div class="table-scroll">
+          <table>
+            <thead><tr><th>When</th><th>Action</th><th>Team</th><th>Quest</th><th class="num">Δ</th><th class="num">Total</th><th>Who</th></tr></thead>
+            <tbody id="log-rows"></tbody>
+          </table>
+        </div>
+        <p class="note"><button id="log-more" type="button" class="quiet">Load more</button></p>
+      </div>
+    </section>
+  </div>
+  <div id="second" class="second-overlay hidden" role="dialog" aria-modal="true" aria-labelledby="second-title">
+    <div class="card second-card t-input">
+      <h2 class="card-title" id="second-title">Second password</h2>
+      <p id="second-what" class="card-sub"></p>
+      <input id="second-pass" type="password" autocomplete="off" aria-label="Second password" />
+      <p id="second-error" class="info error" aria-live="polite"></p>
+      <div class="acc-actions">
+        <button id="second-go" type="button">Continue</button>
+        <button id="second-cancel" type="button" class="quiet">Cancel</button>
+      </div>
+    </div>
+  </div>
+  <div id="email-off" class="second-overlay hidden" role="dialog" aria-modal="true" aria-labelledby="email-off-title">
+    <div class="card second-card">
+      <h2 class="card-title" id="email-off-title">Email sending is off</h2>
+      <p id="email-off-text" class="card-sub"></p>
+      <div class="acc-actions">
+        <button id="email-off-go" type="button" data-goto="settings" data-anchor="set-email">Go to Settings</button>
+        <button id="email-off-close" type="button" class="quiet">Close</button>
+      </div>
+    </div>
+  </div>
+  <div id="toast" role="status" aria-live="polite"></div>
+</main>

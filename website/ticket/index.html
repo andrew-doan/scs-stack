@@ -1,0 +1,80 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
+  <script>try{if(localStorage.getItem('scs2-submit-session')){document.documentElement.classList.add('team-signed-in')}var t=localStorage.getItem('scs2-theme');if(t==='dark'||(!t&&matchMedia('(prefers-color-scheme: dark)').matches)){document.documentElement.setAttribute('data-theme','dark')}var f=parseInt(localStorage.getItem('scs2-font-scale'),10);if(f&&f>=33&&f<=200&&f!==100){document.documentElement.style.fontSize=f+'%'}if(localStorage.getItem('scs2-justify')==='1'){document.documentElement.classList.add('justify-text')}}catch(e){}</script>
+  <title>Your Ticket | SCS.2</title>
+  <meta name="robots" content="noindex" />
+  <link rel="icon" href="../assets/icons/favicon-32.png" type="image/png" />
+  <!-- the service worker registers from this, so the ticket is kept offline -->
+  <link rel="manifest" href="../manifest.webmanifest" />
+  <meta name="theme-color" content="#ffffff" />
+  <link rel="preconnect" href="https://files.scs.andyrew.space" crossorigin />
+  <link rel="stylesheet" href="../assets/site.css" />
+  <link rel="stylesheet" href="ticket.css" />
+</head>
+<body class="themed tk-page" data-no-install>
+  <main class="tk-shell">
+    <!-- Ticket: board, code, tear, stub -->
+    <article class="tk" id="ticket">
+      <header class="tk-board">
+        <p class="tk-service">
+          <span class="tk-service-name">SCS.2 ticket</span>
+          <span class="tk-service-date">Tue 20 Oct 2026</span>
+        </p>
+        <h1 class="tk-name" id="tk-name">Your Ticket</h1>
+        <p class="tk-team is-hidden" id="tk-team"></p>
+      </header>
+      <div class="tk-stripe" aria-hidden="true"></div>
+
+      <div class="tk-body">
+        <div class="tk-code">
+          <!-- QR code, filled by ticket.js. Drawn from the link, or
+               fetched as an image for an older ticket. -->
+          <div class="tk-qr" id="tk-qr"></div>
+          <!-- Error shown in place of the code. ticket.js fills the
+               first two lines and the error code. -->
+          <div class="tk-fault is-hidden" id="tk-missing">
+            <p class="tk-fault-why" id="tk-why"></p>
+            <p class="tk-fault-do" id="tk-do"></p>
+            <p class="tk-fault-fix">At the door, an organiser can check you in by your name. Before the
+              day, ask @OrgCom on the SCS.2 Discord.</p>
+            <p class="tk-fault-ref">Error code <span class="tk-fault-code" id="tk-code"></span></p>
+          </div>
+        </div>
+
+        <div class="tk-tear" aria-hidden="true"></div>
+
+        <div class="tk-stub">
+          <!-- Icons sit inside the dt; ticket.css moves them to the
+               row's left edge. -->
+          <dl class="tk-details">
+            <div>
+              <dt><svg class="tk-icon" viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="12" r="9"/><path d="M12 7v5l3 2"/></svg>Check-in opens</dt>
+              <dd class="tk-time">09:15</dd>
+            </div>
+            <div>
+              <dt><svg class="tk-icon" viewBox="0 0 24 24" aria-hidden="true"><path d="M12 21s-6.5-5.7-6.5-11a6.5 6.5 0 0 1 13 0c0 5.3-6.5 11-6.5 11z"/><circle cx="12" cy="10" r="2.3"/></svg>Where</dt>
+              <dd>Keith Burrows Theatre, UNSW Kensington</dd>
+            </div>
+          </dl>
+          <p class="tk-note"><svg class="tk-note-icon" viewBox="0 0 24 24" aria-hidden="true"><rect x="6.5" y="2.5" width="11" height="19" rx="2"/><path d="M11 18.5h2"/></svg><span>Have this open at check-in.</span></p>
+        </div>
+      </div>
+    </article>
+
+    <p class="tk-links">
+      <a href="../"><svg class="tk-link-icon" viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="12" r="9"/><path d="M3 12h18"/><path d="M12 3c2.4 2.6 3.6 5.6 3.6 9s-1.2 6.4-3.6 9c-2.4-2.6-3.6-5.6-3.6-9s1.2-6.4 3.6-9z"/></svg>scs.andyrew.space</a>
+      <a href="../info/"><svg class="tk-link-icon" viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="12" r="9"/><path d="M12 11v5"/><path d="M12 7.6v.4"/></svg>Event Info</a>
+    </p>
+  </main>
+  <script src="qrcode.js"></script>
+  <script src="ticket.js"></script>
+  <script src="../assets/site.js" defer></script>
+  <script src="../assets/site-viewer.js" defer></script>
+  <script src="../assets/site-chrome.js" defer></script>
+  <script src="../assets/site-input.js" defer></script>
+  <script src="../assets/site-app.js" defer></script>
+</body>
+</html>

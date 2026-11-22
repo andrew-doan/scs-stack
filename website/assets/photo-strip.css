@@ -1,0 +1,44 @@
+/* A row of the event's own photographs.
+   ------------------------------------------------------------------
+   The pictures the organisers put on the home page, shown again on the
+   two pages that were asking people to do something with nothing to
+   look at: the sign-up form, and the gallery before a team has signed
+   in. The photographs are already public — the home page's slideshow
+   reads the same endpoint with no session — so this hands nothing out.
+
+   No frame, no shadow, no rounded corner: a photograph is its own edge,
+   and the site only lifts what is off the page. The row is in the flow. */
+
+.photo-strip[hidden] { display: none; }
+
+.photo-strip {
+  display: grid;
+  /* Five columns whatever the count: stretched to fill the row, two
+     photographs became two posters. */
+  grid-template-columns: repeat(5, minmax(0, 1fr));
+  gap: 10px;
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+.photo-strip li { margin: 0; }
+
+.photo-strip img {
+  display: block;
+  width: 100%;
+  height: 100%;
+  /* Squarer than the slideshow's 16:9: in a row of five these are
+     small, and a wide strip of a photograph shows almost nothing of
+     what is in it. */
+  aspect-ratio: 4 / 3;
+  object-fit: cover;
+  background: var(--sign-bg);
+}
+
+/* Past three across the photographs are too small to read, so a phone
+   shows two and a tablet three. */
+@media (max-width: 700px) {
+  .photo-strip { grid-template-columns: repeat(2, 1fr); gap: 8px; }
+  .photo-strip li:nth-child(n + 5) { display: none; }
+}

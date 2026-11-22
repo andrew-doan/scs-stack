@@ -1,0 +1,11 @@
+-- The gallery flag on submissions, for databases created before it.
+--
+-- Missing from here for the same reason teams.hidden was: it was noted
+-- in schema.sql as a one-off ALTER to run by hand and no file was put
+-- in migrations/, so npm run db:migrate never added it and npm run
+-- db:schema could not.
+--
+-- This is the one that stops a submission being made at all. The submit
+-- page's create inserts into gallery, so without the column every
+-- upload fails on the way in and the file never gets as far as R2.
+ALTER TABLE submissions ADD COLUMN gallery INTEGER NOT NULL DEFAULT 0;

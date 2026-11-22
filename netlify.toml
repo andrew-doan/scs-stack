@@ -1,0 +1,132 @@
+# Netlify publishes `website/` and nothing else, and a file in the repo
+# beats the UI settings.
+#
+# That folder is not only the site. The repo keeps its notes beside the
+# code they describe, so there is a CLAUDE.md in most directories, and
+# those were being uploaded and served — /assets/CLAUDE.md answered 200.
+#
+# It comes out of the deploy rather than out of the repo. Beside the
+# code is where it is useful, and what Netlify publishes is a copy in
+# a checkout it throws away. This is not a build step for the site:
+# nothing is compiled, bundled or installed, and every page is still
+# served exactly as it is written.
+#
+# Each line is a delete that succeeds when it matches nothing, so a
+# folder going away does not start failing deploys.
+[build]
+  publish = "website"
+  command = """
+find website -name CLAUDE.md -delete
+find website -type d -name tests -prune -exec rm -rf {} +
+"""
+
+# The live tab moved from /scs2-tab/ to /tab/, and its team pages and
+# replay with it. Links in Discord, in emails and on home screens still
+# say the old address; the query string travels with the redirect.
+[[redirects]]
+  from = "/scs2-tab/*"
+  to = "/tab/:splat"
+  status = 301
+
+# The compress page runs the multi-threaded video engine, which needs
+# SharedArrayBuffer, and a browser gives that only to a page isolated
+# from other origins: every file it loads from another origin has to
+# allow it (the tab worker's reads already send CORS headers). Only this
+# page is isolated, so the submit page and the worker's files stay as
+# they are. A page loaded without these headers runs the single-threaded
+# engine.
+[[headers]]
+  for = "/compress/*"
+  [headers.values]
+    Cross-Origin-Opener-Policy = "same-origin"
+    Cross-Origin-Embedder-Policy = "require-corp"
+
+# The engine runs in workers the compress page starts, and a worker an
+# isolated page starts is refused unless its own file says the same.
+[[headers]]
+  for = "/assets/ffmpeg/814.ffmpeg.js"
+  [headers.values]
+    Cross-Origin-Embedder-Policy = "require-corp"
+
+[[headers]]
+  for = "/assets/ffmpeg-mt/*"
+  [headers.values]
+    Cross-Origin-Embedder-Policy = "require-corp"
+
+# The dashboard (dashboard.scs.andyrew.space, served by the tab worker)
+# draws its Map tab with the site's copy of MapLibre, its base style,
+# fonts and transport lines, and a browser only lets another origin
+# read them when they say so.
+[[headers]]
+  for = "/assets/maplibre/*"
+  [headers.values]
+    Access-Control-Allow-Origin = "*"
+
+[[headers]]
+  for = "/assets/transit.geojson"
+  [headers.values]
+    Access-Control-Allow-Origin = "*"
+
+# and draws the logo onto the receipt picture it copies, which a canvas
+# can only hand back as a file when the logo's origin allows it
+[[headers]]
+  for = "/assets/icons/*"
+  [headers.values]
+    Access-Control-Allow-Origin = "*"
+    Cache-Control = "public, max-age=86400"
+
+# The stand-in for Helvetica, which the worker's share pages and the
+# dashboard's pictures load from here, and a browser only uses a font
+# from another origin when it says so.
+[[headers]]
+  for = "/assets/fonts/*"
+  [headers.values]
+    Access-Control-Allow-Origin = "*"
+    Cache-Control = "public, max-age=31536000, immutable"
+
+# The worker's file pages draw a PDF with the site's copy of PDF.js,
+# which loads as a module from another origin, and a module from
+# another origin runs only when it says it may. It is kept a year, so a
+# new version of PDF.js goes up under a new folder name.
+[[headers]]
+  for = "/assets/pdfjs/*"
+  [headers.values]
+    Access-Control-Allow-Origin = "*"
+    Content-Type = "text/javascript; charset=utf-8"
+    Cache-Control = "public, max-age=31536000, immutable"
+
+# How long a browser keeps the vendored files before asking again. Every
+# other file is asked about on every page (Netlify's max-age=0), which
+# for a browser the service worker does not control (a desktop, a private
+# window, a first visit) is a round trip per file. The service worker's
+# own fetches skip the browser's cache and are not affected.
+# The fonts and the map's label glyphs are never edited, so a year: a
+# changed one has to go up under a new name. MapLibre and its style have
+# been patched in place, and the icons and the haptics library could be,
+# so a day: a change reaches every browser within a day of the deploy.
+# A header named in two blocks for one path is joined with a comma, so
+# each path gets its Cache-Control from one block only.
+[[headers]]
+  for = "/assets/maplibre/fonts/*"
+  [headers.values]
+    Cache-Control = "public, max-age=31536000, immutable"
+
+[[headers]]
+  for = "/assets/maplibre/maplibre-gl.js"
+  [headers.values]
+    Cache-Control = "public, max-age=86400"
+
+[[headers]]
+  for = "/assets/maplibre/maplibre-gl.css"
+  [headers.values]
+    Cache-Control = "public, max-age=86400"
+
+[[headers]]
+  for = "/assets/maplibre/style.json"
+  [headers.values]
+    Cache-Control = "public, max-age=86400"
+
+[[headers]]
+  for = "/assets/haptics/*"
+  [headers.values]
+    Cache-Control = "public, max-age=86400"

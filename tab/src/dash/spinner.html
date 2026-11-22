@@ -1,0 +1,41 @@
+<header>
+  <h1>SCS.2 <span>Spinner</span></h1>
+  <div class="sp-links">
+    <button id="sp-side-toggle" type="button" class="sp-head-btn hidden">Hide the teams</button>
+    <a href="/dash">Dashboard</a>
+  </div>
+</header>
+<main class="sp-main">
+  <div id="sp-signin" class="card sp-signin hidden">
+    <h2 class="card-title">Sign in first</h2>
+    <p>The spinner opens with your dashboard sign-in.</p>
+    <a class="sp-go" href="/dash?then=spinner">Sign in on the dashboard</a>
+  </div>
+
+  <p id="sp-error" class="sp-error hidden" role="alert"></p>
+
+  <div id="sp-app" class="sp-app hidden">
+    <section class="sp-stage" aria-label="Wheel">
+      <div class="sp-wheel" id="sp-wheel-box">
+        <canvas id="sp-wheel" role="img" aria-label="The wheel"></canvas>
+        <span class="sp-pointer" aria-hidden="true"></span>
+      </div>
+      <button id="sp-spin" type="button" class="sp-spin">Spin</button>
+      <div class="sp-result" aria-live="polite">
+        <p id="sp-winner" class="sp-winner"></p>
+        <button id="sp-drop" type="button" class="quiet small hidden">Take them off the wheel</button>
+      </div>
+    </section>
+
+    <aside id="sp-side" class="card sp-side" aria-label="Teams">
+      <div class="card-head">
+        <h2 class="card-title">Teams</h2>
+        <button id="sp-all" type="button" class="quiet small">All</button>
+        <button id="sp-none" type="button" class="quiet small">None</button>
+        <button id="sp-reload" type="button" class="quiet small">Reload points</button>
+      </div>
+      <p id="sp-count" class="card-sub"></p>
+      <ul id="sp-list" class="sp-list"></ul>
+    </aside>
+  </div>
+</main>

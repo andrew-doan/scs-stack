@@ -1,0 +1,12 @@
+{
+  // npm run typecheck, the service worker (website/sw.js), which runs in
+  // a worker's scope rather than a page's. The site's options, and
+  // strictNullChecks as well, which it already passes.
+  "extends": "./tsconfig.site.json",
+  "compilerOptions": {
+    "lib": ["es2021", "webworker"],
+    "strictNullChecks": true
+  },
+  "include": ["../website/sw.js", "types/sw.d.ts"],
+  "exclude": []
+}

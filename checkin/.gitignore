@@ -1,0 +1,8 @@
+node_modules/
+.wrangler/
+.dev.vars
+secrets.json
+wrangler.deploy.toml
+wrangler.migrate.sql
+wrangler.repair.sql
+package-lock.json

@@ -1,0 +1,16 @@
+# SCS.2 phone — Cloudflare Worker config.
+# Nothing in this file needs editing per account: the secrets come
+# from secrets.example.json via `npm run secrets`. Until both are set
+# the worker answers every call with "not open".
+
+name = "scs-phone"
+main = "src/index.js"
+compatibility_date = "2026-07-01"
+
+[observability]
+enabled = true
+head_sampling_rate = 1
+
+[vars]
+# Where a call's PIN and number are reported (the tab worker).
+TAB_API = "https://files.scs.andyrew.space"

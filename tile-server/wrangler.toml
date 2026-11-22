@@ -1,0 +1,14 @@
+name = "scs-tiles"
+main = "index.js"
+compatibility_date = "2024-06-01"
+
+# Workers Logs, for one request in ten: a map view asks for hundreds of
+# tiles, and logging every one would use up the account's log allowance
+# on tiles alone. An error that keeps happening still shows.
+[observability]
+enabled = true
+head_sampling_rate = 0.1
+
+[[r2_buckets]]
+binding = "BUCKET"
+bucket_name = "scs-tiles"

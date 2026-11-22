@@ -1,0 +1,245 @@
+/* Post-event gallery — one module, the day in hours, and the black
+   spent on three things.
+
+   Every tile is the same square. A larger tile was tried six times and
+   each meaning it was given had to be explained in words: nobody edits
+   this gallery and nobody picks a picture of the hour, so there is
+   nothing for a bigger frame to mean. A square costs a landscape photo
+   and a portrait one the same quarter to the crop.
+
+   The route palette is not on this page. A gallery item is a code, a
+   name, a team and a time — the line was never a fact it has — so the
+   plate is black on every tile, and the palette stays in the stripe
+   under the nav and again on the footer, where it cannot be read as a
+   key to anything.
+
+   An hour is a rule over a heading, not another black bar: the
+   black is the nav, the one control and the footer, and nothing else. */
+
+/* ---------------- The title, the one control, what the page holds ---- */
+
+.gal-top {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) auto;
+  column-gap: 24px;
+  align-items: center;
+}
+
+/* the status line and the gate take the left, the one control the
+   right, level with them */
+
+.gal-go {
+  grid-column: 2;
+  grid-row: 1 / span 2;
+  justify-self: end;
+  display: flex;
+}
+/* signed out there is no slideshow, and the empty row would keep its
+   gap over the sign-in (gallery.js hides the row with its button) */
+.gal-go.is-hidden { display: none; }
+
+/* the one control on the page: the site's button as it is */
+.gal-btn { letter-spacing: -0.012em; }
+
+.gal-line {
+  grid-column: 1;
+  margin: 0;
+  font-size: 1rem;
+  line-height: 1.5;
+  max-width: 44em;
+  font-variant-numeric: tabular-nums lining-nums;
+}
+.gal-line:empty { display: none; }
+
+/* signed out, the sign-in sits under the line that asks for it */
+.gal-login { margin-top: 22px; }
+
+/* ---------------- An hour ---------------- */
+
+.gal-hour {
+  margin-top: 56px;
+  border-top: var(--rule-w) solid var(--rule-ink);
+  padding-top: 14px;
+}
+.gal-hour:first-child { margin-top: 40px; }
+
+.gal-head {
+  position: relative;
+  display: flex;
+  justify-content: space-between;
+  align-items: baseline;
+  gap: 16px;
+  margin-bottom: 24px;
+}
+
+.gal-hour-time {
+  margin: 0;
+  font-size: 1.5rem;
+  font-weight: 850;
+  letter-spacing: -0.03em;
+  line-height: 1;
+  font-variant-numeric: tabular-nums lining-nums;
+}
+
+/* the count is the way into the rest of the hour, so it is the
+   control: bold text and an arrow, the lighter treatment on the
+   lesser action */
+.gal-all {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  border: 0;
+  padding: 0;
+  background: none;
+  color: inherit;
+  font: inherit;
+  font-size: 1rem;
+  font-weight: 800;
+  letter-spacing: -0.012em;
+  line-height: 1.25;
+  font-variant-numeric: tabular-nums lining-nums;
+  cursor: pointer;
+}
+.gal-all svg {
+  display: block;
+  transition: transform var(--duration-fast) var(--ease-smooth-out);
+}
+.gal-hour.is-open .gal-all svg { transform: rotate(180deg); }
+.gal-all:focus-visible { outline: 2px solid var(--accent); outline-offset: 3px; }
+
+/* ---------------- One module ---------------- */
+
+.gal-row {
+  display: grid;
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+  column-gap: 24px;
+  row-gap: 56px;
+}
+
+/* a closed hour shows its first row; the count above it opens the rest */
+.gal-hour:not(.is-open) .gal-tile:nth-child(n + 5) { display: none; }
+
+.gal-tile {
+  display: block;
+  min-width: 0;
+  margin: 0;
+  padding: 0;
+  border: 0;
+  background: none;
+  color: inherit;
+  font: inherit;
+  text-align: left;
+  cursor: pointer;
+}
+.gal-tile:focus-visible { outline: 2px solid var(--accent); outline-offset: 3px; }
+.gal-tile:hover .gal-name { text-decoration: underline; text-underline-offset: 3px; }
+
+.gal-pic {
+  position: relative;
+  display: block;
+  aspect-ratio: 1 / 1;
+  overflow: hidden;
+  border-radius: 2px;
+  background: var(--border);
+}
+.gal-pic img {
+  display: block;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+/* one corner holds one object: the code, and on a video the play
+   glyph with it, so a still and a video differ in exactly one way */
+.gal-plate {
+  position: absolute;
+  left: 0;
+  bottom: 0;
+  display: flex;
+  align-items: center;
+  gap: 7px;
+  padding: 6px 9px;
+  background: var(--sign-bg);
+  color: var(--sign-ink);
+  line-height: 1;
+}
+.gal-quest {
+  font-family: var(--mono);
+  font-size: 0.75rem;
+  font-weight: 700;
+  line-height: 1;
+}
+.gal-play { display: block; }
+
+/* the title is one line, the meta sits under it, the pair is 8px from
+   its picture and there is no rule between them */
+.gal-caption { display: block; margin-top: 8px; }
+.gal-name {
+  display: block;
+  font-size: 1rem;
+  font-weight: 700;
+  line-height: 1.25;
+  letter-spacing: -0.012em;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+/* in ink, not grey: as the palest type on the page it read as a
+   footnote to the picture rather than as what the picture is */
+.gal-meta {
+  display: block;
+  margin-top: 2px;
+  font-size: 0.75rem;
+  line-height: 1.35;
+  font-variant-numeric: tabular-nums lining-nums;
+}
+
+@media (max-width: 560px) {
+  .gal-top {
+    grid-template-columns: minmax(0, 1fr);
+  }
+  /* the control goes under what the page holds, as low in the header as
+     it can go without landing in the middle of the day, and full width
+     because that is the largest target the page can give it */
+  .gal-go {
+    grid-column: 1;
+    grid-row: auto;
+    justify-self: stretch;
+    margin-top: 20px;
+  }
+  .gal-btn {
+    width: 100%;
+    justify-content: flex-start;
+  }
+
+  .gal-hour { margin-top: 40px; padding-top: 0; }
+  .gal-hour:first-child { margin-top: 28px; }
+  .gal-head { align-items: center; padding: 14px 0; margin-bottom: 0; }
+  /* the whole heading row is the control at this width: same words, same
+     treatment, drawn at the size a thumb needs */
+  .gal-all::after { content: ''; position: absolute; inset: 0; }
+
+  .gal-row {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    column-gap: 16px;
+    row-gap: 28px;
+  }
+  /* a 171px column clips almost every name at one line, and
+     "Is the Escalator Wor…" says nothing, so it wraps to two */
+  .gal-name {
+    display: -webkit-box;
+    -webkit-box-orient: vertical;
+    -webkit-line-clamp: 2;
+    line-clamp: 2;
+    white-space: normal;
+    text-overflow: clip;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .gal-all svg { transition: none; }
+}
+
+/* The row of event photographs under the gate. The gap is the page's
+   own rhythm; the row itself is laid out in assets/photo-strip.css. */
+#gal-shots { margin: 22px 0 0; }
